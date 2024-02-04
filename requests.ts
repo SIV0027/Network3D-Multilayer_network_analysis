@@ -4,61 +4,10 @@
 - u globálních i lokálních variant funkcí (vlastností, operací) dodržovat jednotnou syntaktickou konvencni (např.: všechny
   názvy metod globálních vlastností budou končit sufixem _global)
 - BIA možno použít na optimalizaci modularity (detekci komunit)
-- detekce komuit (vrstva nad)
-
-JEDNOVRSTVÉ SÍTĚ:
-    - vážené a nevážené
-    - orientované a neorientované
-    - multigrafy (možnost existence více hran mezi dvěma uzly) - většina sítí takových není => samostatný 
-      speciální typ sítě (možnost jej změnit na jednoduchou síť s váženými hranami, pokud nejsou samostatné hrany vážené =>
-      volba uživatele)
-    - smyčky (self-loop)
-    - Simple networks - neorientované a nevážené (a jednoduché - nejsou to multigrafy)
-    - funkce - počet uzlů (M), počet vrcholů (N), stupeň (k) - specifika pro bipartitní síť (N-partitní - ??), sekvence stupňů -
-      uspořádaná sekvence stupňů ({ k_1, ..., k_N }, implementačně možná pro velké sítě jen část sekvence => top N (N zvoleno
-      uživatelem)), průměrný stupeň (<k>), distribuce stupňů (P(k)), shlukovací koeficient (a tranzitivita sítě), délka nejkratší
-      cesty (i průměrné - globální vlastnost), průměr sítě
-    - adjecency "list" (mapa) -> hierarchicky: mapa uzlů (třída sítě) -> mapa hran konkrétního uzlu (třída uzlu)
-    - matice vzdáleností - implementovat ??
-    - komponenty sítě - orientované a neorientované (dostudovat teorii a promyslet implementaci zacházení s nimi - detekce a 
-      manipulace)
-    - modely sítí - k analýze (porovnání mezi analyzovanou sítí a modelem - kterému modelu nejlépe odpovída a jak moc) a 
-      ke generování sítí (implementovat jako vrstvu nad jádrem)
-    --------------------------------------------------------------------------------------------------------------------------------
-    - korelace v síti, Pearsonův koeficient asortativity
-    - strength and inverse participation ratio
-BIPARTITNÍ SÍTĚ:
-    - možná zobecnit na N-partitní sítě (případně dvě třídy: Bipartitní a N-partitní - možnost dědičnosti) ->
-      závisí na výpočetní náročnosti obecného případu (N-partitní sítě)
-
-VÍCEVRSTVÉ SÍTĚ:
-
-*/
-
-/* ...addNode({ ... }) => třída Node skrytá uživateli, bude obalovat uživatelský typ (pokud nějaký je) */
+- detekce komuit (vrstva nad) */
 
 /* OneLayer network */
-type Network<NODE_TYPE, LINK_TYPE> = OneLayerNetwork<NODE_TYPE, LINK_TYPE>; /* tento alias jako součást knihovny */
-const simpleNetwork: Network<NODE_TYPE = Node /* default */,
-                             NODE_ID_TYPE = Number /* default */,
-                             LINK_TYPE = Link /* default */> = NetworkFactory.createOneLayer({ weighted: false /* default */,
-                                                                                               oriented: false /* default */,
-                                                                                               multi: false /* default */,
-                                                                                               filepath: null /* default */ });
 
-simpleNetwork.addNode({ id: 1 }); /* pohlídat si, jestli uzly s daným id už neexistují */
-simpleNetwork.addNode({ id: 2 }); /*  */
-simpleNetwork.addNode({ id: 3 }); /*  */
-simpleNetwork.addNode({ id: 3,
-                        value: null /* default */ }); /* alternativa */
-
-simpleNetwork.addLink({ sourceNode: 1,
-                        targetNode: 2 }); /* pohlídat si, jestli uzly s daným id existuje */
-simpleNetwork.addLink({ sourceNode: 2,
-                        targetNode: 3 }); /*  */
-
-console.log(simpleNetwork.calcDiameter({ algorithm: Algorithms... /* default */ }));
-console.log(simpleNetwork.calcDegreeDistribution({ algorithms... /* default */ }));
 
 
 /* Bipartite network */
@@ -131,9 +80,77 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 /* namespace Algorithms rozdělit do tříd, kde každá bude určena pro danou podskupinu algoritmů (prohledávání grafu, detekce komunit, ...) */
 
 
+/* Obecné poznámky */
+/* - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
+     přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr */
+
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* MULTILAYER NETWORKS */
+
+/* Obecné rysy vícevrstvých sítí */
+/* - aktéři jsou uspořádáni do různých vrstev
+   - uzly v různých vrstvách mohou odpovídat stejnému aktérovi
+   - ...addNode({ ... }) => třída Node skrytá uživateli, bude obalovat uživatelský typ (pokud nějaký je) */
+
+/* Onelayer networks */
+/* - vážené a nevážené
+   - orientované a neorientované
+   - multigrafy (možnost existence více hran mezi dvěma uzly) - většina sítí takových není => samostatný 
+      speciální typ sítě (možnost jej změnit na jednoduchou síť s váženými hranami, pokud nejsou samostatné hrany vážené =>
+      volba uživatele)
+   - smyčky (self-loop)
+   - Simple networks - neorientované a nevážené (a jednoduché - nejsou to multigrafy)
+   - funkce - počet uzlů (M), počet vrcholů (N), stupeň (k) - specifika pro bipartitní síť (N-partitní - ??), sekvence stupňů -
+     uspořádaná sekvence stupňů ({ k_1, ..., k_N }, implementačně možná pro velké sítě jen část sekvence => top N (N zvoleno
+     uživatelem)), průměrný stupeň (<k>), distribuce stupňů (P(k)), shlukovací koeficient (a tranzitivita sítě), délka nejkratší
+     cesty (i průměrné - globální vlastnost), průměr sítě
+   - adjecency "list" (mapa) -> hierarchicky: mapa uzlů (třída sítě) -> mapa hran konkrétního uzlu (třída uzlu)
+   - matice vzdáleností - implementovat ??
+   - komponenty sítě - orientované a neorientované (dostudovat teorii a promyslet implementaci zacházení s nimi - detekce a 
+     manipulace)
+   - modely sítí - k analýze (porovnání mezi analyzovanou sítí a modelem - kterému modelu nejlépe odpovída a jak moc) a 
+     ke generování sítí (implementovat jako vrstvu nad jádrem)
+   --------------------------------------------------------------------------------------------------------------------------------
+   - korelace v síti, Pearsonův koeficient asortativity
+   - strength and inverse participation ratio */
+
+type Network<NODE_TYPE, LINK_TYPE> = OneLayerNetwork<NODE_TYPE, LINK_TYPE>; /* tento alias jako součást knihovny */
+const simpleNetwork: Network<NODE_TYPE = Node /* default */,
+                             NODE_ID_TYPE = Number /* default */,
+                             LINK_TYPE = Link /* default */> = NetworkFactory.createOneLayer({ weighted: false /* default */,
+                                                                                               oriented: false /* default */,
+                                                                                               multi: false /* default */,
+                                                                                               filepath: null /* default */ }); /* vytvoření sítě */
+/* methods - adders */
+simpleNetwork.addNode({ nodeId: 1,
+                        value: null /* default */ }); /* přidá uzel s daným id do sítě - pokud "value" == null => jako "value" se nastaví dané id */
+simpleNetwork.addLink({ sourceNodeId: 1,
+                        targetNodeId: 2 }); /* přidá vazbu mezi danou dvojicí uzlů (daných id) vazbu - pohlídat si, jestli uzly s daným id 
+                                               existují */
+
+/* methods - getters */
+console.log(simpleNetwork.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
+                                                     metodu přistupovat k uzlům sítě i v rámci metod */
+console.log(simpleNetwork.getLink({ sourceNodeId: 1, targetNodeId: 2 })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) =>
+                                                                             validace, zda existuje spojení mezi danými uzly) */
+
+/* methods - výpočet měr - "konstanty" */
+console.log(simpleNetwork.getNodesCount()); /* počet uzlů (vrcholů) */
+console.log(simpleNetwork.getLinksCount()); /* počet vazeb (hran) */
+/* methods - výpočet měr - "dynamické" */
+console.log(simpleNetwork.calcDensity()); /* hustota sítě */
+console.log(simpleNetwork.calcClusteringCoefficient({ nodeId: null /* default */,
+                                                      algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
+console.log(simpleNetwork.calcDegreeCentrality({ nodeId: null, /* default */
+                                                 algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
+console.log(simpleNetwork.calcDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+console.log(simpleNetwork.calcDistance({ sourceNodeId: null, /* default */
+                                         targetNodeId: null, /* default */
+                                         algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
+                                                                              vzdálenost */
+console.log(simpleNetwork.calcDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
+
 
 /* Multiplex networks */
 /* - reprezentace pomocí matic sousednosti (jedna pro každou vrstvu) - neefektivní a nepraktické
@@ -148,7 +165,9 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 /* - multimode - obecně se jedná o N-partitní sítě (nejčastěji bipartitní síť = two-mode network)
    - mutlilevel - rozšíření multimode sítě o možnost existence vazeb v rámci jednotlivých vrstev (partit)
    - na základě způsobů zacházení (one-mode projekce) a analýzy těchto dvou typů vícevrstvých sítí rozhodnout
-     o implementačních detailech */
+     o implementačních detailech
+   - možná zobecnit na N-partitní sítě (případně dvě třídy: Bipartitní a N-partitní - možnost dědičnosti) ->
+     závisí na výpočetní náročnosti obecného případu (N-partitní sítě) */
 
 /* Heterogeneous Information Networks (HIN) */
 /* - popisuje schéma sítě (str. 25)
@@ -161,11 +180,8 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 
 /* ML model */
 /* - jednomu aktérovi odpovídá více uzlů na téže vrstvě (např.: jedna osoba má více účtu na jední OSN - jeden na práci a druhý soukromý)
-   - není rozšířený (zejména kvůli obtížnému získávání dat tohoto typu) */
-
-/* Obecné rysy vícevrstvých sítí */
-/* - aktéři jsou uspořádáni do různých vrstev
-   - uzly v různých vrstvách mohou odpovídat stejnému aktérovi */
+   - není rozšířený (zejména kvůli obtížnému získávání dat tohoto typu) 
+   - implementovat jako poslední (něco navíc) */
 
 /* Networks of Networks */
 /* - popisují zejména nesociální sítě - jak na sebe různorodé systémy vzájemně působí - kaskádové efekty (mohou vést k řetězovým reakcím)
@@ -182,3 +198,4 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 /* - slouží k hledání definovaných vzorů v síti (jenovrstvých i vícevstrvých) (str. 28)
    - nejčastěji se používá k analýze multiplex a multilevel sítí
    - pro sítě s malým počtem uzlů (řádově 10^3, pro vícevrstvé sítě < 10^3) */
+
