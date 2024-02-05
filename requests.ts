@@ -81,8 +81,11 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 
 
 /* Obecné poznámky */
-/* - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
-     přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr */
+/* - lokal. = lokální vlastnost (počítá se vůči uzlu), global. = globální vlastnost (počítá se vůči síti)
+   - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
+     přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr 
+   - výpočet stupně - str. 44
+   - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.) */
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
