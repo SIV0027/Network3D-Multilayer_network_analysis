@@ -82,10 +82,16 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 
 /* Obecné poznámky */
 /* - lokal. = lokální vlastnost (počítá se vůči uzlu), global. = globální vlastnost (počítá se vůči síti)
+   - pro všechny lokální vlastnosti možná udělat možnost distribuce těchto vlastností (global.)
    - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
-     přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr 
-   - výpočet stupně - str. 44
-   - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.) */
+     přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr
+   - při implementaci i návrhu znovu přečíst text k dané míře (vlastnosti)
+   - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
+   - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+   - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
+   - výpočet konektivní redundance (lokal.) - str. 48
+   - exkluzivní sousedství (lokal.) - str. 48
+   - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality */
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
