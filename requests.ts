@@ -91,7 +91,10 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
    - výpočet konektivní redundance (lokal.) - str. 48
    - exkluzivní sousedství (lokal.) - str. 48
-   - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality */
+   - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
+   - (vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
+   - random walk closeness centrality (lokal.) - str. 54
+   - random walk betweenness centrality (lokal.) - str. 54 */
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
