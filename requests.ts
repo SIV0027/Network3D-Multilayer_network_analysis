@@ -108,7 +108,7 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
       - tranzitivita (lokal. a global.) - str. 61
    - MÍRY PODOBNOSTI VRSTVEV:
       - korelace vrstev (lokal. - vrstvy) - str. 62
-      - asortativita a disortativita (global. - vrstvy) - str. 63 */
+      - asortativita a disortativita (lokal. - vrstvy) - str. 63 */
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
