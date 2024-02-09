@@ -81,20 +81,34 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 
 
 /* Obecné poznámky */
-/* - lokal. = lokální vlastnost (počítá se vůči uzlu), global. = globální vlastnost (počítá se vůči síti)
+/* - lokal. = lokální vlastnost (počítá se vůči uzlu - případně vrstvy), global. = globální vlastnost (počítá se vůči celé síti)
    - pro všechny lokální vlastnosti možná udělat možnost distribuce těchto vlastností (global.)
    - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
      přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr
    - při implementaci i návrhu znovu přečíst text k dané míře (vlastnosti)
-   - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
-   - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
-   - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
-   - výpočet konektivní redundance (lokal.) - str. 48
-   - exkluzivní sousedství (lokal.) - str. 48
-   - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
-   - (vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
-   - random walk closeness centrality (lokal.) - str. 54
-   - random walk betweenness centrality (lokal.) - str. 54 */
+   - v textu jsou i další postupy, které nejsou v praxi ještě prozkoumány - možnost přidat jako "něco navíc"
+   - vše implementovat s ohledem na modifikaci (v parametrech jednotlivých měr ideálně možnost specifikovat algoritmus => dobře promyslet
+     rozhraní daného algoritmu - parametry, které mu metoda předá)
+   - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
+      - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
+      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
+      - výpočet konektivní redundance (lokal.) - str. 48
+      - exkluzivní sousedství (lokal.) - str. 48
+      - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
+   - MĚŘÍTKA VZDÁLENOSTÍ (A CEST):
+      - (vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
+      - random walk closeness centrality (lokal.) - str. 54
+      - random walk betweenness centrality (lokal.) - str. 54
+   - MEŘÍTKA RELEVANCE:
+      - relevance (lokal.) - str. 57.
+      - exklusivní relevance (lokal.) - str. 59 
+   - SHLUKOVACÍ MÍRY:
+      - shlukovací koeficient (lokal. a global.) - str. 61
+      - tranzitivita (lokal. a global.) - str. 61
+   - MÍRY PODOBNOSTI VRSTVEV:
+      - korelace vrstev (lokal. - vrstvy) - str. 62
+      - asortativita a disortativita (global. - vrstvy) - str. 63 */
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
