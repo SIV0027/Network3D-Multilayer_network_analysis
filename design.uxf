@@ -1,0 +1,23 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>321</x><y>130</y><w>470</w><h>230</h></coordinates><panel_attributes>OneLayerNetwork
+template=NODE_ID_TYPE, NODE_VALUE_TYPE, LINK_VALUE_TYPE
+--
+--
++addNode(params: Params): void
++addLink(params: Params): void
++getNode(params: Params): NODE_VALUE_TYPE
++getLink(params: Params): LINK_VALUE_TYPE
++getNodesCount(): int
++getLinksCount(): int
++calcDensity(): double
++calcClusteringCoefficient(params: Params): double
++calcDegreeCentrality(params: Params): int | double
++calcDegreeDistribution(params: Params): JSON
++calcDistance(params: Params): int | double
++calcDiameter(): int
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>21</x><y>150</y><w>210</w><h>40</h></coordinates><panel_attributes>&lt;&lt;JSON&gt;&gt;
+Params</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>221</x><y>160</y><w>120</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;100;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>821</x><y>130</y><w>390</w><h>70</h></coordinates><panel_attributes>MultiplexNetwork
+template=NODE_ID_TYPE, NODE_VALUE_TYPE, LINK_VALUE_TYPE
+--
+--
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>

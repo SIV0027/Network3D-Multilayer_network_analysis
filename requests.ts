@@ -89,6 +89,7 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - v textu jsou i další postupy, které nejsou v praxi ještě prozkoumány - možnost přidat jako "něco navíc"
    - vše implementovat s ohledem na modifikaci (v parametrech jednotlivých měr ideálně možnost specifikovat algoritmus => dobře promyslet
      rozhraní daného algoritmu - parametry, které mu metoda předá)
+   - zkusit použít datovou strukturu "Set"
    - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
       - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
       - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
@@ -152,15 +153,40 @@ const simpleNetwork: Network<NODE_TYPE = Node /* default */,
 simpleNetwork.addNode({ nodeId: 1,
                         value: null /* default */ }); /* přidá uzel s daným id do sítě - pokud "value" == null => jako "value" se nastaví dané id */
 simpleNetwork.addLink({ sourceNodeId: 1,
-                        targetNodeId: 2 }); /* přidá vazbu mezi danou dvojicí uzlů (daných id) vazbu - pohlídat si, jestli uzly s daným id 
-                                               existují */
+                        targetNodeId: 2,
+                        value: null /* default */ }); /* přidá vazbu mezi danou dvojicí uzlů (daných id) vazbu - pohlídat si, jestli uzly s daným id 
+                                                         existují - pokud "value" == null => nastaví se default hodnota vazby (nastavena v 
+                                                         konstruktoru, pokud není => nastaví se na "1") */
 
 /* methods - getters */
 console.log(simpleNetwork.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
                                                      metodu přistupovat k uzlům sítě i v rámci metod */
 console.log(simpleNetwork.getLink({ sourceNodeId: 1, targetNodeId: 2 })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) =>
-                                                                             validace, zda existuje spojení mezi danými uzly) */
+                                                                             validace, zda existuje spojení mezi danými uzly a validace
+                                                                             existence uzlů s danými id) */
 
+/* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
+      - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
+      - ??výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - ??výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
+      - ??výpočet konektivní redundance (lokal.) - str. 48
+      - ??exkluzivní sousedství (lokal.) - str. 48
+      - ??occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
+   - MĚŘÍTKA VZDÁLENOSTÍ (A CEST):
+      - ??(vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
+      - ??random walk closeness centrality (lokal.) - str. 54
+      - ??random walk betweenness centrality (lokal.) - str. 54
+   - MEŘÍTKA RELEVANCE:
+      - ??relevance (lokal.) - str. 57.
+      - ??exklusivní relevance (lokal.) - str. 59 
+   - SHLUKOVACÍ MÍRY:
+      - ??shlukovací koeficient (lokal. a global.) - str. 61
+      - ??tranzitivita (lokal. a global.) - str. 61
+   - MÍRY PODOBNOSTI VRSTVEV:
+      - ??korelace vrstev (lokal. - vrstvy) - str. 62
+      - ??asortativita a disortativita (global. - vrstvy) - str. 63 */
+
+                                                                             
 /* methods - výpočet měr - "konstanty" */
 console.log(simpleNetwork.getNodesCount()); /* počet uzlů (vrcholů) */
 console.log(simpleNetwork.getLinksCount()); /* počet vazeb (hran) */
