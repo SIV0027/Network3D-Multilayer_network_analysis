@@ -29,11 +29,7 @@ const projection: Network<NODE_TYPE = Actor,
                                                                                  algorithm: Algorithms... /* default */ });
 
 /* Multiplex network */
-const multiplexNetwork: MultiplexNetwork<NODE_TYPE = Actor,
-                                         NODE_ID_TYPE = String> = NetworkFactory.createMultiplex({ filepath: null /* default */ });
 
-multiplexNetwork.addLayer<LINK_TYPE = Link /* default */>({ name: "colabs" });
-multiplexNetwork.addLayer<LINK_TYPE = Link /* default */>({ name: "private" });
 
 
 /* str. 18 - definice obecné vícevrstvé sítě M = (A, L, V, E); A - množina aktérů, L - množina vrstev, (V, E) - graf, kde V je relací A x L */
@@ -90,6 +86,10 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - vše implementovat s ohledem na modifikaci (v parametrech jednotlivých měr ideálně možnost specifikovat algoritmus => dobře promyslet
      rozhraní daného algoritmu - parametry, které mu metoda předá)
    - zkusit použít datovou strukturu "Set"
+   - zaměřit se na neorientované a nevážené sítě (tyto vlastnosti doimplementovat následně => při návrhu brát toto rozšíření v potaz)
+   - zamyslet se nad defaultními datovými typy hodnot uzlů a vazeb (null by z hlediska metod getNode(...) a getLink(...) nemusel být vhodný)
+   - Params třídu udělat tak, ať je schopna vyvolat výjimku při poslání undefined, pokud nemají všechny atributy default hodnotu
+   - Params podtřídy (pro jednotlivé metody udělat jako vnitřní třídy)
    - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
       - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
       - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
@@ -110,6 +110,27 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - MÍRY PODOBNOSTI VRSTVEV:
       - korelace vrstev (lokal. - vrstvy) - str. 62
       - asortativita a disortativita (lokal. - vrstvy) - str. 63 */
+
+
+/* Návrh na Params třídu - promyslet a dodělat */
+class Params
+{
+   constructor(given: { } | undefined)
+   {
+      for()
+   }
+
+   public getArgs()
+   {
+
+   }
+};
+
+class MyParams<Type> extends Params
+{
+   protected sourceNodeId: Type | Number = 1;
+   protected targetNodeId: Type | Number = 2;
+};
 
 /* -------------------------------------------------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------------------------------------------------- */
@@ -142,28 +163,31 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - korelace v síti, Pearsonův koeficient asortativity
    - strength and inverse participation ratio */
 
-type Network<NODE_TYPE, LINK_TYPE> = OneLayerNetwork<NODE_TYPE, LINK_TYPE>; /* tento alias jako součást knihovny */
-const simpleNetwork: Network<NODE_TYPE = Node /* default */,
-                             NODE_ID_TYPE = Number /* default */,
-                             LINK_TYPE = Link /* default */> = NetworkFactory.createOneLayer({ weighted: false /* default */,
-                                                                                               oriented: false /* default */,
-                                                                                               multi: false /* default */,
-                                                                                               filepath: null /* default */ }); /* vytvoření sítě */
+type Network<NODE_ID_TYPE,
+             NODE_VALUE_TYPE,
+             LINK_VALUE_TYPE> = OneLayerNetwork<NODE_ID_TYPE,
+                                                NODE_VALUE_TYPE,
+                                                LINK_VALUE_TYPE>; /* tento alias jako nativní součást knihovny */
+const simpleNetwork: Network<NODE_ID_TYPE = Number /* default */,
+                             NODE_VALUE_TYPE = null /* default */,
+                             LINK_VALUE_TYPE = null /* default */> = NetworkFactory.createOneLayer({ weighted: false /* default */,
+                                                                                                     oriented: false /* default */,
+                                                                                                     multi: false /* default */,
+                                                                                                     filepath: null /* default */ }); /* vytvoření sítě */
 /* methods - adders */
 simpleNetwork.addNode({ nodeId: 1,
-                        value: null /* default */ }); /* přidá uzel s daným id do sítě - pokud "value" == null => jako "value" se nastaví dané id */
+                        value: null /* default */ }); /* přidá uzel s daným id do sítě */
 simpleNetwork.addLink({ sourceNodeId: 1,
                         targetNodeId: 2,
-                        value: null /* default */ }); /* přidá vazbu mezi danou dvojicí uzlů (daných id) vazbu - pohlídat si, jestli uzly s daným id 
-                                                         existují - pokud "value" == null => nastaví se default hodnota vazby (nastavena v 
-                                                         konstruktoru, pokud není => nastaví se na "1") */
+                        value: null /* default */ }); /* přidá vazbu mezi danou dvojicí uzlů (daných id) vazbu - pohlídat si, jestli uzly
+                                                         s daným id existují - pokud "value" == null */
 
 /* methods - getters */
 console.log(simpleNetwork.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
                                                      metodu přistupovat k uzlům sítě i v rámci metod */
-console.log(simpleNetwork.getLink({ sourceNodeId: 1, targetNodeId: 2 })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) =>
-                                                                             validace, zda existuje spojení mezi danými uzly a validace
-                                                                             existence uzlů s danými id) */
+console.log(simpleNetwork.getLink({ sourceNodeId: 1,
+                                    targetNodeId: 2 })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) => validace, zda 
+                                                            existuje spojení mezi danými uzly a validace existence uzlů s danými id) */
 
 /* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
       - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
@@ -212,6 +236,75 @@ console.log(simpleNetwork.calcDiameter({ algorithm: Algorithms... /* default */ 
                                            - výměna (exchange) - dvě spojení odehrávající se na dvou různých typech vazeb
    - multiplexita - lze vysvětlit vývoj sítě - existence spolupracovnického vztahu lze často využít k předpovědi možného
                                                vzniku spojení přátelského typu */
+
+
+   /* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
+      - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
+      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
+      - výpočet konektivní redundance (lokal.) - str. 48
+      - exkluzivní sousedství (lokal.) - str. 48
+      - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
+   - MĚŘÍTKA VZDÁLENOSTÍ (A CEST):
+      - (vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
+      - random walk closeness centrality (lokal.) - str. 54
+      - random walk betweenness centrality (lokal.) - str. 54
+   - MEŘÍTKA RELEVANCE:
+      - relevance (lokal.) - str. 57.
+      - exklusivní relevance (lokal.) - str. 59 
+   - SHLUKOVACÍ MÍRY:
+      - shlukovací koeficient (lokal. a global.) - str. 61
+      - tranzitivita (lokal. a global.) - str. 61
+   - MÍRY PODOBNOSTI VRSTVEV:
+      - korelace vrstev (lokal. - vrstvy) - str. 62
+      - asortativita a disortativita (lokal. - vrstvy) - str. 63 */
+
+const multiplex: MultiplexNetwork<NODE_ID_TYPE = Number /* default */,
+                                  NODE_VALUE_TYPE = null /* default */> = NetworkFactory.createMultiplex({ filepath: null /* default */ });
+
+
+/* methods - adders */
+multiplex.addLayer<LINK_VALUE_TYPE = null /* default */>({ name: "colabs" }); /* přidá novou vrstvu */
+multiplex.addNode({ nodeId: 1,
+                    value: null /* default */ }); /* přidá uzel s daným id do sítě - pokud "value" == null => jako "value" se nastaví 
+                                                     dané id */
+multiplex.addLink({ sourceNodeId: 1,
+                    targetNodeId: 2,
+                    layer: "colabs",
+                    value: null /* default */ }); /* přidá vazbu do sítě - zkontrolovat existenci uzlu a datový typ "value" vůči datovému 
+                                                     typu "value" dané vrsty (zde "colabs") */
+
+/* methods - getters */
+console.log(multiplex.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
+                                                 metodu přistupovat k uzlům sítě i v rámci metod */
+console.log(multiplex.getLink({ sourceNodeId: 1,
+                                targetNodeId: 2,
+                                layer: "colabs" })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) => validace, zda existuje 
+                                                        spojení mezi danými uzly a validace existence uzlů s danými id a validace existence dané vrstvy) */
+console.log(multiplex.getLayersNames()) /* vrací seznam (pole) názvů všech vrstev */
+
+
+/* methods - výpočet měr - "konstanty" */
+console.log(multiplex.getNodesCount({ layer: null /* default */ })); /* počet uzlů (vrcholů) na dané vrstvě - pokud "layer" == null =>
+                                                                        vrátí se počet vrcholů  */
+console.log(multiplex.getLinksCount({ layers: null })); /* počet vazeb (hran) na daných vrstvách (jejich součet), pokud "layers" == null =>
+                                                           počet vazeb v celé síti */
+
+/* methods - výpočet měr - "dynamické" -------------------------------------------DODĚLAT---------------------- */
+console.log(multiplex.calcDensity()); /* hustota sítě */
+console.log(multiplex.calcClusteringCoefficient({ nodeId: null /* default */,
+                                                  algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
+console.log(multiplex.calcDegreeCentrality({ nodeId: null, /* default */
+                                             algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
+console.log(multiplex.calcDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+console.log(multiplex.calcDistance({ sourceNodeId: null, /* default */
+                                     targetNodeId: null, /* default */
+                                     algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
+                                                                          vzdálenost */
+console.log(multiplex.calcDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
+
+
+
 
 /* Multimode & multilevel networks */
 /* - multimode - obecně se jedná o N-partitní sítě (nejčastěji bipartitní síť = two-mode network)
