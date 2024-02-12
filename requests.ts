@@ -112,7 +112,9 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
       - asortativita a disortativita (lokal. - vrstvy) - str. 63 */
 
 
-/* Návrh na Params třídu - promyslet a dodělat */
+/* Návrh na Params třídu - promyslet a dodělat
+   - dodělat metody pro validaci případu, kdy je přípustná hodnota nebo typ jednoho parametru závislý na hodnotě jiného parametru,
+     např. id == null => nepočítá se lokální, ale globální vlastnost => nutné použít jiný typ algoritmu (s jiným rozhraním) */
 class Params
 {
    constructor(given: { } | undefined)
@@ -190,7 +192,6 @@ console.log(simpleNetwork.getLink({ sourceNodeId: 1,
                                                             existuje spojení mezi danými uzly a validace existence uzlů s danými id) */
 
 /* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
-      - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
       - ??výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
       - ??výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
       - ??výpočet konektivní redundance (lokal.) - str. 48
@@ -204,7 +205,6 @@ console.log(simpleNetwork.getLink({ sourceNodeId: 1,
       - ??relevance (lokal.) - str. 57.
       - ??exklusivní relevance (lokal.) - str. 59 
    - SHLUKOVACÍ MÍRY:
-      - ??shlukovací koeficient (lokal. a global.) - str. 61
       - ??tranzitivita (lokal. a global.) - str. 61
    - MÍRY PODOBNOSTI VRSTVEV:
       - ??korelace vrstev (lokal. - vrstvy) - str. 62
@@ -215,17 +215,17 @@ console.log(simpleNetwork.getLink({ sourceNodeId: 1,
 console.log(simpleNetwork.getNodesCount()); /* počet uzlů (vrcholů) */
 console.log(simpleNetwork.getLinksCount()); /* počet vazeb (hran) */
 /* methods - výpočet měr - "dynamické" */
-console.log(simpleNetwork.calcDensity()); /* hustota sítě */
-console.log(simpleNetwork.calcClusteringCoefficient({ nodeId: null /* default */,
+console.log(simpleNetwork.calculateDensity()); /* hustota sítě */
+console.log(simpleNetwork.calculateClusteringCoefficient({ nodeId: null /* default */,
                                                       algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
-console.log(simpleNetwork.calcDegreeCentrality({ nodeId: null, /* default */
+console.log(simpleNetwork.calculateDegreeCentrality({ nodeId: null, /* default */
                                                  algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
-console.log(simpleNetwork.calcDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
-console.log(simpleNetwork.calcDistance({ sourceNodeId: null, /* default */
+console.log(simpleNetwork.calculateDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+console.log(simpleNetwork.calculateDistance({ sourceNodeId: null, /* default */
                                          targetNodeId: null, /* default */
                                          algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
                                                                               vzdálenost */
-console.log(simpleNetwork.calcDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
+console.log(simpleNetwork.calculateDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
 
 
 /* Multiplex networks */
@@ -253,8 +253,7 @@ console.log(simpleNetwork.calcDiameter({ algorithm: Algorithms... /* default */ 
       - relevance (lokal.) - str. 57.
       - exklusivní relevance (lokal.) - str. 59 
    - SHLUKOVACÍ MÍRY:
-      - shlukovací koeficient (lokal. a global.) - str. 61
-      - tranzitivita (lokal. a global.) - str. 61
+      - tranzitivita (lokal. a global.) - str. 59
    - MÍRY PODOBNOSTI VRSTVEV:
       - korelace vrstev (lokal. - vrstvy) - str. 62
       - asortativita a disortativita (lokal. - vrstvy) - str. 63 */
@@ -287,21 +286,27 @@ console.log(multiplex.getLayersNames()) /* vrací seznam (pole) názvů všech v
 /* methods - výpočet měr - "konstanty" */
 console.log(multiplex.getNodesCount({ layer: null /* default */ })); /* počet uzlů (vrcholů) na dané vrstvě - pokud "layer" == null =>
                                                                         vrátí se počet vrcholů  */
-console.log(multiplex.getLinksCount({ layers: null })); /* počet vazeb (hran) na daných vrstvách (jejich součet), pokud "layers" == null =>
-                                                           počet vazeb v celé síti */
+console.log(multiplex.getLinksCount({ layer: null /* default */ })); /* počet vazeb (hran) na dané vrstvě, pokud "layer" == null => počet 
+                                                                        vazeb v celé síti */
 
+enum ClusteringCoefficientType
+{
+   Ci1, 
+   Ci2 
+};
+console.log(multiplex.calculateDensity({ layer: null /* default */ })); /* hustota vrstvy - "layer" == null => vrátí se hustota celé sítě */
+console.log(multiplex.calculateClusteringCoefficient({ type: ClusteringCoefficientType,
+                                                       nodeId: null /* default */,
+                                                       algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
 /* methods - výpočet měr - "dynamické" -------------------------------------------DODĚLAT---------------------- */
-console.log(multiplex.calcDensity()); /* hustota sítě */
-console.log(multiplex.calcClusteringCoefficient({ nodeId: null /* default */,
-                                                  algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
-console.log(multiplex.calcDegreeCentrality({ nodeId: null, /* default */
-                                             algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
-console.log(multiplex.calcDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
-console.log(multiplex.calcDistance({ sourceNodeId: null, /* default */
-                                     targetNodeId: null, /* default */
-                                     algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
+console.log(multiplex.calculateDegreeCentrality({ nodeId: null, /* default */
+                                                  algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
+console.log(multiplex.calculateDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+console.log(multiplex.calculateDistance({ sourceNodeId: null, /* default */
+                                          targetNodeId: null, /* default */
+                                          algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
                                                                           vzdálenost */
-console.log(multiplex.calcDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
+console.log(multiplex.calculateDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
 
 
 
