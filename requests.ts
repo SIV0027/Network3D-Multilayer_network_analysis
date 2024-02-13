@@ -78,7 +78,7 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
 
 /* Obecné poznámky */
 /* - lokal. = lokální vlastnost (počítá se vůči uzlu - případně vrstvy), global. = globální vlastnost (počítá se vůči celé síti)
-   - pro všechny lokální vlastnosti možná udělat možnost distribuce těchto vlastností (global.)
+   - pro všechny lokální vlastnosti možná udělat možnost distribuce těchto vlastností - jako nádstavbu (jedná se o počet lokal. vlastnosti)
    - při výpočtu měr si výsledky zapamatovat a následně je jen vracet, až při změně jejich proměnné (to, na základě čeho se míra počítá,
      přepočítat) -> observer -> možná vytvořit třídu pro uchavávání výsledků měr
    - při implementaci i návrhu znovu přečíst text k dané míře (vlastnosti)
@@ -92,7 +92,7 @@ const communitiesNodesObject: { [key: String]: Array<number> } = communityStruct
    - Params podtřídy (pro jednotlivé metody udělat jako vnitřní třídy)
    - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
       - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
-      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.)
       - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
       - výpočet konektivní redundance (lokal.) - str. 48
       - exkluzivní sousedství (lokal.) - str. 48
@@ -192,15 +192,12 @@ console.log(simpleNetwork.getLink({ sourceNodeId: 1,
                                                             existuje spojení mezi danými uzly a validace existence uzlů s danými id) */
 
 /* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
-      - ??výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - ??výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.)
       - ??výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
       - ??výpočet konektivní redundance (lokal.) - str. 48
       - ??exkluzivní sousedství (lokal.) - str. 48
       - ??occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
    - MĚŘÍTKA VZDÁLENOSTÍ (A CEST):
-      - ??(vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
-      - ??random walk closeness centrality (lokal.) - str. 54
-      - ??random walk betweenness centrality (lokal.) - str. 54
    - MEŘÍTKA RELEVANCE:
       - ??relevance (lokal.) - str. 57.
       - ??exklusivní relevance (lokal.) - str. 59 
@@ -220,7 +217,8 @@ console.log(simpleNetwork.calculateClusteringCoefficient({ nodeId: null /* defau
                                                       algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
 console.log(simpleNetwork.calculateDegreeCentrality({ nodeId: null, /* default */
                                                  algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
-console.log(simpleNetwork.calculateDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+console.log(simpleNetwork.calculateBetweennessCentrality({ nodeId: null /* default */ }));
+console.log(simpleNetwork.calculateClosenessCentrality({ nodeId: null /* default */ }));
 console.log(simpleNetwork.calculateDistance({ sourceNodeId: null, /* default */
                                          targetNodeId: null, /* default */
                                          algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
@@ -239,16 +237,13 @@ console.log(simpleNetwork.calculateDiameter({ algorithm: Algorithms... /* defaul
 
 
    /* - MÍRY CENTRALITY STUPNĚ A SOUSEDSTVÍ:
-      - výpočet stupně (lokal.) - str. 44 - možnost ignorace mezivrstvých vazeb
-      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.) a následná distribuce (global.)
+      - výpočet stupňové odchylky - str. 45 - multiplexové sítě - výpočet pro jednotlivé uzly (lokal.)
       - výpočet sousedů a sousedské centrality (lokal.) - str. 47 - možnost ignorace mezivrstvých vazeb
       - výpočet konektivní redundance (lokal.) - str. 48
       - exkluzivní sousedství (lokal.) - str. 48
       - occupation centrality (lokal.) - (jak to přeložit??) - str. 49 - random-walk based degree centrality
    - MĚŘÍTKA VZDÁLENOSTÍ (A CEST):
-      - (vícevrstvá) vzdálenost (lokal. - mezi dvěma uzly) - str. 51 -> shorter-than relation - str. 52
-      - random walk closeness centrality (lokal.) - str. 54
-      - random walk betweenness centrality (lokal.) - str. 54
+      - shorter-than relation - str. 52
    - MEŘÍTKA RELEVANCE:
       - relevance (lokal.) - str. 57.
       - exklusivní relevance (lokal.) - str. 59 
@@ -276,9 +271,9 @@ multiplex.addLink({ sourceNodeId: 1,
 /* methods - getters */
 console.log(multiplex.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
                                                  metodu přistupovat k uzlům sítě i v rámci metod */
-console.log(multiplex.getLink({ sourceNodeId: 1,
-                                targetNodeId: 2,
-                                layer: "colabs" })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) => validace, zda existuje 
+console.log(multiplex.getLink<Colab>({ sourceNodeId: 1,
+                                       targetNodeId: 2,
+                                       layer: "colabs" })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) => validace, zda existuje 
                                                         spojení mezi danými uzly a validace existence uzlů s danými id a validace existence dané vrstvy) */
 console.log(multiplex.getLayersNames()) /* vrací seznam (pole) názvů všech vrstev */
 
@@ -289,24 +284,22 @@ console.log(multiplex.getNodesCount({ layer: null /* default */ })); /* počet u
 console.log(multiplex.getLinksCount({ layer: null /* default */ })); /* počet vazeb (hran) na dané vrstvě, pokud "layer" == null => počet 
                                                                         vazeb v celé síti */
 
-enum ClusteringCoefficientType
-{
-   Ci1, 
-   Ci2 
-};
-console.log(multiplex.calculateDensity({ layer: null /* default */ })); /* hustota vrstvy - "layer" == null => vrátí se hustota celé sítě */
-console.log(multiplex.calculateClusteringCoefficient({ type: ClusteringCoefficientType,
-                                                       nodeId: null /* default */,
-                                                       algorithm: Algorithms... })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
-/* methods - výpočet měr - "dynamické" -------------------------------------------DODĚLAT---------------------- */
-console.log(multiplex.calculateDegreeCentrality({ nodeId: null, /* default */
-                                                  algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná, jinak lokální) */
-console.log(multiplex.calculateDegreeDistribution({ algorithm: ... /* default */ })); /* distribuce stupňů */
+
+console.log(multiplex.calculateDensity({ layer: null /* default */ })); /* hustota vrstvy - "layer" == null => vrátí se hustota celé sítě
+                                                                           vzít v potaz možnou nepřítomnost určitého uzlu v určité vrstvě */
+console.log(multiplex.calculateClusteringCoefficient({ nodeId: null /* default */,
+                                                       algorithm: Algorithms.Ci1 /* default Algorithms.Ci1 | Algorithms.Ci2 - typ CC určovat
+                                                       dle algoritmu */ })); /* shlukovací koeficient (nodeId: null - globální, jinak lokální */
+console.log(multiplex.calculateBetweennessCentrality({ nodeId: null /* default */ }));
+console.log(multiplex.calculateClosenessCentrality({ nodeId: null /* default */ }));
+console.log(multiplex.calculateDegreeCentrality({ nodeId: null, /* default?? */
+                                                  layers: null, /* default */
+                                                  algorithm: ... /* default */  })); /* degree centrality (nodeId: null - průměrná??, jinak lokální) -
+                                                                                      validace existence uzlu s daným id a existence dané vrstvy */
 console.log(multiplex.calculateDistance({ sourceNodeId: null, /* default */
                                           targetNodeId: null, /* default */
                                           algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
                                                                           vzdálenost */
-console.log(multiplex.calculateDiameter({ algorithm: Algorithms... /* default */ })); /* průměr sítě */
 
 
 
