@@ -269,13 +269,17 @@ multiplex.addLink({ sourceNodeId: 1,
                                                      typu "value" dané vrsty (zde "colabs") */
 
 /* methods - getters */
-console.log(multiplex.getNode({ nodeId: 1 })) /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
+console.log(multiplex.getNode({ nodeId: 1 })); /* vrátí uzel (jeho hodnotu) s daným id => validace, zda daný uzel existuje -> skrz tuto 
                                                  metodu přistupovat k uzlům sítě i v rámci metod */
-console.log(multiplex.getLink<Colab>({ sourceNodeId: 1,
+console.log(multiplex.getLink<null>({ sourceNodeId: 1,
                                        targetNodeId: 2,
                                        layer: "colabs" })); /* vrátí vazbu (její hodnotu) mezi danými uzly (s daným id) => validace, zda existuje 
                                                         spojení mezi danými uzly a validace existence uzlů s danými id a validace existence dané vrstvy) */
 console.log(multiplex.getLayersNames()) /* vrací seznam (pole) názvů všech vrstev */
+
+const oneLayer: Network<NODE_ID_TYPE = Number,
+                        NODE_VALUE_TYPE = null,
+                        LINK_VALUE_TYPE = null> = multiplex.getLayer<LINK_VALUE_TYPE = null>({ layer: "colabs" });
 
 
 /* methods - výpočet měr - "konstanty" */
@@ -300,6 +304,9 @@ console.log(multiplex.calculateDistance({ sourceNodeId: null, /* default */
                                           targetNodeId: null, /* default */
                                           algorithm: ... /* default */ })); /* vzádlenost mezi dvěma uzly (dáno id), pokud jsou null - průměrná 
                                                                           vzdálenost */
+const oneLayer: OneLayerNetwork<NODE_ID_TYPE = Number,
+                                NODE_VALUE_TYPE = null,
+                                LINK_TYPE_VALUE = null> = multiplex.flattening<LINK_TYPE_VALUE = null>(params: Params);
 
 
 

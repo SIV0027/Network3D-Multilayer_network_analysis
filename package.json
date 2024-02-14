@@ -1,0 +1,27 @@
+{
+  "name": "network3d",
+  "version": "1.0.0",
+  "description": "Mutlilayer network analysis framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SIV0027/Network3D-Multilayer_network_analysis.git"
+  },
+  "keywords": [
+    "Multilayer",
+    "Networks",
+    "Analysis"
+  ],
+  "author": "Ondřej Sivek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SIV0027/Network3D-Multilayer_network_analysis/issues"
+  },
+  "homepage": "https://github.com/SIV0027/Network3D-Multilayer_network_analysis#readme",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
