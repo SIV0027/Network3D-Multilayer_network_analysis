@@ -1,9 +1,9 @@
-import Node from "./node";
-import Link from "./link";
+import Node from "./node.js";
+import Link from "./link.js";
 
-export default class UnorientedNode<ID_TYPE = Number,
-                                    VALUE_TYPE = null,
-                                    LINK_VALUE_TYPE = null> 
+export default class UnorientedNode<ID_TYPE,
+                                    VALUE_TYPE,
+                                    LINK_VALUE_TYPE> 
                extends Node<ID_TYPE,
                             VALUE_TYPE,
                             LINK_VALUE_TYPE>

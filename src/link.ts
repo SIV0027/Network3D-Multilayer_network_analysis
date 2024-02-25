@@ -1,4 +1,5 @@
-export default class Link<VALUE_TYPE, NODE_ID_TYPE>
+export default class Link<VALUE_TYPE,
+                          NODE_ID_TYPE>
 {
     private source: NODE_ID_TYPE;
     private target: NODE_ID_TYPE;

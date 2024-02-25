@@ -1,4 +1,6 @@
-export default abstract class Node<ID_TYPE, VALUE_TYPE, LINK_VALUE_TYPE>
+export default abstract class Node<ID_TYPE,
+                                   VALUE_TYPE,
+                                   LINK_VALUE_TYPE>
 {
     private id: ID_TYPE;
     private value: VALUE_TYPE;
