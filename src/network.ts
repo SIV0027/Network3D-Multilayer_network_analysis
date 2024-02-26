@@ -22,7 +22,7 @@ export default interface Network<NODE_ID_TYPE,
         targetNodeId: NODE_ID_TYPE;
     }): LINK_VALUE_TYPE;
 
-    getNodesCount(args: { }): Number;
+    getNodesCount(args: { }): number;
     
-    getLinksCount(args: { }): Number;
+    getLinksCount(args: { }): number;
 };

@@ -10,49 +10,59 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
                                   NODE_VALUE_TYPE,
                                   LINK_VALUE_TYPE>
 {
+    /* Single layer network has just one layer => one map -> O(1) operations */
     protected nodes: Map<NODE_ID_TYPE,
                          Node<NODE_ID_TYPE,
                               NODE_VALUE_TYPE,
                               LINK_VALUE_TYPE>>;
 
-    protected oriented: Boolean;
-
-    constructor(args: {
-        oriented: Boolean
-    })
+    constructor()
     {
         this.nodes = new Map();
-
-        this.oriented = args.oriented;
     }
     
+
+
+    //PŘIDAT PRIVÁTNÍ METODU PRO VALIDACI EXISTENCE UZLU A ZKUSIT PŘEPSAT ROZHRANÍ Network NA
+    //ABSTRAKTNÍ TŘÍDU
+
+
+
+
     addNode(args: {
         id: NODE_ID_TYPE;
-        value: NODE_VALUE_TYPE; }): void
+        value: NODE_VALUE_TYPE;
+    }): void
     {
         const { id, value } = args;
 
+        /* check if node with given ID already exists (by getNode(...) method)
+           if do not, getNode(...) method throw Error and in catch is new node 
+           (with given ID) is created and added, if already exists, Error is thrown */
+
+        /* __errorThrowing__:
+           Error throwing (of no existing node) must be out of try block */
         let sameIdNodeFound: Boolean = false;
         try
         {
             this.getNode({ id: id });
 
+            //__errorThrowing__
             sameIdNodeFound = true;
         } 
         catch(error)
         {
             const node: Node<NODE_ID_TYPE,
                              NODE_VALUE_TYPE,
-                             LINK_VALUE_TYPE> = new UnorientedNode<NODE_ID_TYPE,
-                                                                   NODE_VALUE_TYPE,
-                                                                   LINK_VALUE_TYPE>({ 
-                                                                                        id: id,
-                                                                                        value: value
-                                                                                     });
+                             LINK_VALUE_TYPE> = new UnorientedNode({ 
+                                                                        id: id,
+                                                                        value: value
+                                                                    });
 
             this.nodes.set(id, node);
         }
 
+        //__errorThrowing__
         if(sameIdNodeFound == true)
         {
             throw new Error(`Node with given ID: ${id} already exists.`);
@@ -83,8 +93,7 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
             throw new Error(`Node with given ID: ${id} does not exists.`);
         }
 
-        const value: NODE_VALUE_TYPE = node.getValue();
-        return value;
+        return node.getValue();
     }
 
     getLink(args: {
@@ -95,12 +104,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
         throw new Error("Method not implemented.");
     }
 
-    getNodesCount(): Number
+    getNodesCount(): number
     {
-        throw new Error("Method not implemented.");
+        return this.nodes.size;
     }
 
-    getLinksCount(): Number
+    getLinksCount(): number
     {
         throw new Error("Method not implemented.");
     }    
