@@ -1,14 +1,23 @@
-import Network from "./network.js";
+import Network from "./network/network.js";
+import { Id, SourceTargetNodesIds, Value } from "./network/networkArgsTypes.js";
 
 import Node from "./node.js";
 import UnorientedNode from "./unorientedNode.js";
 
-export default class SingleLayerNetwork<NODE_ID_TYPE,
+type Impossible<K extends keyof any> = {
+    [P in K]: never;
+  };
+  
+  // The secret sauce! Provide it the type that contains only the properties you want,
+  // and then a type that extends that type, based on what the caller provided
+  // using generics.
+  type NoExtraProperties<T, U extends T = T> = U & Impossible<Exclude<keyof U, keyof T>>;
+  
+
+export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends Object => because of error message is necessary to have toString() method
                                         NODE_VALUE_TYPE,
                                         LINK_VALUE_TYPE>
-               implements Network<NODE_ID_TYPE,
-                                  NODE_VALUE_TYPE,
-                                  LINK_VALUE_TYPE>
+               extends Network
 {
     /* Single layer network has just one layer => one map -> O(1) operations */
     protected nodes: Map<NODE_ID_TYPE,
@@ -18,21 +27,16 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
 
     constructor()
     {
+        super();
+
         this.nodes = new Map();
     }
-    
-
-
-    //PŘIDAT PRIVÁTNÍ METODU PRO VALIDACI EXISTENCE UZLU A ZKUSIT PŘEPSAT ROZHRANÍ Network NA
-    //ABSTRAKTNÍ TŘÍDU
 
 
 
-
-    addNode(args: {
-        id: NODE_ID_TYPE;
-        value: NODE_VALUE_TYPE;
-    }): void
+    addNode<ARG_TYPE extends Id<NODE_ID_TYPE> &
+                             Value<NODE_VALUE_TYPE>>
+    (args: NoExtraProperties<Id<NODE_ID_TYPE> & Value<NODE_VALUE_TYPE>, ARG_TYPE>): void //???
     {
         const { id, value } = args;
 
@@ -69,18 +73,16 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
         }
     }
 
-    addLink(args: {
-        sourceNodeId: NODE_ID_TYPE;
-        targetNodeId: NODE_ID_TYPE;
-        value?: LINK_VALUE_TYPE | undefined;
-    }): void
+    addLink<ARG_TYPE extends SourceTargetNodesIds<NODE_ID_TYPE> & Impossible<Exclude<keyof ARG_TYPE, keyof SourceTargetNodesIds<NODE_ID_TYPE>>>>
+    (args: ARG_TYPE): void
     {
-        throw new Error("Method not implemented.");
+        const num = 5 + 3;
+        num;
+        //throw new Error("Method not implemented.");
     }
 
-    getNode(args: {
-        id: NODE_ID_TYPE;
-    }): NODE_VALUE_TYPE
+    getNode<ARG_TYPE extends Id<NODE_ID_TYPE>>
+    (args: ARG_TYPE): NODE_VALUE_TYPE
     {
         const { id } = args;
 
@@ -90,7 +92,7 @@ export default class SingleLayerNetwork<NODE_ID_TYPE,
 
         if(node == undefined)
         {
-            throw new Error(`Node with given ID: ${id} does not exists.`);
+            throw new Error(Network.nonExistingNodeErrorMsg(id.toString()));
         }
 
         return node.getValue();
