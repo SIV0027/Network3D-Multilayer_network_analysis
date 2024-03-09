@@ -4,14 +4,6 @@ import { Id, SourceTargetNodesIds, Value } from "./network/networkArgsTypes.js";
 import Node from "./node.js";
 import UnorientedNode from "./unorientedNode.js";
 
-type Impossible<K extends keyof any> = {
-    [P in K]: never;
-  };
-  
-  // The secret sauce! Provide it the type that contains only the properties you want,
-  // and then a type that extends that type, based on what the caller provided
-  // using generics.
-  type NoExtraProperties<T, U extends T = T> = U & Impossible<Exclude<keyof U, keyof T>>;
   
 
 export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends Object => because of error message is necessary to have toString() method
@@ -19,7 +11,7 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
                                         LINK_VALUE_TYPE>
                extends Network
 {
-    /* Single layer network has just one layer => one map -> O(1) operations */
+    /* Single layer network has just one layer => one map -> Theta(1) operations */
     protected nodes: Map<NODE_ID_TYPE,
                          Node<NODE_ID_TYPE,
                               NODE_VALUE_TYPE,
@@ -32,11 +24,39 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         this.nodes = new Map();
     }
 
+    //--------------------------------------------------------------------------------
+    //-----------------------------HELP-------------------------------
+    protected override validateNodeId<ARGS extends Id<NODE_ID_TYPE>>
+    (args: ARGS): Node<NODE_ID_TYPE,
+                       NODE_VALUE_TYPE,
+                       LINK_VALUE_TYPE>
+    {
+        const { id } = args;
 
+        const possibleNode: undefined |
+                            Node<NODE_ID_TYPE,
+                                 NODE_VALUE_TYPE,
+                                 LINK_VALUE_TYPE> = this.nodes.get(id);
 
-    addNode<ARG_TYPE extends Id<NODE_ID_TYPE> &
+        //if "possibleNode" == undefined => node with id: "id" does not exists -> throw exception
+        if(possibleNode == undefined)
+        {
+            const idString: string = id.toString();
+            const errorMsg: string = SingleLayerNetwork.nonExistingNodeErrorMsg({
+                id: idString
+            });
+            throw new Error(errorMsg);
+        }
+
+        //exception was not throwed => node does exists => it can be returned
+        return possibleNode;
+    }
+
+    //--------------------------------------------------------------------------------
+    //-----------------------------ADDERS-----------------------------
+    public override addNode<ARGS extends Id<NODE_ID_TYPE> &
                              Value<NODE_VALUE_TYPE>>
-    (args: NoExtraProperties<Id<NODE_ID_TYPE> & Value<NODE_VALUE_TYPE>, ARG_TYPE>): void //???
+    (args: ARGS): void
     {
         const { id, value } = args;
 
@@ -49,7 +69,9 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         let sameIdNodeFound: Boolean = false;
         try
         {
-            this.getNode({ id: id });
+            this.validateNodeId({
+                id: id
+            });
 
             //__errorThrowing__
             sameIdNodeFound = true;
@@ -59,9 +81,9 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
             const node: Node<NODE_ID_TYPE,
                              NODE_VALUE_TYPE,
                              LINK_VALUE_TYPE> = new UnorientedNode({ 
-                                                                        id: id,
-                                                                        value: value
-                                                                    });
+                                id: id,
+                                value: value
+                            });
 
             this.nodes.set(id, node);
         }
@@ -69,36 +91,52 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         //__errorThrowing__
         if(sameIdNodeFound == true)
         {
-            throw new Error(`Node with given ID: ${id} already exists.`);
+            const idString: string = id.toString();
+            const errorMsg = SingleLayerNetwork.alreadyExistingNodeErrorMsg({
+                id: idString
+            });
+            throw new Error(errorMsg);
         }
     }
 
-    addLink<ARG_TYPE extends SourceTargetNodesIds<NODE_ID_TYPE> & Impossible<Exclude<keyof ARG_TYPE, keyof SourceTargetNodesIds<NODE_ID_TYPE>>>>
-    (args: ARG_TYPE): void
+    public override addLink<ARGS extends SourceTargetNodesIds<NODE_ID_TYPE>>
+    (args: ARGS): void
     {
-        const num = 5 + 3;
-        num;
-        //throw new Error("Method not implemented.");
+        args;
+        throw new Error("not implement method");
+
+        //DODĚLAT!!!
+        /* const { sourceNodeId, targetNodeId } = args;
+
+         const sourceNode: Node<NODE_ID_TYPE,
+                               NODE_VALUE_TYPE,
+                               LINK_VALUE_TYPE> = this.validateNodeId({
+                                    id: sourceNodeId
+                                });
+        const targetNode: Node<NODE_ID_TYPE,
+                               NODE_VALUE_TYPE,
+                               LINK_VALUE_TYPE> = this.validateNodeId({
+                                    id: targetNodeId
+                                }); */                
     }
 
-    getNode<ARG_TYPE extends Id<NODE_ID_TYPE>>
-    (args: ARG_TYPE): NODE_VALUE_TYPE
+    //--------------------------------------------------------------------------------
+    //-----------------------------GETTERS-----------------------------
+    public override getNode<ARGS extends Id<NODE_ID_TYPE>>
+    (args: ARGS): NODE_VALUE_TYPE
     {
         const { id } = args;
 
         const node: Node<NODE_ID_TYPE,
                          NODE_VALUE_TYPE,
-                         LINK_VALUE_TYPE> | undefined = this.nodes.get(id);
-
-        if(node == undefined)
-        {
-            throw new Error(Network.nonExistingNodeErrorMsg(id.toString()));
-        }
+                         LINK_VALUE_TYPE> = this.validateNodeId({
+                            id: id
+                         });
 
         return node.getValue();
     }
 
-    getLink(args: {
+    public override getLink(args: {
         sourceNodeId: NODE_ID_TYPE;
         targetNodeId: NODE_ID_TYPE;
     }): LINK_VALUE_TYPE
@@ -106,12 +144,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         throw new Error("Method not implemented.");
     }
 
-    getNodesCount(): number
+    public override getNodesCount(): number
     {
         return this.nodes.size;
     }
 
-    getLinksCount(): number
+    public override getLinksCount(): number
     {
         throw new Error("Method not implemented.");
     }    
