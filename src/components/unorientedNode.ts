@@ -34,6 +34,7 @@ export default class UnorientedNode<ID_TYPE extends Object,
         const { neighborNodeId } = args;
         const targetNodeId = neighborNodeId;
 
+        // get link from map (if not exists -> undefined is returned)
         const possibleLink: undefined |
                             Link<LINK_VALUE_TYPE,
                                  ID_TYPE,
