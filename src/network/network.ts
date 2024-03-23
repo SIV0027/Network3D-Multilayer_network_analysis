@@ -1,15 +1,15 @@
-import { Id } from "./networkArgsTypes";
+import { Id_ARGS } from "./networkArgsTypes";
 
 export default abstract class Network
 {
-    protected static nonExistingNodeErrorMsg<ARGS extends Id<string>>
+    protected static nonExistingNodeErrorMsg<ARGS extends Id_ARGS<string>>
     (args: ARGS): string
     {
         const { id } = args;
         return `Node with given ID: ${id} does not exists.`;
     }
 
-    protected static alreadyExistingNodeErrorMsg<ARGS extends Id<string>>
+    protected static alreadyExistingNodeErrorMsg<ARGS extends Id_ARGS<string>>
     (args: ARGS): string
     {
         const { id } = args;
