@@ -5,16 +5,20 @@ export default class Link<VALUE_TYPE,
                           NODE_VALUE_TYPE>
 {
     private source: Node<NODE_ID_TYPE,
-                         NODE_VALUE_TYPE>;
+                         NODE_VALUE_TYPE,
+                         VALUE_TYPE>;
     private target: Node<NODE_ID_TYPE,
-                         NODE_VALUE_TYPE>;
+                         NODE_VALUE_TYPE,
+                         VALUE_TYPE>;
     private value: VALUE_TYPE;
 
     constructor(args: {
         source: Node<NODE_ID_TYPE,
-                     NODE_VALUE_TYPE>,
+                     NODE_VALUE_TYPE,
+                     VALUE_TYPE>,
         target: Node<NODE_ID_TYPE,
-                     NODE_VALUE_TYPE>,
+                     NODE_VALUE_TYPE,
+                     VALUE_TYPE>,
         value: VALUE_TYPE
     })
     {
@@ -24,13 +28,15 @@ export default class Link<VALUE_TYPE,
     }
 
     public getSource(): Node<NODE_ID_TYPE,
-                             NODE_VALUE_TYPE>
+                             NODE_VALUE_TYPE,
+                             VALUE_TYPE>
     {
         return this.source;
     }
 
     public getTarget(): Node<NODE_ID_TYPE,
-                             NODE_VALUE_TYPE>
+                             NODE_VALUE_TYPE,
+                             VALUE_TYPE>
     {
         return this.target;
     }

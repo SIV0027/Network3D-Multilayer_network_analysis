@@ -1,9 +1,11 @@
 import Network from "./network/network.js";
 import { Id_ARGS, SourceTargetNodesIds_ARGS, Value_ARGS } from "./network/networkArgsTypes.js";
 
+import Direction from "./directionality/direction.js";
+
 import Node from "./components/node.js";
-import UnorientedNode from "./components/unorientedNode.js";
 import Link from "./components/link.js";
+import { SingleLayerNetworkConstructor_ARGS } from "./singleLayerNetworkTypes.js";
 
 
 export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends Object => because of error message is necessary to have toString() method
@@ -11,29 +13,41 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
                                         LINK_VALUE_TYPE>
                extends Network
 {
+    /* Network could (must) be undirected or directed */
+    protected direction: Direction<NODE_ID_TYPE,
+                                   NODE_VALUE_TYPE,
+                                   LINK_VALUE_TYPE>;
     /* Single layer network has just one layer => one map -> Theta(1) operations */
     protected nodes: Map<NODE_ID_TYPE,
                          Node<NODE_ID_TYPE,
-                              NODE_VALUE_TYPE>>;
+                              NODE_VALUE_TYPE,
+                              LINK_VALUE_TYPE>>;
 
-    constructor()
+    constructor(args: SingleLayerNetworkConstructor_ARGS<NODE_ID_TYPE,
+                                                         NODE_VALUE_TYPE,
+                                                         LINK_VALUE_TYPE>)
     {
         super();
 
+        const { direction } = args;
+
+        this.direction = direction;
         this.nodes = new Map();
     }
 
     //--------------------------------------------------------------------------------
     //-----------------------------HELP-------------------------------
-    protected override validateNodeId<ARGS extends Id_ARGS<NODE_ID_TYPE>>
+    protected validateNodeId<ARGS extends Id_ARGS<NODE_ID_TYPE>>
     (args: ARGS): Node<NODE_ID_TYPE,
-                       NODE_VALUE_TYPE>
+                       NODE_VALUE_TYPE,
+                       LINK_VALUE_TYPE>
     {
         const { id } = args;
 
         const possibleNode: undefined |
                             Node<NODE_ID_TYPE,
-                                 NODE_VALUE_TYPE> = this.nodes.get(id);
+                                 NODE_VALUE_TYPE,
+                                 LINK_VALUE_TYPE> = this.nodes.get(id);
 
         // if "possibleLink" == undefined => lnik with id: "id" does not exists -> throw exception
         if(possibleNode == undefined)
@@ -77,10 +91,11 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         catch(error)
         {
             const node: Node<NODE_ID_TYPE,
-                             NODE_VALUE_TYPE> = new UnorientedNode({ 
+                             NODE_VALUE_TYPE,
+                             LINK_VALUE_TYPE> = this.direction.createNode({
                                 id: id,
                                 value: value
-                            });
+                             });
 
             this.nodes.set(id, node);
         }
@@ -96,6 +111,7 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         }
     }
 
+    //--------------------------------------------------------------------------------
     // add link with given value between nodes with given IDs
     public override addLink<ARGS extends SourceTargetNodesIds_ARGS<NODE_ID_TYPE> &
                                          Value_ARGS<LINK_VALUE_TYPE>>
@@ -104,21 +120,17 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         const { sourceNodeId, targetNodeId, value } = args;
 
         // validate if nodes with given IDs exists
-        const sourceNode: UnorientedNode<NODE_ID_TYPE,
-                                         NODE_VALUE_TYPE,
-                                         LINK_VALUE_TYPE> = this.validateNodeId({
+        const sourceNode: Node<NODE_ID_TYPE,
+                               NODE_VALUE_TYPE,
+                               LINK_VALUE_TYPE> = this.validateNodeId({
                                                     id: sourceNodeId
-                                                }) as UnorientedNode<NODE_ID_TYPE,
-                                                                     NODE_VALUE_TYPE,
-                                                                     LINK_VALUE_TYPE>;
+                                                });
 
-        const targetNode: UnorientedNode<NODE_ID_TYPE,
-                                         NODE_VALUE_TYPE,
-                                         LINK_VALUE_TYPE> = this.validateNodeId({
+        const targetNode: Node<NODE_ID_TYPE,
+                               NODE_VALUE_TYPE,
+                               LINK_VALUE_TYPE> = this.validateNodeId({
                                                     id: targetNodeId
-                                                }) as UnorientedNode<NODE_ID_TYPE,
-                                                                     NODE_VALUE_TYPE,
-                                                                     LINK_VALUE_TYPE>;
+                                                });
         
         // if nodes with given IDs exists -> create link                                                      
         const link: Link<LINK_VALUE_TYPE,
@@ -132,16 +144,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         // try to add created link between nodes with given IDs -> it can exists already => try-catch block
         try
         {
-            const sourceNodeNeighborId: NODE_ID_TYPE = targetNode.getId();
-            sourceNode.addLink({
-                link: link,
-                neighborNodeId: sourceNodeNeighborId
-            });
-
-            const targetNodeNeighborId: NODE_ID_TYPE = sourceNode.getId();
-            targetNode.addLink({
-                link: link,
-                neighborNodeId: targetNodeNeighborId
+            //VYZKOUŠET, ZDA ZACHYTÍ VÝJIMKU, POKUD SE PŘIDÁ "JIŽ EXISTUJÍCÍ" VAZBA, 
+            //A PŘIDAT ODDĚLOVACÍ KOMENTÁŘE MEZI METODY A JEJICH POPISKY
+            this.direction.addLinkBetweenNodes({
+                sourceNode: sourceNode,
+                targetNode: targetNode,
+                link: link
             });
         }
         catch(error)
@@ -170,34 +178,32 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         const { id } = args;
 
         const node: Node<NODE_ID_TYPE,
-                         NODE_VALUE_TYPE> = this.validateNodeId({
+                         NODE_VALUE_TYPE,
+                         LINK_VALUE_TYPE> = this.validateNodeId({
                             id: id
                          });
 
         return node.getValue();
     }
 
+    //--------------------------------------------------------------------------------
     public override getLink<ARGS extends SourceTargetNodesIds_ARGS<NODE_ID_TYPE>>
     (args: ARGS): LINK_VALUE_TYPE
     {
         const { sourceNodeId, targetNodeId } = args;
 
         // validate if nodes with given IDs exists
-        const sourceNode: UnorientedNode<NODE_ID_TYPE,
+        const sourceNode: Node<NODE_ID_TYPE,
                                          NODE_VALUE_TYPE,
                                          LINK_VALUE_TYPE> = this.validateNodeId({
                                                     id: sourceNodeId
-                                                }) as UnorientedNode<NODE_ID_TYPE,
-                                                                     NODE_VALUE_TYPE,
-                                                                     LINK_VALUE_TYPE>;
+                                                });
 
-        const targetNode: UnorientedNode<NODE_ID_TYPE,
+        const targetNode: Node<NODE_ID_TYPE,
                                          NODE_VALUE_TYPE,
                                          LINK_VALUE_TYPE> = this.validateNodeId({
                                                     id: targetNodeId
-                                                }) as UnorientedNode<NODE_ID_TYPE,
-                                                                     NODE_VALUE_TYPE,
-                                                                     LINK_VALUE_TYPE>;
+                                                });
 
 
         const sourceNodeNeighborId: NODE_ID_TYPE = targetNode.getId();
@@ -212,11 +218,13 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         return linkValue;
     }
 
+    //--------------------------------------------------------------------------------
     public override getNodesCount(): number
     {
         return this.nodes.size;
     }
 
+    //--------------------------------------------------------------------------------
     public override getLinksCount(): number
     {
         throw new Error("Method not implemented.");

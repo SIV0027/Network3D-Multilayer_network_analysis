@@ -1,15 +1,17 @@
 import Node from "./node.js";
 import Link from "./link.js";
-import { NeighborNodeId_ARGS, NodeConstructor_ARGS } from "./componentsArgsType.js";
-import { Link_ARGS } from "./componentsArgsType.js";
+import { NeighborNodeId_ARGS, NodeConstructor_ARGS } from "./componentsArgsTypes.js";
+import { Link_ARGS } from "./componentsArgsTypes.js";
 
 
-export default class UnorientedNode<ID_TYPE extends Object,
+export default class UndirectedNode<ID_TYPE extends Object,
                                     VALUE_TYPE,
                                     LINK_VALUE_TYPE> 
                extends Node<ID_TYPE,
-                            VALUE_TYPE>
+                            VALUE_TYPE,
+                            LINK_VALUE_TYPE>
 {
+    //------------------------INSTANCE------------------------
     protected links: Map<ID_TYPE,
                          Link<LINK_VALUE_TYPE,
                               ID_TYPE,

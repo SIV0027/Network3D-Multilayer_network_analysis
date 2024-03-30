@@ -1,8 +1,10 @@
 import { SourceTargetNodesIds_ARGS } from "../network/networkArgsTypes";
-import { NodeConstructor_ARGS } from "./componentsArgsType";
+import { NodeConstructor_ARGS } from "./componentsArgsTypes";
+import Link from "./link";
 
 export default abstract class Node<ID_TYPE extends Object,
-                                   VALUE_TYPE>
+                                   VALUE_TYPE,
+                                   LINK_VALUE_TYPE>
 {
     //------------------------STATIC------------------------
     protected static nonExistingLinkErrorMsg<ARGS extends SourceTargetNodesIds_ARGS<string>>
@@ -49,8 +51,13 @@ export default abstract class Node<ID_TYPE extends Object,
         return this.value;
     }
 
-    protected abstract validateLink(args: Object): any;
-    public abstract addLink(args: Object): any;
-    public abstract getLink(args: Object): any;
-    public abstract removeLink(args: Object): any;
+    protected abstract validateLink(args: Object): Link<LINK_VALUE_TYPE,
+                                                        ID_TYPE,
+                                                        VALUE_TYPE>;
+    public abstract addLink(args: Object): void;
+
+    public abstract getLink(args: Object): Link<LINK_VALUE_TYPE,
+                                                ID_TYPE,
+                                                VALUE_TYPE>;
+    public abstract removeLink(args: Object): void;
 };
