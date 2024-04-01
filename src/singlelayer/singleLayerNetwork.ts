@@ -13,6 +13,14 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
                                         LINK_VALUE_TYPE>
                extends Network
 {
+    //----------------------------------------------------------------
+    //----------------------------STATIC------------------------------
+    //----------------------------------------------------------------
+
+    //----------------------------------------------------------------
+    //---------------------------INSTANCE-----------------------------
+    //----------------------------------------------------------------
+
     /* Network could (must) be undirected or directed */
     protected direction: Direction<NODE_ID_TYPE,
                                    NODE_VALUE_TYPE,
@@ -35,8 +43,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         this.nodes = new Map();
     }
 
-    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------
     //-----------------------------HELP-------------------------------
+
+    //----------------------------------------------------------------
+    // validateNodeId() - check if node does exists in network, if does
+    // -> return this node, if not -> throw non-existing node error
     protected validateNodeId<ARGS extends Id_ARGS<NODE_ID_TYPE>>
     (args: ARGS): Node<NODE_ID_TYPE,
                        NODE_VALUE_TYPE,
@@ -49,7 +61,7 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
                                  NODE_VALUE_TYPE,
                                  LINK_VALUE_TYPE> = this.nodes.get(id);
 
-        // if "possibleLink" == undefined => lnik with id: "id" does not exists -> throw exception
+        // if "possibleNode" == undefined => lnik with id: "id" does not exists -> throw exception
         if(possibleNode == undefined)
         {
             const idString: string = id.toString();
@@ -63,8 +75,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         return possibleNode;
     }
 
-    //--------------------------------------------------------------------------------
-    //-----------------------------ADDERS-----------------------------
+    //----------------------------------------------------------------
+    //----------------------------ADDERS------------------------------
+
+    //----------------------------------------------------------------
+    // addNode() - add new node to network, if node (with given ID) is
+    // already exists -> throw already exists node error
     public override addNode<ARGS extends Id_ARGS<NODE_ID_TYPE> &
                                          Value_ARGS<NODE_VALUE_TYPE>>
     (args: ARGS): void
@@ -111,8 +127,11 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         }
     }
 
-    //--------------------------------------------------------------------------------
-    // add link with given value between nodes with given IDs
+    //----------------------------------------------------------------
+    // addLink() - add link with given value between nodes with given
+    // IDs, if one of nodes (or both) does not exists -> throw
+    // non-existing node error, if link already exists -> throw already
+    // existing link error
     public override addLink<ARGS extends SourceTargetNodesIds_ARGS<NODE_ID_TYPE> &
                                          Value_ARGS<LINK_VALUE_TYPE>>
     (args: ARGS): void
@@ -144,7 +163,6 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         // try to add created link between nodes with given IDs -> it can exists already => try-catch block
         try
         {
-            //VYZKOUŠET, ZDA ZACHYTÍ VÝJIMKU, POKUD SE PŘIDÁ "JIŽ EXISTUJÍCÍ" VAZBA, 
             //A PŘIDAT ODDĚLOVACÍ KOMENTÁŘE MEZI METODY A JEJICH POPISKY
             this.direction.addLinkBetweenNodes({
                 sourceNode: sourceNode,
@@ -170,8 +188,12 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         }
     }
 
-    //--------------------------------------------------------------------------------
-    //-----------------------------GETTERS-----------------------------
+    //----------------------------------------------------------------
+    //----------------------------GETTERS-----------------------------
+
+    //----------------------------------------------------------------
+    // getNode() - return node value by given ID, if node (with given
+    // ID) does not exists -> throw non-existing node error
     public override getNode<ARGS extends Id_ARGS<NODE_ID_TYPE>>
     (args: ARGS): NODE_VALUE_TYPE
     {
@@ -186,7 +208,11 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         return node.getValue();
     }
 
-    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------
+    // getLink() - return link value by IDs of nodes, which it connect
+    // them, if one of node (or both) does not exists -> throw
+    // non-existing node error, if link does not exists -> throw
+    // non-existing link
     public override getLink<ARGS extends SourceTargetNodesIds_ARGS<NODE_ID_TYPE>>
     (args: ARGS): LINK_VALUE_TYPE
     {
@@ -218,15 +244,20 @@ export default class SingleLayerNetwork<NODE_ID_TYPE extends Object, //extends O
         return linkValue;
     }
 
-    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------
+    // getNodesCount() - return number of nodes in network
     public override getNodesCount(): number
     {
         return this.nodes.size;
     }
 
-    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------
+    // getLinksCount() - return number of links in network
     public override getLinksCount(): number
     {
         throw new Error("Method not implemented.");
-    }    
+    }
+
+    //----------------------------------------------------------------
+    //----------------------------OTHERS------------------------------
 };

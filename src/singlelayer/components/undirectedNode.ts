@@ -11,7 +11,14 @@ export default class UndirectedNode<ID_TYPE extends Object,
                             VALUE_TYPE,
                             LINK_VALUE_TYPE>
 {
-    //------------------------INSTANCE------------------------
+    //----------------------------------------------------------------
+    //----------------------------STATIC------------------------------
+    //----------------------------------------------------------------
+
+    //----------------------------------------------------------------
+    //---------------------------INSTANCE-----------------------------
+    //----------------------------------------------------------------
+
     protected links: Map<ID_TYPE,
                          Link<LINK_VALUE_TYPE,
                               ID_TYPE,
@@ -28,6 +35,14 @@ export default class UndirectedNode<ID_TYPE extends Object,
                                   VALUE_TYPE>>();
     }
 
+
+    //----------------------------------------------------------------
+    //-----------------------------HELP-------------------------------
+
+    //----------------------------------------------------------------
+    // validateLink() - check if link exists (if node is connected)
+    // with neighbor (given ID), if it -> return link, if not -> throw
+    // non-exsting link error
     protected override validateLink<ARGS extends NeighborNodeId_ARGS<ID_TYPE>>
     (args: ARGS): Link<LINK_VALUE_TYPE,
                        ID_TYPE,
@@ -57,8 +72,13 @@ export default class UndirectedNode<ID_TYPE extends Object,
         // exception was not throwed => link does exists => it can be returned
         return possibleLink;
     }
-    
-    // method to add link (and its value) between current node and node its ID is given as argument
+
+    //----------------------------------------------------------------
+    //----------------------------ADDERS------------------------------
+
+    //----------------------------------------------------------------
+    // addLink() - add link (and its value) between current node and 
+    // node its ID is given as argument
     public addLink<ARGS extends Link_ARGS<Link<LINK_VALUE_TYPE,
                                                ID_TYPE,
                                                VALUE_TYPE>> &
@@ -104,6 +124,11 @@ export default class UndirectedNode<ID_TYPE extends Object,
         }
     }
 
+    //----------------------------------------------------------------
+    //----------------------------GETTERS-----------------------------
+
+    //----------------------------------------------------------------
+    // getLink() - return link by neighbor ID
     public getLink<ARGS extends NeighborNodeId_ARGS<ID_TYPE>>
     (args: ARGS): Link<LINK_VALUE_TYPE,
                        ID_TYPE,
@@ -122,6 +147,11 @@ export default class UndirectedNode<ID_TYPE extends Object,
         return link;
     }
 
+    //----------------------------------------------------------------
+    //----------------------------OTHERS------------------------------
+
+    //----------------------------------------------------------------
+    // removeLink() - remove link of node by given neighbor ID
     public removeLink(args: {
         neighborNodeId: ID_TYPE
     }): void

@@ -7,14 +7,21 @@ export default abstract class Direction<NODE_ID_TYPE extends Object,
                                         NODE_VALUE_TYPE,
                                         LINK_VALUE_TYPE>
 {
-    //--------------------------------------------------------------------------------
-    // createNode(...) - create concrete node and return its abstract supertype (Node)
-    public abstract createNode<ARGS extends Id_ARGS<NODE_ID_TYPE> &
-                                            Value_ARGS<NODE_VALUE_TYPE>>
-    (args: ARGS): Node<NODE_ID_TYPE,
-                       NODE_VALUE_TYPE,
-                       LINK_VALUE_TYPE>;
-    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------
+    //----------------------------STATIC------------------------------
+    //----------------------------------------------------------------
+
+    //----------------------------------------------------------------
+    //---------------------------INSTANCE-----------------------------
+    //----------------------------------------------------------------
+
+    //----------------------------------------------------------------
+    //-----------------------------HELP-------------------------------
+
+    //----------------------------------------------------------------
+    //----------------------------ADDERS------------------------------   
+
+    //----------------------------------------------------------------
     // addLinkBetweenNodes(...) - add given link between given nodes
     public abstract addLinkBetweenNodes<ARGS extends SourceTargetNodes_ARGS<Node<NODE_ID_TYPE,
                                                                                  NODE_VALUE_TYPE,
@@ -23,4 +30,19 @@ export default abstract class Direction<NODE_ID_TYPE extends Object,
                                                                     NODE_ID_TYPE,
                                                                     NODE_VALUE_TYPE>>>
     (args: ARGS): void;
+
+    //----------------------------------------------------------------
+    //----------------------------GETTERS-----------------------------
+
+    //----------------------------------------------------------------
+    //----------------------------OTHERS------------------------------
+
+    //----------------------------------------------------------------
+    // createNode(...) - create concrete node and return its abstract 
+    // supertype (Node)
+    public abstract createNode<ARGS extends Id_ARGS<NODE_ID_TYPE> &
+                                            Value_ARGS<NODE_VALUE_TYPE>>
+    (args: ARGS): Node<NODE_ID_TYPE,
+                       NODE_VALUE_TYPE,
+                       LINK_VALUE_TYPE>;
 };

@@ -12,30 +12,22 @@ export default class Undirected<NODE_ID_TYPE extends Object,
                                  NODE_VALUE_TYPE,
                                  LINK_VALUE_TYPE>
 {
-    //--------------------------------------------------------------------------------
-    // createNode(...) - create undirected node and return its abstract supertype (Node)
-    public override createNode<ARGS extends Id_ARGS<NODE_ID_TYPE> & 
-                                            Value_ARGS<NODE_VALUE_TYPE>>
-    (args: ARGS): Node<NODE_ID_TYPE,
-                       NODE_VALUE_TYPE,
-                       LINK_VALUE_TYPE>
-    {
-        const { 
-            id,
-            value
-        } = args;
+    //----------------------------------------------------------------
+    //----------------------------STATIC------------------------------
+    //----------------------------------------------------------------
 
-        const createdNode: UndirectedNode<NODE_ID_TYPE,
-                                          NODE_VALUE_TYPE,
-                                          LINK_VALUE_TYPE> = new UndirectedNode({
-            id: id,
-            value: value
-        });
-        return createdNode;
-    }
+    //----------------------------------------------------------------
+    //---------------------------INSTANCE-----------------------------
+    //----------------------------------------------------------------
 
-    //--------------------------------------------------------------------------------
-    // addLinkBetweenNodes(...) - add given link between given nodes
+    //----------------------------------------------------------------
+    //-----------------------------HELP-------------------------------
+
+    //----------------------------------------------------------------
+    //----------------------------ADDERS------------------------------
+
+    //----------------------------------------------------------------
+    // addLinkBetweenNodes() - add given link between given nodes
     public override addLinkBetweenNodes<ARGS extends SourceTargetNodes_ARGS<Node<NODE_ID_TYPE, 
                                                                                  NODE_VALUE_TYPE,
                                                                                  LINK_VALUE_TYPE>> & 
@@ -66,6 +58,35 @@ export default class Undirected<NODE_ID_TYPE extends Object,
                                                 link: link,
                                                 neighborNodeId: targetNodeNeighborId
                                             });
+    } 
+
+    //----------------------------------------------------------------
+    //----------------------------GETTERS-----------------------------
+
+    //----------------------------------------------------------------
+    //----------------------------OTHERS------------------------------ 
+
+    //----------------------------------------------------------------
+    // createNode() - create undirected node and return its 
+    // abstract supertype (Node)
+    public override createNode<ARGS extends Id_ARGS<NODE_ID_TYPE> & 
+                                            Value_ARGS<NODE_VALUE_TYPE>>
+    (args: ARGS): Node<NODE_ID_TYPE,
+                       NODE_VALUE_TYPE,
+                       LINK_VALUE_TYPE>
+    {
+        const { 
+            id,
+            value
+        } = args;
+
+        const createdNode: UndirectedNode<NODE_ID_TYPE,
+                                          NODE_VALUE_TYPE,
+                                          LINK_VALUE_TYPE> = new UndirectedNode({
+            id: id,
+            value: value
+        });
+        return createdNode;
     }
     
 };
