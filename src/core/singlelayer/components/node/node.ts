@@ -1,6 +1,6 @@
-import { SourceTargetNodesIds_ARGS } from "../network/networkArgsTypes";
-import { NodeConstructor_ARGS } from "./componentsArgsTypes";
-import Link from "./link";
+import { SourceTargetNodesIds_ARGS } from "../../../network/networkArgsTypes";
+import { Algorithm_ARGS, GenericFunction, NodeConstructor_ARGS } from "../componentsArgsTypes";
+import Link from "../link/link";
 
 export default abstract class Node<ID_TYPE extends Object,
                                    VALUE_TYPE,
@@ -86,6 +86,14 @@ export default abstract class Node<ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     //----------------------------OTHERS------------------------------
+
+    //----------------------------------------------------------------
     // removeLink() - remove link of node
     public abstract removeLink(args: Object): void;
+
+    //----------------------------------------------------------------
+    // iterateLinks(...) - access to links of current node
+    public abstract iterateLinks<ALGORITHM_INTERFACE extends GenericFunction,
+                                 ARGS extends Algorithm_ARGS<ALGORITHM_INTERFACE>>
+    (args: ARGS): void;
 };

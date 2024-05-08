@@ -1,4 +1,4 @@
-import Direction from "./directionality/direction.js";
+import Direction from "./direction/direction.js";
 
 export interface Directionality_ARGS<NODE_ID_TYPE extends Object,
                                      NODE_VALUE_TYPE,

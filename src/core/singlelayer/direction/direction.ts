@@ -1,6 +1,6 @@
-import Link from "../components/link.js";
-import Node from "../components/node.js";
-import { Id_ARGS, Value_ARGS } from "../network/networkArgsTypes.js";
+import Link from "../components/link/link.js";
+import Node from "../components/node/node.js";
+import { Id_ARGS, Value_ARGS } from "../../network/networkArgsTypes.js";
 import { Link_ARGS, SourceTargetNodes_ARGS } from "./directionArgsTypes.js";
 
 export default abstract class Direction<NODE_ID_TYPE extends Object,
@@ -33,6 +33,16 @@ export default abstract class Direction<NODE_ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     //----------------------------GETTERS-----------------------------
+    public abstract getAllLinks(args: {
+        nodes: Map<NODE_ID_TYPE,
+                   Node<NODE_ID_TYPE,
+                        NODE_VALUE_TYPE,
+                        LINK_VALUE_TYPE>> 
+    }): Array<Link<LINK_VALUE_TYPE,
+                   NODE_ID_TYPE,
+                   NODE_VALUE_TYPE>>
+
+    //----------------------------------------------------------------
 
     //----------------------------------------------------------------
     //----------------------------OTHERS------------------------------

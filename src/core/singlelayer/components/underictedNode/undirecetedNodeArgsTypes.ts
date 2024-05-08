@@ -1,0 +1,1 @@
+export type IterateLinksAlgorithmInterface<ARGS> = (args: ARGS) => void;

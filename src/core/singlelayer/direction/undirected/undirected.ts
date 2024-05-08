@@ -1,9 +1,9 @@
-import Direction from "./direction.js"; "./direction.js";
-import UndirectedNode from "../components/undirectedNode.js";
-import Node from "../components/node.js";
-import { Id_ARGS, Value_ARGS } from "../network/networkArgsTypes.js";
-import Link from "../components/link.js";
-import { SourceTargetNodes_ARGS, Link_ARGS } from "./directionArgsTypes.js";
+import Direction from "../direction.js"; "./direction.js";
+import UndirectedNode from "../../components/underictedNode/undirectedNode.js";
+import Node from "../../components/node/node.js";
+import { Id_ARGS, Value_ARGS } from "../../../network/networkArgsTypes.js";
+import Link from "../../components/link/link.js";
+import { SourceTargetNodes_ARGS, Link_ARGS } from "../directionArgsTypes.js";
 
 export default class Undirected<NODE_ID_TYPE extends Object,
                                 NODE_VALUE_TYPE,
@@ -62,6 +62,44 @@ export default class Undirected<NODE_ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     //----------------------------GETTERS-----------------------------
+    public override getAllLinks(args: {
+        nodes: Map<NODE_ID_TYPE,
+                   Node<NODE_ID_TYPE,
+                        NODE_VALUE_TYPE,
+                        LINK_VALUE_TYPE>> 
+    }): Array<Link<LINK_VALUE_TYPE,
+                   NODE_ID_TYPE,
+                   NODE_VALUE_TYPE>>
+    {
+        const { nodes } = args;
+
+        const links: Array<Link<LINK_VALUE_TYPE,
+                                NODE_ID_TYPE,
+                                NODE_VALUE_TYPE>> = new Array<Link<LINK_VALUE_TYPE,
+                                                                   NODE_ID_TYPE,
+                                                                   NODE_VALUE_TYPE>>();
+
+        for(const [_,node] of nodes)
+        {
+            (node as UndirectedNode<NODE_ID_TYPE,
+                                     NODE_VALUE_TYPE,
+                                     LINK_VALUE_TYPE>).iterateLinks({
+                                        algorithm: (args: {
+                                            neighbourId: NODE_ID_TYPE
+                                            link: Link<LINK_VALUE_TYPE,
+                                                       NODE_ID_TYPE,
+                                                       NODE_VALUE_TYPE>
+                                        }) =>
+                                        {
+                                            const { link } = args;
+
+                                            links.push(link);
+                                        }
+                                     });
+        }
+
+        return links;
+    }
 
     //----------------------------------------------------------------
     //----------------------------OTHERS------------------------------ 
@@ -88,5 +126,6 @@ export default class Undirected<NODE_ID_TYPE extends Object,
         });
         return createdNode;
     }
+
     
 };

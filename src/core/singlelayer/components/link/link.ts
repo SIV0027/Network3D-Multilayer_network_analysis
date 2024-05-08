@@ -1,4 +1,4 @@
-import Node from "./node.js";
+import Node from "../node/node.js";
 
 export default class Link<VALUE_TYPE,
                           NODE_ID_TYPE extends Object,

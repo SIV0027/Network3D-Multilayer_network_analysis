@@ -1,7 +1,8 @@
-import Node from "./node.js";
-import Link from "./link.js";
-import { NeighborNodeId_ARGS, NodeConstructor_ARGS } from "./componentsArgsTypes.js";
-import { Link_ARGS } from "./componentsArgsTypes.js";
+import Node from "../node/node.js";
+import Link from "../link/link.js";
+import { Algorithm_ARGS, Link_ARGS, NeighborNodeId_ARGS, NodeConstructor_ARGS } from "../componentsArgsTypes.js";
+
+
 
 
 export default class UndirectedNode<ID_TYPE extends Object,
@@ -79,10 +80,10 @@ export default class UndirectedNode<ID_TYPE extends Object,
     //----------------------------------------------------------------
     // addLink() - add link (and its value) between current node and 
     // node its ID is given as argument
-    public addLink<ARGS extends Link_ARGS<Link<LINK_VALUE_TYPE,
-                                               ID_TYPE,
-                                               VALUE_TYPE>> &
-                                NeighborNodeId_ARGS<ID_TYPE>>
+    public  override addLink<ARGS extends Link_ARGS<Link<LINK_VALUE_TYPE,
+                                                         ID_TYPE,
+                                                         VALUE_TYPE>> &
+                                          NeighborNodeId_ARGS<ID_TYPE>>
     (args: ARGS): void
     {
         const { link, neighborNodeId } = args;
@@ -129,7 +130,7 @@ export default class UndirectedNode<ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     // getLink() - return link by neighbor ID
-    public getLink<ARGS extends NeighborNodeId_ARGS<ID_TYPE>>
+    public override getLink<ARGS extends NeighborNodeId_ARGS<ID_TYPE>>
     (args: ARGS): Link<LINK_VALUE_TYPE,
                        ID_TYPE,
                        VALUE_TYPE>
@@ -152,12 +153,33 @@ export default class UndirectedNode<ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     // removeLink() - remove link of node by given neighbor ID
-    public removeLink(args: {
+    public override removeLink(args: {
         neighborNodeId: ID_TYPE
     }): void
     {
         args;
 
         throw new Error("Method not implemented.");
+    }
+
+    //----------------------------------------------------------------
+    // iterateLinks(...) - access to links of current node
+    public override iterateLinks<ARGS extends Algorithm_ARGS<(args: { neighbourId: ID_TYPE
+                                                                      link: Link<LINK_VALUE_TYPE,
+                                                                                 ID_TYPE,
+                                                                                 VALUE_TYPE> }) => void>>
+    (args: ARGS): void
+    {
+        //ZOBECNIT SUB_ARGS (ARGS předávaného algoritmu) - Z NĚJAKÉHO DŮVODU TO VYHAZUJE CHYBU
+        
+        const { algorithm } = args;
+
+        for(const [id, link] of this.links)
+        {
+            algorithm({
+                neighbourId: id,
+                link: link
+            });
+        }
     }
 };
