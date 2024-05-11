@@ -86,7 +86,10 @@ export default class UndirectedNode<ID_TYPE extends Object,
                                           NeighborNodeId_ARGS<ID_TYPE>>
     (args: ARGS): void
     {
-        const { link, neighborNodeId } = args;
+        const { 
+            link,
+            neighborNodeId
+        } = args;
 
         /* check if link with between current node and node with given ID already exists 
            (by validateLink(...) method) - if do not, validateLink(...) method throw Error

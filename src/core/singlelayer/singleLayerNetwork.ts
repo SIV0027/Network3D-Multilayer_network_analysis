@@ -144,7 +144,11 @@ export namespace Core
                                             Value_ARGS<LINK_VALUE_TYPE>>
         (args: ARGS): void
         {
-            const { sourceNodeId, targetNodeId, value } = args;
+            const { 
+                sourceNodeId,
+                targetNodeId,
+                value
+            } = args;
 
             // validate if nodes with given IDs exists
             const sourceNode: Node<NODE_ID_TYPE,

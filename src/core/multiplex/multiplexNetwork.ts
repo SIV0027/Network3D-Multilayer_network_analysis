@@ -1,5 +1,6 @@
 import Network from "../network/network.js";
-import { Id_ARGS, Value_ARGS } from "../network/networkArgsTypes.js";
+import { Id_ARGS, SourceTargetNodesIds_ARGS, Value_ARGS } from "../network/networkArgsTypes.js";
+import Link from "../singlelayer/components/link/link.js";
 import MultiplexNode from "./components/node/multiplexNode.js";
 import { LayerId_ARGS } from "./components/node/multiplexNodeArgsTypes.js";
 
@@ -40,9 +41,6 @@ export namespace Core
 
         //----------------------------------------------------------------
         //-----------------------------HELP-------------------------------
-
-        //----------------------------------------------------------------
-        //----------------------------ADDERS------------------------------
         protected validateNodeId<ARGS extends Id_ARGS<NODE_ID_TYPE>>
         (args: ARGS): MultiplexNode<NODE_ID_TYPE,
                                     NODE_VALUE_TYPE,
@@ -72,10 +70,15 @@ export namespace Core
         }
 
         //----------------------------------------------------------------
+        //----------------------------ADDERS------------------------------
+
+        //----------------------------------------------------------------
         public addLayer<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
         (args: ARGS): void
         {
             const { layerId } = args;
+
+            this.layers.push(layerId);
 
             for(const [_, node] of this.nodes)
             {
@@ -147,10 +150,75 @@ export namespace Core
         }
 
         //----------------------------------------------------------------
-        public override addLink
-        (args: Object): void
+        public override addLink<ARGS extends SourceTargetNodesIds_ARGS<NODE_ID_TYPE> &
+                                             Value_ARGS<any> &
+                                             LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
         {
-            throw new Error("Method not implemented.");
+            const { 
+                sourceNodeId,
+                targetNodeId,
+                value,
+                layerId
+            } = args;
+
+            // validate if nodes with given IDs exists
+            const sourceNode: MultiplexNode<NODE_ID_TYPE,
+                                            NODE_VALUE_TYPE,
+                                            undefined,
+                                            LAYER_ID_TYPE> = this.validateNodeId({
+                                                                id: sourceNodeId
+                                                            });
+
+            const targetNode: MultiplexNode<NODE_ID_TYPE,
+                                            NODE_VALUE_TYPE,
+                                            undefined,
+                                            LAYER_ID_TYPE> = this.validateNodeId({
+                                                                id: targetNodeId
+                                                            });
+            
+            // if nodes with given IDs exists -> create link                                                      
+            const link: Link<any,
+                             NODE_ID_TYPE,
+                             NODE_VALUE_TYPE> = new Link({
+                                                            source: sourceNode,
+                                                            target: targetNode,
+                                                            value: value                             
+                                                        });
+
+            // try to add created link between nodes with given IDs -> it can exists already => try-catch block
+            try
+            {
+                sourceNode.addLink({
+                    layerId: layerId,
+                    link: link,
+                    neighborNodeId: targetNode.getId()
+                });
+
+                targetNode.addLink({
+                    layerId: layerId,
+                    link: link,
+                    neighborNodeId: sourceNode.getId()
+                });
+
+                //this.linksCount++;
+            }
+            catch(error)
+            {
+                // delete link in both nodes -> prevent of adding link to one node and not to another
+                // (theoretically not possible) -> prevent to have consistent state
+
+                //VYMAZAT PŘÍSLUŠNOU VAZBU U OBOU UZLŮ
+
+                if(typeof error === "string")
+                {
+                    throw new Error(error);
+                }
+                else if(error instanceof Error)
+                {
+                    throw error;
+                }
+            }
         }
 
 
@@ -173,9 +241,9 @@ export namespace Core
 
         //----------------------------------------------------------------
         public override getNodesCount
-        (args: Object)
+        (): number
         {
-            throw new Error("Method not implemented.");
+            return this.nodes.size;
         }
 
         //----------------------------------------------------------------

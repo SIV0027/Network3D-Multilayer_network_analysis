@@ -4,6 +4,7 @@ import Node from "../../../singlelayer/components/node/node.js";
 import { NodeConstructor_ARGS } from "../../../singlelayer/components/componentsArgsTypes.js";
 import { LayerId_ARGS } from "./multiplexNodeArgsTypes.js";
 import { SourceTargetNodesIds_ARGS } from "../../../network/networkArgsTypes.js";
+import { Link_ARGS } from "../../../singlelayer/direction/directionArgsTypes.js";
 
 export default class MultiplexNode<ID_TYPE extends Object,
                                    VALUE_TYPE,
@@ -165,17 +166,16 @@ export default class MultiplexNode<ID_TYPE extends Object,
 
         // POTENCIONÁLNĚ ZBYTEČNÉ -> VALIDACE MŮŽE PROBĚHNOUT UŽ V RÁMCI SÍTĚ
         // validation if layer already exists
+        /* __errorThrowing__*/
+        let sameIdNodeFound: Boolean = false;
         try
         {
             this.validateLayer({
                 layerId: layerId
             });
 
-            const layerIdString: string = layerId.toString();
-            const errorMsg: string = MultiplexNode.alreadyExistingLayerErrorMsg({
-                layerId: layerIdString
-            })
-            throw Error(errorMsg);
+            // __errorThrowing__
+            sameIdNodeFound = true;
         }
         catch(_) // if not => create layer
         {
@@ -191,13 +191,69 @@ export default class MultiplexNode<ID_TYPE extends Object,
 
             console.log(layerId);
         }
+
+        // __errorThrowing__
+        if(sameIdNodeFound == true)
+        {
+            const layerIdString: string = layerId.toString();
+            const errorMsg: string = MultiplexNode.alreadyExistingLayerErrorMsg({
+                layerId: layerIdString
+            })
+            throw Error(errorMsg);
+        }
     }
 
     //----------------------------------------------------------------
-    public override addLink
-    (args: Object): void
+    public override addLink<ARGS extends Link_ARGS<Link<LINK_VALUE_TYPE,
+                                                        ID_TYPE,
+                                                        VALUE_TYPE>> &
+                                                   NeighborNodeId_ARGS<ID_TYPE> &
+                                                   LayerId_ARGS<LAYER_ID_TYPE>>
+    (args: ARGS): void
     {
-        throw new Error("Method not implemented.");
+        const {
+            layerId,
+            link,
+            neighborNodeId
+        } = args;
+
+        const layer: Map<ID_TYPE,
+                         Link<any,
+                              ID_TYPE,
+                              VALUE_TYPE>> = this.validateLayer({
+                                layerId: layerId
+                              });
+
+        /* __errorThrowing__:
+          Error throwing (of already existing link) must be out of try block */
+        let linkAlreadyFound: Boolean = false;
+        try
+        {
+            this.validateLink({
+                neighborNodeId: neighborNodeId,
+                layerId: layerId
+            });
+               
+            // __errorThrowing__
+            linkAlreadyFound = true;
+        }
+        catch(_)
+        {
+            // link does not exists => will be added
+            layer.set(neighborNodeId, link);
+        }
+   
+        // __errorThrowing__
+        if(linkAlreadyFound == true)
+        {
+            const sourceNodeIdString: string = this.getId().toString();
+            const targetNodeIdString: string = neighborNodeId.toString();
+            const errorMsg: string = Node.alreadyExistingLinkErrorMsg({
+                sourceNodeId: sourceNodeIdString,
+                targetNodeId: targetNodeIdString
+            });
+            throw new Error(errorMsg);
+        }
     }
 
     //----------------------------------------------------------------
