@@ -90,7 +90,10 @@ export namespace Core
                                             Value_ARGS<NODE_VALUE_TYPE>>
         (args: ARGS): void
         {
-            const { id, value } = args;
+            const { 
+                id,
+                value
+            } = args;
 
             /* check if node with given ID already exists (by validateNodeId(...) method)
             if do not, validateNodeId(...) method throw Error and in catch block is

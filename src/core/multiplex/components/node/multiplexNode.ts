@@ -42,6 +42,15 @@ export default class MultiplexNode<ID_TYPE extends Object,
         return `Link between nodes: ${sourceNodeId} and ${targetNodeId} in layer: ${layerId} does not exists.`;
     }
 
+    protected static alreadyExistingLayerErrorMsg<ARGS extends LayerId_ARGS<string>>
+    (args: ARGS): string
+    {
+        const { 
+            layerId
+         } = args;
+        return `Layer with ID: ${layerId} already exists.`;
+    }
+
 
     //----------------------------------------------------------------
     //---------------------------INSTANCE-----------------------------
@@ -156,22 +165,32 @@ export default class MultiplexNode<ID_TYPE extends Object,
 
         // POTENCIONÁLNĚ ZBYTEČNÉ -> VALIDACE MŮŽE PROBĚHNOUT UŽ V RÁMCI SÍTĚ
         // validation if layer already exists
-        this.validateLayer({
-            layerId: layerId
-        });
+        try
+        {
+            this.validateLayer({
+                layerId: layerId
+            });
 
-        // if not => create layer
-        const layer: Map<ID_TYPE,
-                         Link<any,
-                              ID_TYPE,
-                              VALUE_TYPE>> = new Map<ID_TYPE,
-                                                     Link<any,
-                                                          ID_TYPE,
-                                                          VALUE_TYPE>>();
+            const layerIdString: string = layerId.toString();
+            const errorMsg: string = MultiplexNode.alreadyExistingLayerErrorMsg({
+                layerId: layerIdString
+            })
+            throw Error(errorMsg);
+        }
+        catch(_) // if not => create layer
+        {
+            const layer: Map<ID_TYPE,
+                             Link<any,
+                                  ID_TYPE,
+                                  VALUE_TYPE>> = new Map<ID_TYPE,
+                                                         Link<any,
+                                                              ID_TYPE,
+                                                              VALUE_TYPE>>();
 
-        this.layers.set(layerId, layer);
+            this.layers.set(layerId, layer);
 
-        // OTESTOVAT !!!
+            console.log(layerId);
+        }
     }
 
     //----------------------------------------------------------------
