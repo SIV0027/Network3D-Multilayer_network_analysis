@@ -1,20 +1,24 @@
-import { Core } from "../core/singlelayer/singleLayerNetwork.js";
-import Link from "../core/singlelayer/components/link/link.js";
-import { CanvasId_ARGS, Nodes_ARGS, Scene_ARGS } from "./singleLayerNetworkArgsTypes.js";
+import MultiplexNode from "../core/multiplex/components/node/multiplexNode.js";
+import { LayerId_ARGS } from "../core/multiplex/components/node/multiplexNodeArgsTypes.js";
+import { Core } from "../core/multiplex/multiplexNetwork.js";
+import Link from "../core/singlelayer/components/link/link";
+import { CanvasId_ARGS, Nodes_ARGS, Scene_ARGS } from "./singleLayerNetworkArgsTypes";
 
 export namespace Visualization
 {
-    export class SingleLayerNetwork<NODE_ID_TYPE extends Object,
-                                 NODE_VALUE_TYPE,
-                                 LINK_VALUE_TYPE>
-               extends Core.SingleLayerNetwork<NODE_ID_TYPE,
-                                               NODE_VALUE_TYPE,
-                                               LINK_VALUE_TYPE>
+    export class MultiplexNetwork<NODE_ID_TYPE extends Object,
+                                  NODE_VALUE_TYPE,
+                                  LAYER_ID_TYPE extends Object>
+            extends Core.MultiplexNetwork<NODE_ID_TYPE,
+                                            NODE_VALUE_TYPE,
+                                            LAYER_ID_TYPE>
     {
         private createPlayground<ARGS extends CanvasId_ARGS>
         (args: ARGS): BABYLON.Scene
         {
-            const { canvasId } = args;
+            const {
+                canvasId
+            } = args;
 
             const canvas = document.querySelector(canvasId) as HTMLCanvasElement;
 
@@ -77,7 +81,9 @@ export namespace Visualization
         private renderNodes<ARGS extends Scene_ARGS>
         (args: ARGS): Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }>
         {
-            const { scene } = args;
+            const { 
+                scene
+            } = args;
 
             const nodes: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }> = new Map();
             const spheres: Array<BABYLON.Mesh> = new Array<BABYLON.Mesh>();
@@ -129,21 +135,46 @@ export namespace Visualization
         }
 
         private renderLinks<ARGS extends Scene_ARGS &
-                                         Nodes_ARGS<NODE_ID_TYPE>>
-        (args: ARGS): Array<Link<LINK_VALUE_TYPE,
+                                         Nodes_ARGS<NODE_ID_TYPE> &
+                                         LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): Array<Link<any,
                                  NODE_ID_TYPE,
                                  NODE_VALUE_TYPE>>
         {
             const { 
                 scene,
-                nodes
+                nodes,
+                layerId
             } = args;
 
-            const links: Array<Link<LINK_VALUE_TYPE,
-                                    NODE_ID_TYPE,
-                                    NODE_VALUE_TYPE>> = this.direction.getAllLinks({
-                nodes: this.nodes
-            });
+            const links: Array<Link<any,
+                                NODE_ID_TYPE,
+                                NODE_VALUE_TYPE>> = new Array<Link<any,
+                                                                   NODE_ID_TYPE,
+                                                                   NODE_VALUE_TYPE>>();
+
+            for(const [_, node] of this.nodes)
+            {
+                (node as MultiplexNode<NODE_ID_TYPE,
+                                        NODE_VALUE_TYPE,
+                                       any,
+                                       LAYER_ID_TYPE>).iterateLinks({
+                                            algorithm: (args: {
+                                                neighbourId: NODE_ID_TYPE
+                                                link: Link<any,
+                                                        NODE_ID_TYPE,
+                                                        NODE_VALUE_TYPE>
+                                            }) =>
+                                            {
+                                                const {
+                                                    link
+                                                } = args;
+
+                                                links.push(link);
+                                            },
+                                            layerId: layerId
+                                        });
+            }
 
             for(const link of links)
             {
@@ -165,10 +196,14 @@ export namespace Visualization
             return links;
         }
 
-        public render<ARGS extends CanvasId_ARGS>
+        public render<ARGS extends CanvasId_ARGS &
+                                   LayerId_ARGS<LAYER_ID_TYPE>>
         (args: ARGS): void
         {
-            const { canvasId } = args;
+            const {
+                canvasId,
+                layerId
+            } = args;
 
             const scene: BABYLON.Scene = this.createPlayground({
                 canvasId: canvasId
@@ -179,45 +214,13 @@ export namespace Visualization
                 scene: scene
             });
 
-            const links: Array<Link<LINK_VALUE_TYPE,
+            const links: Array<Link<any,
                                     NODE_ID_TYPE,
                                     NODE_VALUE_TYPE>> = this.renderLinks({
                                         scene: scene,
-                                        nodes: nodes
+                                        nodes: nodes,
+                                        layerId: layerId
                                     });
-            
-
-            // ITEMS MOVING
-            /* let selectedSphere: BABYLON.Nullable<BABYLON.Mesh> = null;
-            let startingPoint: BABYLON.Nullable<BABYLON.Vector3> = null;
-
-            scene.onPointerObservable.add((eventData) => {
-                switch (eventData.type) {
-                    case BABYLON.PointerEventTypes.POINTERDOWN:
-                        const pickResult = scene.pick(scene.pointerX, scene.pointerY);
-                        if (pickResult.hit) {
-                            selectedSphere = pickResult.pickedMesh as BABYLON.Mesh;
-                            if (selectedSphere && spheres.includes(selectedSphere)) {
-                                startingPoint = pickResult.pickedPoint;
-                            }
-                        }
-                        break;
-                    case BABYLON.PointerEventTypes.POINTERMOVE:
-                        if (startingPoint && selectedSphere) {
-                            const currentPick = scene.pick(scene.pointerX, scene.pointerY);
-                            if (currentPick.hit) {
-                                const delta = (currentPick.pickedPoint as BABYLON.Vector3).subtract(startingPoint);
-                                selectedSphere.position.addInPlace(delta);
-                                startingPoint = currentPick.pickedPoint;
-                            }
-                        }
-                        break;
-                    case BABYLON.PointerEventTypes.POINTERUP:
-                        selectedSphere = null;
-                        startingPoint = null;
-                        break;
-                }
-            }); */
         }
     };
 };

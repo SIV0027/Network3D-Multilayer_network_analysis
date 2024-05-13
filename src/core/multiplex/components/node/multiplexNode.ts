@@ -1,4 +1,4 @@
-import { GenericFunction, Algorithm_ARGS, NeighborNodeId_ARGS } from "../../../singlelayer/components/componentsArgsTypes.js";
+import { Algorithm_ARGS, NeighborNodeId_ARGS } from "../../../singlelayer/components/componentsArgsTypes.js";
 import Link from "../../../singlelayer/components/link/link.js";
 import Node from "../../../singlelayer/components/node/node.js";
 import { NodeConstructor_ARGS } from "../../../singlelayer/components/componentsArgsTypes.js";
@@ -279,10 +279,31 @@ export default class MultiplexNode<ID_TYPE extends Object,
     }
     
     //----------------------------------------------------------------
-    public override iterateLinks<ALGORITHM_INTERFACE extends GenericFunction,
-                                 ARGS extends Algorithm_ARGS<ALGORITHM_INTERFACE>>
+    public override iterateLinks<ARGS extends Algorithm_ARGS<(args: { neighbourId: ID_TYPE,
+                                                                      link: Link<LINK_VALUE_TYPE,
+                                                                                 ID_TYPE,
+                                                                                 VALUE_TYPE> }) => void> &
+                                              LayerId_ARGS<LAYER_ID_TYPE>>
     (args: ARGS): void
     {
-        throw new Error("Method not implemented.");
+        const {
+            algorithm,
+            layerId
+        } = args;
+
+        const layer: Map<ID_TYPE,
+                         Link<any,
+                              ID_TYPE,
+                              VALUE_TYPE>> = this.validateLayer({
+                                        layerId: layerId
+                                    });
+
+        for(const [id, link] of layer)
+        {
+            algorithm({
+                neighbourId: id,
+                link: link
+            });
+        }
     }
 };

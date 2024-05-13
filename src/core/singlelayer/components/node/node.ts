@@ -93,7 +93,5 @@ export default abstract class Node<ID_TYPE extends Object,
 
     //----------------------------------------------------------------
     // iterateLinks(...) - access to links of current node
-    public abstract iterateLinks<ALGORITHM_INTERFACE extends GenericFunction,
-                                 ARGS extends Algorithm_ARGS<ALGORITHM_INTERFACE>>
-    (args: ARGS): void;
+    public abstract iterateLinks(args: Object): void;
 };

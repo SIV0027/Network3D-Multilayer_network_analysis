@@ -160,8 +160,6 @@ export default class UndirectedNode<ID_TYPE extends Object,
         neighborNodeId: ID_TYPE
     }): void
     {
-        args;
-
         throw new Error("Method not implemented.");
     }
 
@@ -175,7 +173,9 @@ export default class UndirectedNode<ID_TYPE extends Object,
     {
         //ZOBECNIT SUB_ARGS (ARGS předávaného algoritmu) - Z NĚJAKÉHO DŮVODU TO VYHAZUJE CHYBU
         
-        const { algorithm } = args;
+        const {
+            algorithm
+        } = args;
 
         for(const [id, link] of this.links)
         {

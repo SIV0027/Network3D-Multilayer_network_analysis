@@ -71,7 +71,9 @@ export default class Undirected<NODE_ID_TYPE extends Object,
                    NODE_ID_TYPE,
                    NODE_VALUE_TYPE>>
     {
-        const { nodes } = args;
+        const {
+            nodes
+        } = args;
 
         const links: Array<Link<LINK_VALUE_TYPE,
                                 NODE_ID_TYPE,
@@ -79,7 +81,7 @@ export default class Undirected<NODE_ID_TYPE extends Object,
                                                                    NODE_ID_TYPE,
                                                                    NODE_VALUE_TYPE>>();
 
-        for(const [_,node] of nodes)
+        for(const [_, node] of nodes)
         {
             (node as UndirectedNode<NODE_ID_TYPE,
                                      NODE_VALUE_TYPE,
@@ -91,7 +93,9 @@ export default class Undirected<NODE_ID_TYPE extends Object,
                                                        NODE_VALUE_TYPE>
                                         }) =>
                                         {
-                                            const { link } = args;
+                                            const {
+                                                link
+                                            } = args;
 
                                             links.push(link);
                                         }
@@ -124,6 +128,7 @@ export default class Undirected<NODE_ID_TYPE extends Object,
             id: id,
             value: value
         });
+        
         return createdNode;
     }
 
