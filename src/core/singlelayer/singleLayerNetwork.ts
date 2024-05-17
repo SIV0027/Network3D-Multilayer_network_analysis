@@ -128,7 +128,7 @@ export namespace Core
             if(sameIdNodeFound == true)
             {
                 const idString: string = id.toString();
-                const errorMsg = SingleLayerNetwork.alreadyExistingNodeErrorMsg({
+                const errorMsg: string = SingleLayerNetwork.alreadyExistingNodeErrorMsg({
                     id: idString
                 });
                 throw new Error(errorMsg);

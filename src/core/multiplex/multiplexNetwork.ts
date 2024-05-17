@@ -14,6 +14,15 @@ export namespace Core
         //----------------------------------------------------------------
         //----------------------------STATIC------------------------------
         //----------------------------------------------------------------
+        protected static alreadyExistingLayerErrorMsg<ARGS extends LayerId_ARGS<string>>
+        (args: ARGS): string
+        {
+            const { 
+                layerId
+            } = args;
+
+            return `Layer with given ID: ${layerId} already exists.`;
+        }
 
         //----------------------------------------------------------------
         //---------------------------INSTANCE-----------------------------
@@ -69,6 +78,23 @@ export namespace Core
             return possibleNode;
         }
 
+        protected validateLayerId<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
+        {
+            const {
+                layerId
+            } = args;
+
+            if(this.layers.includes(layerId))
+            {
+                const layerIdString: string = layerId.toString();
+                const errorMsg: string = MultiplexNetwork.alreadyExistingLayerErrorMsg({
+                    layerId: layerIdString
+                });
+                throw new Error(errorMsg);
+            }
+        }
+
         //----------------------------------------------------------------
         //----------------------------ADDERS------------------------------
 
@@ -76,7 +102,13 @@ export namespace Core
         public addLayer<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
         (args: ARGS): void
         {
-            const { layerId } = args;
+            const { 
+                layerId
+            } = args;
+
+            this.validateLayerId({
+                layerId: layerId
+            });
 
             this.layers.push(layerId);
 
@@ -226,6 +258,12 @@ export namespace Core
         //----------------------------GETTERS-----------------------------
 
         //----------------------------------------------------------------
+        public getLayersList
+        (): Array<LAYER_ID_TYPE>
+        {
+            return this.layers;
+        }
+
         public override getNode
         (args: Object)
         {

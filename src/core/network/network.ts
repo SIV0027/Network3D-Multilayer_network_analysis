@@ -12,7 +12,10 @@ export default abstract class Network
     protected static nonExistingNodeErrorMsg<ARGS extends Id_ARGS<string>>
     (args: ARGS): string
     {
-        const { id } = args;
+        const {
+            id
+        } = args;
+
         return `Node with given ID: ${id} does not exists.`;
     }
 
@@ -22,7 +25,10 @@ export default abstract class Network
     protected static alreadyExistingNodeErrorMsg<ARGS extends Id_ARGS<string>>
     (args: ARGS): string
     {
-        const { id } = args;
+        const {
+            id
+        } = args;
+        
         return `Node with given ID: ${id} already exists.`;
     }
 

@@ -23,6 +23,11 @@ export interface LinkValueParser_ARGS<LINK_VALUE_TYPE>
     linkValueParser: LinkValueParserCallback<LINK_VALUE_TYPE>;
 };
 
+export interface LayerTypeParser_ARGS<LAYER_ID_TYPE>
+{
+    layerTypeParser: LayerTypeParserCallback<LAYER_ID_TYPE>;
+};
+
 export type NodeIDParserCallback<NODE_ID_TYPE> = (args: {
     id: string
 }) => NODE_ID_TYPE;
@@ -34,3 +39,7 @@ export type NodeValueParserCallback<NODE_VALUE_TYPE> = (args: {
 export type LinkValueParserCallback<LINK_VALUE_TYPE> = (args: {
     value: string
 }) => LINK_VALUE_TYPE;
+
+export type LayerTypeParserCallback<LAYER_ID_TYPE> = (args: {
+    value: string
+}) => LAYER_ID_TYPE;

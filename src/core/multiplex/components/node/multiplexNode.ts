@@ -188,8 +188,6 @@ export default class MultiplexNode<ID_TYPE extends Object,
                                                               VALUE_TYPE>>();
 
             this.layers.set(layerId, layer);
-
-            console.log(layerId);
         }
 
         // __errorThrowing__

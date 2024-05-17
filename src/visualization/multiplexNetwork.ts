@@ -2,7 +2,10 @@ import MultiplexNode from "../core/multiplex/components/node/multiplexNode.js";
 import { LayerId_ARGS } from "../core/multiplex/components/node/multiplexNodeArgsTypes.js";
 import { Core } from "../core/multiplex/multiplexNetwork.js";
 import Link from "../core/singlelayer/components/link/link";
-import { CanvasId_ARGS, Nodes_ARGS, Scene_ARGS } from "./singleLayerNetworkArgsTypes";
+import { MultiplexNetworkConstructor_ARGS } from "./multiplexNetworkArgsTypes.js";
+import { Scene_ARGS } from "./singleLayerNetworkArgsTypes";
+
+
 
 export namespace Visualization
 {
@@ -13,16 +16,31 @@ export namespace Visualization
                                             NODE_VALUE_TYPE,
                                             LAYER_ID_TYPE>
     {
-        private createPlayground<ARGS extends CanvasId_ARGS>
-        (args: ARGS): BABYLON.Scene
+
+        protected canvas: HTMLCanvasElement;
+        protected scene: BABYLON.Scene;
+        protected nodesRender: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }>; 
+        protected linksRender: Array<BABYLON.LinesMesh>;
+
+        constructor(args: MultiplexNetworkConstructor_ARGS)
         {
+            super();
+
             const {
                 canvasId
             } = args;
 
-            const canvas = document.querySelector(canvasId) as HTMLCanvasElement;
+            this.canvas = document.querySelector(canvasId) as HTMLCanvasElement;
+            this.scene = this.createPlayground();
+            this.nodesRender = this.renderNodes({
+                scene: this.scene
+            });
+            this.linksRender = new Array<BABYLON.LinesMesh>();
+        }
 
-            const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+        protected createPlayground(): BABYLON.Scene
+        {
+            const engine = new BABYLON.Engine(this.canvas, true); // Generate the BABYLON 3D engine
             const scene = new BABYLON.Scene(engine);
             scene.clearColor = BABYLON.Color4.FromColor3(BABYLON.Color3.White());
             scene.lightsEnabled = false;
@@ -41,7 +59,7 @@ export namespace Visualization
             camera.upperBetaLimit = Math.PI / 2;
             camera.lowerBetaLimit = Math.PI / 2;
             
-            camera.attachControl(canvas, true);
+            camera.attachControl(this.canvas, true);
 
             const rotState = {
                 x: camera.alpha,
@@ -64,7 +82,7 @@ export namespace Visualization
                 engine.resize();
             });
 
-            canvas.addEventListener("wheel", (event) =>
+            this.canvas.addEventListener("wheel", (event) =>
             {
                 const delta: number = event.deltaY;
                 const camera: BABYLON.ArcRotateCamera = scene.activeCamera as BABYLON.ArcRotateCamera;
@@ -78,7 +96,7 @@ export namespace Visualization
             return scene;
         }
 
-        private renderNodes<ARGS extends Scene_ARGS>
+        protected renderNodes<ARGS extends Scene_ARGS>
         (args: ARGS): Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }>
         {
             const { 
@@ -134,16 +152,10 @@ export namespace Visualization
             return nodes;
         }
 
-        private renderLinks<ARGS extends Scene_ARGS &
-                                         Nodes_ARGS<NODE_ID_TYPE> &
-                                         LayerId_ARGS<LAYER_ID_TYPE>>
-        (args: ARGS): Array<Link<any,
-                                 NODE_ID_TYPE,
-                                 NODE_VALUE_TYPE>>
+        protected renderLinks<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
         {
-            const { 
-                scene,
-                nodes,
+            const {
                 layerId
             } = args;
 
@@ -176,10 +188,11 @@ export namespace Visualization
                                         });
             }
 
+            const linksRender: Array<BABYLON.LinesMesh> =  new Array<BABYLON.LinesMesh>();
             for(const link of links)
             {
-                const sourceNodeGraphic: { x: number, y: number, mesh: BABYLON.Mesh } = nodes.get(link.getSource().getId()) as { x: number, y: number, mesh: BABYLON.Mesh };
-                const targetNodeGraphic: { x: number, y: number, mesh: BABYLON.Mesh } = nodes.get(link.getTarget().getId()) as { x: number, y: number, mesh: BABYLON.Mesh };
+                const sourceNodeGraphic: { x: number, y: number, mesh: BABYLON.Mesh } = this.nodesRender.get(link.getSource().getId()) as { x: number, y: number, mesh: BABYLON.Mesh };
+                const targetNodeGraphic: { x: number, y: number, mesh: BABYLON.Mesh } = this.nodesRender.get(link.getTarget().getId()) as { x: number, y: number, mesh: BABYLON.Mesh };
                 
 
                 const points = [
@@ -187,40 +200,51 @@ export namespace Visualization
                     new BABYLON.Vector3(targetNodeGraphic.x, targetNodeGraphic.y, 0)
                 ];
                 
-                const line = BABYLON.MeshBuilder.CreateLines("line", { points: points }, scene);
-                const material = new BABYLON.StandardMaterial("material", scene);
+                const line = BABYLON.MeshBuilder.CreateLines("line", { points: points }, this.scene);
+                const material = new BABYLON.StandardMaterial("material", this.scene);
                 material.emissiveColor = new BABYLON.Color3(0, 0, 0);
                 line.material = material;
+                
+                linksRender.push(line);
             }
 
-            return links;
+            this.linksRender = linksRender;
         }
 
-        public render<ARGS extends CanvasId_ARGS &
-                                   LayerId_ARGS<LAYER_ID_TYPE>>
+        public render<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
         (args: ARGS): void
         {
             const {
-                canvasId,
                 layerId
             } = args;
 
-            const scene: BABYLON.Scene = this.createPlayground({
-                canvasId: canvasId
+            this.scene = this.createPlayground();
+            this.nodesRender = this.renderNodes({
+                scene: this.scene
             });
 
-
-            const nodes: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }> = this.renderNodes({
-                scene: scene
+            this.switchLayer({
+                layerId: layerId
             });
+        }
 
-            const links: Array<Link<any,
-                                    NODE_ID_TYPE,
-                                    NODE_VALUE_TYPE>> = this.renderLinks({
-                                        scene: scene,
-                                        nodes: nodes,
-                                        layerId: layerId
-                                    });
+        public switchLayer<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
+        {
+            const {
+                layerId
+            } = args;
+
+            for(const linkRender of this.linksRender)
+            {
+                linkRender.dispose();
+            }
+
+            this.renderLinks({
+                scene: this.scene,
+                nodes: this.nodesRender,
+                layerId: layerId
+            });
         }
     };
 };

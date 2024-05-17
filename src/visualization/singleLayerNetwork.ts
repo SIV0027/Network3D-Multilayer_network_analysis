@@ -1,6 +1,15 @@
 import { Core } from "../core/singlelayer/singleLayerNetwork.js";
 import Link from "../core/singlelayer/components/link/link.js";
-import { CanvasId_ARGS, Nodes_ARGS, Scene_ARGS } from "./singleLayerNetworkArgsTypes.js";
+import { Nodes_ARGS, Scene_ARGS, SingleLayerNetworkConstructor_ARGS } from "./singleLayerNetworkArgsTypes.js";
+import { SingleLayerNetworkConstructor_ARGS as SuperConstructor_ARGS } from "../core/singlelayer/singleLayerNetworkTypes.js";
+
+interface Constructor_ARGS<NODE_ID_TYPE extends Object,
+                      NODE_VALUE_TYPE,
+                      LINK_VALUE_TYPE>
+extends SingleLayerNetworkConstructor_ARGS, SuperConstructor_ARGS<NODE_ID_TYPE,
+                                                                         NODE_VALUE_TYPE,
+                                                                         LINK_VALUE_TYPE>
+{ };
 
 export namespace Visualization
 {
@@ -11,14 +20,28 @@ export namespace Visualization
                                                NODE_VALUE_TYPE,
                                                LINK_VALUE_TYPE>
     {
-        private createPlayground<ARGS extends CanvasId_ARGS>
-        (args: ARGS): BABYLON.Scene
+
+        protected canvas: HTMLCanvasElement;
+
+        constructor(args: Constructor_ARGS<NODE_ID_TYPE,
+                                           NODE_VALUE_TYPE,
+                                           LINK_VALUE_TYPE>)
         {
-            const { canvasId } = args;
+            super({
+                direction: args.direction
+            });
 
-            const canvas = document.querySelector(canvasId) as HTMLCanvasElement;
+            const { 
+                canvasId
+            } = args;
 
-            const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+            this.canvas = document.querySelector(canvasId) as HTMLCanvasElement;;
+        }
+
+        private createPlayground(): BABYLON.Scene
+        {
+
+            const engine = new BABYLON.Engine(this.canvas, true); // Generate the BABYLON 3D engine
             const scene = new BABYLON.Scene(engine);
             scene.clearColor = BABYLON.Color4.FromColor3(BABYLON.Color3.White());
             scene.lightsEnabled = false;
@@ -37,7 +60,7 @@ export namespace Visualization
             camera.upperBetaLimit = Math.PI / 2;
             camera.lowerBetaLimit = Math.PI / 2;
             
-            camera.attachControl(canvas, true);
+            camera.attachControl(this.canvas, true);
 
             const rotState = {
                 x: camera.alpha,
@@ -60,7 +83,7 @@ export namespace Visualization
                 engine.resize();
             });
 
-            canvas.addEventListener("wheel", (event) =>
+            this.canvas.addEventListener("wheel", (event) =>
             {
                 const delta: number = event.deltaY;
                 const camera: BABYLON.ArcRotateCamera = scene.activeCamera as BABYLON.ArcRotateCamera;
@@ -165,14 +188,9 @@ export namespace Visualization
             return links;
         }
 
-        public render<ARGS extends CanvasId_ARGS>
-        (args: ARGS): void
+        public render(): void
         {
-            const { canvasId } = args;
-
-            const scene: BABYLON.Scene = this.createPlayground({
-                canvasId: canvasId
-            });
+            const scene: BABYLON.Scene = this.createPlayground();
 
 
             const nodes: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }> = this.renderNodes({
