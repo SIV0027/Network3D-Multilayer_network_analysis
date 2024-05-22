@@ -185,4 +185,12 @@ export default class UndirectedNode<ID_TYPE extends Object,
             });
         }
     }
+
+    //----------------------------------------------------------------
+    // getDegree() - get degree of node
+    public override getDegree
+    (): number
+    {
+        return this.links.size;
+    }
 };

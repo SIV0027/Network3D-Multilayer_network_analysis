@@ -1,5 +1,5 @@
 import { SourceTargetNodesIds_ARGS } from "../../../network/networkArgsTypes";
-import { Algorithm_ARGS, GenericFunction, NodeConstructor_ARGS } from "../componentsArgsTypes";
+import { NodeConstructor_ARGS } from "../componentsArgsTypes";
 import Link from "../link/link";
 
 export default abstract class Node<ID_TYPE extends Object,
@@ -94,4 +94,8 @@ export default abstract class Node<ID_TYPE extends Object,
     //----------------------------------------------------------------
     // iterateLinks(...) - access to links of current node
     public abstract iterateLinks(args: Object): void;
+
+    //----------------------------------------------------------------
+    // getDegree(...) - get degree of node
+    public abstract getDegree(args: Object): any;
 };

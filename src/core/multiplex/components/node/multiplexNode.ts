@@ -25,6 +25,7 @@ export default class MultiplexNode<ID_TYPE extends Object,
         const { 
             layerId
          } = args;
+         
         return `Layer with ID: ${layerId} does not exists.`;
     }
 
@@ -303,5 +304,23 @@ export default class MultiplexNode<ID_TYPE extends Object,
                 link: link
             });
         }
+    }
+
+    //----------------------------------------------------------------
+    public override getDegree<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+    (args: ARGS): number
+    {
+        const {
+            layerId
+        } = args;
+
+        const layer: Map<ID_TYPE,
+                         Link<any,
+                              ID_TYPE,
+                              VALUE_TYPE>> = this.validateLayer({
+            layerId: layerId
+        });
+
+        return layer.size;
     }
 };

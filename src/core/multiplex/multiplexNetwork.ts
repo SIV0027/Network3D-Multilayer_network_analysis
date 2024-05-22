@@ -285,10 +285,51 @@ export namespace Core
         }
 
         //----------------------------------------------------------------
-        public override getLinksCount
-        (args: Object)
+        public override getLinksCount<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): number
         {
-            throw new Error("Method not implemented.");
+            const {
+                layerId
+            } = args;
+
+            let linksCount = 0;
+            for(const [_, node] of this.nodes)
+            {
+                linksCount += node.getDegree({
+                    layerId: layerId
+                });
+            }
+
+            return (linksCount / 2);
+        }
+
+        //----------------------------------------------------------------
+        public getNodeDegree<ARGS extends Id_ARGS<NODE_ID_TYPE> &
+                                          LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): number
+        {
+            const {
+                id,
+                layerId
+            } = args;
+
+            const node = this.validateNodeId({
+                id: id
+            });
+
+            const degree = node.getDegree({
+                layerId: layerId
+            });
+
+            return degree;
+        }
+
+        //----------------------------------------------------------------
+        // getAllNodeIds() - return all Ids of nodes
+        public getAllNodeIds
+        (): Array<NODE_ID_TYPE>
+        {
+            return Array.from(this.nodes.keys());
         }
 
         //----------------------------------------------------------------

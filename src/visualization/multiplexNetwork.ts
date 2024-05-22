@@ -19,7 +19,7 @@ export namespace Visualization
 
         protected canvas: HTMLCanvasElement;
         protected scene: BABYLON.Scene;
-        protected nodesRender: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }>; 
+        protected nodesRender: Map<NODE_ID_TYPE, { x: number, y: number, mesh: BABYLON.Mesh }>;
         protected linksRender: Array<BABYLON.LinesMesh>;
 
         constructor(args: MultiplexNetworkConstructor_ARGS)
@@ -245,6 +245,28 @@ export namespace Visualization
                 nodes: this.nodesRender,
                 layerId: layerId
             });
+
+            /* for(const [_, node] of this.nodes)
+            {
+                const degree: number = node.getDegree({
+                    layerId: layerId
+                });
+
+                const nodeRender = this.nodesRender.get(node.getId());
+                if(nodeRender == undefined)
+                {
+                    throw new Error("Node does not have visual.");
+                }
+                
+                if(degree > 0)
+                {
+                    nodeRender.mesh.setEnabled(true);
+                }
+                else
+                {
+                    nodeRender.mesh.setEnabled(false);
+                }
+            } */
         }
     };
 };

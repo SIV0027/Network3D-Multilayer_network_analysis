@@ -6,6 +6,7 @@ import Direction from "./direction/direction.js";
 import Node from "./components/node/node.js";
 import Link from "./components/link/link.js";
 import { SingleLayerNetworkConstructor_ARGS } from "./singleLayerNetworkTypes.js";
+import UndirectedNode from "./components/underictedNode/undirectedNode.js";
 
 export namespace Core
 {
@@ -270,6 +271,35 @@ export namespace Core
         {
             return this.linksCount;
         }
+
+        //----------------------------------------------------------------
+        // getNodeDegree(...) - return degree of node of given ID
+        public getNodeDegree<ARGS extends Id_ARGS<NODE_ID_TYPE>>
+        (args: ARGS): number
+        {
+            const {
+                id
+            } = args;
+
+            const node = this.validateNodeId({
+                id: id
+            }) as UndirectedNode<NODE_ID_TYPE,
+                                 NODE_VALUE_TYPE,
+                                 LINK_VALUE_TYPE>;
+
+            const degree = node.getDegree();
+
+            return degree;
+        }
+
+        //----------------------------------------------------------------
+        // getAllNodeIds() - return all Ids of nodes
+        public getAllNodeIds
+        (): Array<NODE_ID_TYPE>
+        {
+            return Array.from(this.nodes.keys());
+        }
+        
 
         //----------------------------------------------------------------
         //----------------------------OTHERS------------------------------
