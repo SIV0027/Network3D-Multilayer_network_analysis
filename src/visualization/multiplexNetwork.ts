@@ -49,6 +49,36 @@ export namespace Visualization
             });
         }
 
+        public addLayerRender<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
+        {
+            const {
+                layerId
+            } = args;
+
+            for(const [_, node] of this.nodes)
+            {
+                        node.iterateLinks({
+                            layerId: layerId,
+                            algorithm: (args) =>
+                            {
+                                const {
+                                    link
+                                } = args;
+        
+                                if(link.getSource() == node)
+                                {
+                                    this.graph.addItem("edge", {
+                                        source: link.getSource().getId().toString(),
+                                        target: link.getTarget().getId().toString(),
+                                        layer: layerId
+                                    });
+                                }
+                            }
+                        });
+            }
+        }
+
         public render
         (): void
         {

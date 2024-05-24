@@ -3,6 +3,7 @@ import { Id_ARGS, SourceTargetNodesIds_ARGS, Value_ARGS } from "../network/netwo
 import Link from "../singlelayer/components/link/link.js";
 import MultiplexNode from "./components/node/multiplexNode.js";
 import { LayerId_ARGS } from "./components/node/multiplexNodeArgsTypes.js";
+import { Layers_ARGS } from "./multiplexNetworkArgsTypes.js";
 
 export namespace Core
 {
@@ -337,11 +338,45 @@ export namespace Core
 
         //----------------------------------------------------------------
         // flattening(...) - create new flatted layer in network
-        public flattening
-        (): void
+        public flattening<ARGS extends Layers_ARGS<LAYER_ID_TYPE> &
+                                       LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): void
         {
-            
-        }
+            const {
+                layers,
+                layerId
+            } = args;
 
+            this.addLayer({
+                layerId: layerId
+            });
+
+            for(const layer of layers)
+            {
+                for(const [_, node] of this.nodes)
+                {
+                    node.iterateLinks({
+                        layerId: layer,
+                        algorithm: (args) =>
+                        {
+                            const {
+                                link
+                            } = args;
+
+                            try
+                            {
+                                this.addLink({
+                                    layerId: layerId,
+                                    sourceNodeId: link.getSource().getId(),
+                                    targetNodeId: link.getTarget().getId(),
+                                    value: null
+                                });
+                            }
+                            catch(e) { }
+                        }
+                    });
+                }
+            }            
+        }
     };
 };
