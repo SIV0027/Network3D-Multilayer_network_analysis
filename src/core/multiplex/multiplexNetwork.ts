@@ -326,7 +326,7 @@ export namespace Core
 
         //----------------------------------------------------------------
         // getAllNodeIds() - return all Ids of nodes
-        public getAllNodeIds
+        public override getAllNodeIds
         (): Array<NODE_ID_TYPE>
         {
             return Array.from(this.nodes.keys());
@@ -334,6 +334,14 @@ export namespace Core
 
         //----------------------------------------------------------------
         //----------------------------OTHERS------------------------------
+
+        //----------------------------------------------------------------
+        // flattening(...) - create new flatted layer in network
+        public flattening
+        (): void
+        {
+            
+        }
 
     };
 };

@@ -43,31 +43,35 @@ export default abstract class Network
     //----------------------------ADDERS------------------------------
 
     //----------------------------------------------------------------
-    // addNode() - add node to network
+    // addNode(...) - add node to network
     public abstract addNode(args: Object): any;
 
     //----------------------------------------------------------------
-    // addLink() - add link to network
+    // addLink(...) - add link to network
     public abstract addLink(args: Object): any;
 
     //----------------------------------------------------------------
     //----------------------------GETTERS-----------------------------
 
     //----------------------------------------------------------------
-    // getNode() - get node of network
+    // getNode(...) - get node of network
     public abstract getNode(args: Object): any;
 
     //----------------------------------------------------------------
-    // getLink() - get link of network
+    // getLink(...) - get link of network
     public abstract getLink(args: Object): any;
 
     //----------------------------------------------------------------
-    // getNodesCount - get count of nodes in network
+    // getNodesCount(...) - get count of nodes in network
     public abstract getNodesCount(args: Object): any; 
        
     //----------------------------------------------------------------
-    // getLinksCount() - get count of links in network
+    // getLinksCount(...) - get count of links in network
     public abstract getLinksCount(args: Object): any;
+
+    //----------------------------------------------------------------
+    // getAllNodeIds(...) - get all node IDs of network
+    public abstract getAllNodeIds(args: Object): any;
 
     //----------------------------------------------------------------
     //----------------------------OTHERS------------------------------

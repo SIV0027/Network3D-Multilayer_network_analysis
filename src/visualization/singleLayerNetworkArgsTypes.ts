@@ -16,3 +16,8 @@ export interface Nodes_ARGS<NODE_ID_TYPE>
 export interface SingleLayerNetworkConstructor_ARGS
        extends CanvasId_ARGS
 { };
+
+export interface Layout_ARGS
+{
+    layout: String;
+}
