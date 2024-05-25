@@ -75,4 +75,9 @@ export default abstract class Network
 
     //----------------------------------------------------------------
     //----------------------------OTHERS------------------------------
+
+    //----------------------------------------------------------------
+    // clusteringCoefficient(...) - call clustering coefficient method
+    // on node with given ID
+    public abstract clusteringCoefficient(args: Object): any;
 };

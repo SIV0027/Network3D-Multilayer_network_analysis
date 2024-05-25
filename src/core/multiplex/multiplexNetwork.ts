@@ -378,5 +378,28 @@ export namespace Core
                 }
             }            
         }
+
+        //----------------------------------------------------------------
+        // clusteringCoefficient(...) - call clustering coefficient method
+        // on node with given ID
+        clusteringCoefficient<ARGS extends Id_ARGS<NODE_ID_TYPE> &
+                                           LayerId_ARGS<LAYER_ID_TYPE>>
+        (args: ARGS): number
+        {
+            const {
+                id,
+                layerId
+            } = args;
+
+            const node = this.validateNodeId({
+                id: id
+            });
+
+            const clusteringCoefficient: number = node.clusteringCoefficient({
+                layerId: layerId
+            });
+
+            return clusteringCoefficient;
+        }
     };
 };

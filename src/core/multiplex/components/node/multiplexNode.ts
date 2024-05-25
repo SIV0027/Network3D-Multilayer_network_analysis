@@ -323,4 +323,72 @@ export default class MultiplexNode<ID_TYPE extends Object,
 
         return layer.size;
     }
+
+    //----------------------------------------------------------------
+    public override clusteringCoefficient<ARGS extends LayerId_ARGS<LAYER_ID_TYPE>>
+    (args: ARGS): number
+    {
+        const {
+            layerId
+        } = args;
+
+        let clusteringCoefficient: number = 0;
+
+        const layer = this.validateLayer({
+            layerId: layerId
+        });
+
+        if(layer.size == 0 || layer.size == 1)
+        {
+            return 0;
+        }
+
+        const neighbors: Array<MultiplexNode<ID_TYPE,
+                                             VALUE_TYPE,
+                                             LINK_VALUE_TYPE,
+                                             LAYER_ID_TYPE>> = new Array();
+        for(const [_, link] of layer)
+        {
+            if(link.getSource() == this)
+            {
+                neighbors.push(link.getTarget() as MultiplexNode<ID_TYPE,
+                                                                 VALUE_TYPE,
+                                                                 LINK_VALUE_TYPE,
+                                                                 LAYER_ID_TYPE>);
+            }
+            else
+            {
+                neighbors.push(link.getSource() as MultiplexNode<ID_TYPE,
+                                                                 VALUE_TYPE,
+                                                                 LINK_VALUE_TYPE,
+                                                                 LAYER_ID_TYPE>);
+            }
+        }
+
+        for(const neighbor of neighbors)
+        {
+            neighbor.iterateLinks({
+                layerId: layerId,
+                algorithm: (args) =>
+                {
+                    const {
+                        neighbourId
+                    } = args;
+
+                    for(const neighborInner of neighbors)
+                    {
+                        if(neighbourId == neighborInner.getId())
+                        {
+                            clusteringCoefficient++;
+                        }
+                    }
+                }
+            });
+        }
+
+        const maxLinks: number = neighbors.length * (neighbors.length - 1);
+        clusteringCoefficient /= maxLinks;
+
+        return clusteringCoefficient;
+    }
 };

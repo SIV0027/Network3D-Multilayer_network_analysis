@@ -98,4 +98,9 @@ export default abstract class Node<ID_TYPE extends Object,
     //----------------------------------------------------------------
     // getDegree(...) - get degree of node
     public abstract getDegree(args: Object): any;
+
+    //----------------------------------------------------------------
+    // clusteringCoefficient() - calculate clustering coefficient of
+    // current node
+    public abstract clusteringCoefficient(args: Object): any;
 };

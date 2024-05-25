@@ -303,5 +303,26 @@ export namespace Core
 
         //----------------------------------------------------------------
         //----------------------------OTHERS------------------------------
+
+        //----------------------------------------------------------------
+        // clusteringCoefficient(...) - call clustering coefficient method
+        // on node with given ID
+        clusteringCoefficient<ARGS extends Id_ARGS<NODE_ID_TYPE>>
+        (args: ARGS): number
+        {
+            const {
+                id
+            } = args;
+
+            const node = this.validateNodeId({
+                id: id
+            });
+
+            const clusteringCoefficient: number = (node as UndirectedNode<NODE_ID_TYPE,
+                                                                          NODE_VALUE_TYPE,
+                                                                          LINK_VALUE_TYPE>).clusteringCoefficient();
+
+            return clusteringCoefficient;
+        }
     };
 };

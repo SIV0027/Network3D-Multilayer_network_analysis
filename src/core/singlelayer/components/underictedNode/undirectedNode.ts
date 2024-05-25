@@ -193,4 +193,62 @@ export default class UndirectedNode<ID_TYPE extends Object,
     {
         return this.links.size;
     }
+
+    //----------------------------------------------------------------
+    // clusteringCoefficient() - calculate clustering coefficient of
+    // current node
+    public override clusteringCoefficient
+    (): number
+    {
+        if(this.links.size == 0 || this.links.size == 1)
+        {
+            return 0;
+        }
+
+        let clusteringCoefficient: number = 0;
+
+        const neighbors: Array<UndirectedNode<ID_TYPE,
+                                              VALUE_TYPE,
+                                              LINK_VALUE_TYPE>> = new Array();
+            for(const [_, link] of this.links)
+            {
+                if(link.getSource() == this)
+                {
+                    neighbors.push(link.getTarget() as UndirectedNode<ID_TYPE,
+                                                                      VALUE_TYPE,
+                                                                      LINK_VALUE_TYPE>);
+                }
+                else
+                {
+                    neighbors.push(link.getSource() as UndirectedNode<ID_TYPE,
+                                                                      VALUE_TYPE,
+                                                                      LINK_VALUE_TYPE>);
+                }
+            }
+    
+            for(const neighbor of neighbors)
+            {
+                neighbor.iterateLinks({
+                    algorithm: (args) =>
+                    {
+                        const {
+                            neighbourId
+                        } = args;
+    
+                        for(const neighborInner of neighbors)
+                        {
+                            if(neighbourId == neighborInner.getId())
+                            {
+                                clusteringCoefficient++;
+                            }
+                        }
+                    }
+                });
+            }
+    
+            const maxLinks: number = neighbors.length * (neighbors.length - 1);
+            clusteringCoefficient /= maxLinks;
+    
+            return clusteringCoefficient; 
+    }
 };
