@@ -57,6 +57,20 @@ export class MultilayerNetwork<T extends TT, U extends TU<T>>
         this.nodes = this.hin.generateMultilayerNodes();
     }
 
+    // Returns its HIN object
+    public getHIN
+    (): HIN<T, U>
+    {
+        return this.hin;
+    }
+
+    // Returns all node layers (with all nodes)
+    public getNodes
+    (): MultilayerNetwork_Nodes<T, U>
+    {
+        return this.nodes;
+    }
+
     // Adds node to given node layer of current network
     public addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
                                                    ARGS_Node<Node<L, T, U>>>
@@ -94,7 +108,6 @@ export class MultilayerNetwork<T extends TT, U extends TU<T>>
             nodeId
         } = args;
 
-
         const layer: Map<string, Node<L, T, U>> = this.nodes[layerId];
         // Check if node with given ID exists
         if(!layer.has(nodeId))
@@ -121,15 +134,11 @@ export class MultilayerNetwork<T extends TT, U extends TU<T>>
         } = args;
 
         // Getting source node type
-        const sourceNodeLayerId: U[L]["source"] = this.hin.getSourceTarget({
-            layerId: layerId
-        }).source;
+        const sourceNodeLayerId: U[L]["source"] = link.getSource().getLayerId();
         const sourceNodeId: string = link.getSource().getId();
 
         // Getting target node type
-        const targetNodeLayerId: U[L]["target"] = this.hin.getSourceTarget({
-            layerId: layerId
-        }).target;
+        const targetNodeLayerId: U[L]["target"] = link.getTarget().getLayerId();
         const targetNodeId: string = link.getTarget().getId();
 
         // Getting source node
@@ -194,12 +203,7 @@ export class MultilayerNetwork<T extends TT, U extends TU<T>>
         return link;
     }
 
-    /* protected getNodes
-    (): MultilayerNetwork_Nodes<T, U, V["nodes"]>
-    {
-        return (this.nodes as MultilayerNetwork_Nodes<T, U, V["nodes"]>);
-    }
-
+    /* 
     public abstract removeNode
     (args: ARGS_): any;
 

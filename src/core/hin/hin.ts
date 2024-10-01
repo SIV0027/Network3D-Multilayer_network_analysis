@@ -68,6 +68,20 @@ export class HIN<T extends TT, U extends TU<T>>
         return this.orientationGenerator[orientation](multi, source, target);
     }
 
+    // Returns a list of node layers (types)
+    public getNodeLayersList
+    (): Array<keyof T>
+    {
+        return Object.keys(this.tuMeta.nodes);
+    }
+
+    // Returns a list of link layers (types)
+    public getLinkLayersList
+    (): Array<keyof U>
+    {
+        return Object.keys(this.tuMeta.links);
+    }
+
     // Returns types of source and target nodes by network structure (tuMeta) of given link layer 
     public getSourceTarget<L extends keyof U, ARGS extends ARGS_LayerId<L>>
     (args: ARGS): Source_Target<U[L]["source"], U[L]["target"]>
@@ -82,8 +96,8 @@ export class HIN<T extends TT, U extends TU<T>>
         };
     }
 
-    // Returns information about direction and multilinks of given link layer by network structure (tuMeta)
-    public getDirectionMulti<L extends keyof U, ARGS extends ARGS_LayerId<L>>
+    // Returns information about orientation and multilinks of given link layer by network structure (tuMeta)
+    public getOrientationMulti<L extends keyof U, ARGS extends ARGS_LayerId<L>>
     (args: ARGS): Layer_Orientation_Multi<T, U, L>
     {
         const {

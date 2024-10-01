@@ -105,7 +105,7 @@ export class Node<L extends keyof T, T extends TT, U extends TU<T>>
         } = args;
 
         // Obtain information about direction and mutlilinks information of given link layer
-        const layerOrientationMulti: Layer_Orientation_Multi<T, U, K> = this.hin.getDirectionMulti({
+        const layerOrientationMulti: Layer_Orientation_Multi<T, U, K> = this.hin.getOrientationMulti({
             layerId: layerId
         });
         // Obtain information about source and target nodes types of given link layer
@@ -164,7 +164,7 @@ export class Node<L extends keyof T, T extends TT, U extends TU<T>>
         }
         
         // Obtain information about direction and mutlilinks information of given link layer
-        const layerOrientationMulti: Layer_Orientation_Multi<T, U, K> = this.hin.getDirectionMulti({
+        const layerOrientationMulti: Layer_Orientation_Multi<T, U, K> = this.hin.getOrientationMulti({
             layerId: layerId
         });
         // Obtain information about source and target nodes types of given link layer
@@ -222,7 +222,7 @@ export class Node<L extends keyof T, T extends TT, U extends TU<T>>
             }
 
             // Add link to link layer
-            (layer as Multi_Gen<K, T, U>["Multilinks"]).get(neighbourId)?.push(link);
+            (layer as Multi_Gen<K, T, U>["Multilinks"]).get(neighbourId)!.push(link);
         }
     }
 

@@ -1,4 +1,4 @@
-// Items for arguments (parameters) JSONs of constructors and methods (always start by "ARGS_")
+// Items for arguments (parameters) JSONs of constructors and methods (always starts with prefix "ARGS_")
 
 export interface ARGS_
 { };
@@ -101,4 +101,14 @@ export interface ARGS_Orientation<T>
 export interface ARGS_Multi<T>
 {
     multi: T;
+};
+
+export interface ARGS_Callback<T>
+{
+    callback: T;
+};
+
+export interface ARGS_Network<T>
+{
+    network: T;
 };

@@ -34,6 +34,11 @@ export type Orientation_Gen<K extends keyof Multi, L extends keyof U, T extends 
     Directed: U[K]["source"] extends U[K]["target"] ? U[K]["target"] extends U[K]["source"] ? { in: Multi_Gen<L, T, U>[K], out: Multi_Gen<L, T, U>[K] } : Multi_Gen<L, T, U>[K] : Multi_Gen<L, T, U>[K]
 };
 
+// Directed or undirected
+export type Orientation_In<T> = T;
+export type Orientation_Out<T> = { in: T, out: T };
+export type Orientation_In_Out<V extends keyof Orientation, T> = V extends "Undirected" ? Orientation_In<T> : Orientation_Out<T>;
+
 // Type filter for filtering if given node layer is source or target node type of given link layer
 export type Filtered_U_Keys<K extends keyof U, L extends keyof T, T extends TT, U extends TU<T>> = U[K]["source"] extends L ? K : U[K]["target"] extends L ? K : never;
 // Data structure for link layers of given node
