@@ -38,6 +38,10 @@ import {
     ARGS_SingleLayerNetwork_Constructor
 } from "./singleLayerNetwork_types.js";
 
+import {
+    Layer
+} from "../../visualization/interface/index.js";
+
 // Represents single layer network
 // It receives (generics) type of node, type of link, type of orerientation (Directed or Undirected) and Multi type (Singlelinks or Multilinks)
 export class SingleLayerNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
@@ -183,5 +187,22 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
         this.core.iterate({
             callback: callback
         });
+    }
+
+
+
+
+
+    public visualization
+    (): void
+    {
+        const layer = new Layer({
+            container: "mountNode",
+            core: this.core,
+            layerId: "default"
+        });
+
+        layer.loadData();
+        layer.render();
     }
 };
