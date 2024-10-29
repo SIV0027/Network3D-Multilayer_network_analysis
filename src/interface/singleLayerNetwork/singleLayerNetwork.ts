@@ -35,12 +35,13 @@ import {
 } from "./singleLayerNetwork_metrics.js";
 
 import {
+    SingleLayerNetwork as SingleLayerNetworkVisualization
+} from "../../visualization/index.js";
+
+import {
     ARGS_SingleLayerNetwork_Constructor
 } from "./singleLayerNetwork_types.js";
 
-import {
-    Layer
-} from "../../visualization/interface/index.js";
 
 // Represents single layer network
 // It receives (generics) type of node, type of link, type of orerientation (Directed or Undirected) and Multi type (Singlelinks or Multilinks)
@@ -51,6 +52,8 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
     protected core: MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>;
     // Access to metrics calculate methods
     protected metrics: SingleLayerNetworkMetrics<T, U, V, W>;
+    // Enable visualization of network
+    protected visualization: SingleLayerNetworkVisualization<Node_Types<T>, Link_Types<U, V, W>>;
 
     // SingleLayerNetwork is initialized by its Orientation and Mulit info
     constructor(args: ARGS_SingleLayerNetwork_Constructor<V, W>)
@@ -83,6 +86,10 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
 
         this.metrics = new SingleLayerNetworkMetrics({
             network: this.core
+        });
+        
+        this.visualization = new SingleLayerNetworkVisualization({
+            core: this.core
         });
     }
 
@@ -176,6 +183,13 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
         return this.metrics;
     }
 
+    // Override getVisualization method
+    public override getVisualization
+    (): SingleLayerNetworkVisualization<Node_Types<T>, Link_Types<U, V, W>>
+    {
+        return this.visualization;
+    }
+
     // Override iterate method
     public override iterate<ARGS extends ARGS_Callback<IterateCallback<Node_Types<T>, Link_Types<U, V, W>>>>
     (args: ARGS): void
@@ -187,22 +201,5 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
         this.core.iterate({
             callback: callback
         });
-    }
-
-
-
-
-
-    public visualization
-    (): void
-    {
-        const layer = new Layer({
-            container: "mountNode",
-            core: this.core,
-            layerId: "default"
-        });
-
-        layer.loadData();
-        layer.render();
     }
 };

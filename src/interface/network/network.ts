@@ -16,6 +16,8 @@ export abstract class Network<T extends TT, U extends TU<T>>
     protected abstract core: any;
     // Access to metrics calculate methods
     protected abstract metrics: any;
+    // Enable visualization of network
+    protected abstract visualization: any;
 
     // Adds node
     public abstract addNode
@@ -39,6 +41,10 @@ export abstract class Network<T extends TT, U extends TU<T>>
 
     // Getter of metrics
     public abstract getMetrics
+    (args: ARGS_): any;
+
+    // Getter of visualization
+    public abstract getVisualization
     (args: ARGS_): any;
 
     // Enable iterate through the network

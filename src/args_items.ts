@@ -112,3 +112,13 @@ export interface ARGS_Network<T>
 {
     network: T;
 };
+
+export interface ARGS_Core<T>
+{
+    core: T;
+}
+
+export interface ARGS_Container<T>
+{
+    container: T;
+}

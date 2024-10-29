@@ -27,6 +27,10 @@ import {
 } from "./multilayerNetwork_metrics.js";
 
 import {
+    Network as NetworkVisualizaiton
+} from "../../visualization/index.js";
+
+import {
     Multi_Data_Type_Value,
     IterateCallback,
     ARGS_MultilayerNetwork_Constructor
@@ -41,6 +45,8 @@ extends Network<T, U>
     protected core: Core<T, U>;
     // Compute all metrics of network
     protected metrics: MultilayerNetworkMetrics<T, U>;
+    // Enable visualization of network
+    protected visualization: NetworkVisualizaiton<T, U>;
 
     // Multilayer newtork is initialized by describing of structure of network (TU_META<T, U>)
     constructor(args: ARGS_MultilayerNetwork_Constructor<T, U>)
@@ -61,6 +67,10 @@ extends Network<T, U>
 
         this.metrics = new MultilayerNetworkMetrics({
             network: this
+        });
+
+        this.visualization = new NetworkVisualizaiton({
+            core: this,
         });
     }
 
@@ -219,6 +229,13 @@ extends Network<T, U>
     (): MultilayerNetworkMetrics<T, U>
     {
         return this.metrics;
+    }
+
+    // Override getVisualization method
+    public override getVisualization
+    (): NetworkVisualizaiton<T, U>
+    {
+        return this.visualization;
     }
 
     // Enable passage through the whole network
