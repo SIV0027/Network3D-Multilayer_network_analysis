@@ -1,5 +1,4 @@
 import {
-    ARGS_Callback,
     ARGS_NodeId,
     ARGS_SourceNodeId,
     ARGS_TargetNodeId,
@@ -7,7 +6,6 @@ import {
 } from "../../args_items.js";
 
 import {
-    TU_Meta,
     Orientation,
     Multi,
     HIN
@@ -19,20 +17,17 @@ import {
 
 import {
     MultilayerNetwork
-} from "../multilayerNetwork/multilayerNetwork.js";
+} from "../core/index.js";
 
 import {
     Node_Types,
-    Link_Types
+    Link_Types,
+    SingleLayerNetwork_TU_Meta
 } from "./singleLayerNetwork_types.js";
 
 import {
-    IterateCallback
-} from "../multilayerNetwork/multilayerNetwork_types.js";
-
-import {
-    SingleLayerNetworkMetrics
-} from "./singleLayerNetwork_metrics.js";
+    SingleLayerNetwork as SingleLayerNetworkMetrics
+} from "../../metrics/index.js";
 
 import {
     SingleLayerNetwork as SingleLayerNetworkVisualization
@@ -48,25 +43,19 @@ import {
 export class SingleLayerNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
 extends Network<Node_Types<T>, Link_Types<U, V, W>>
 {
-    // MultilayerNetwork already implements all method
-    protected core: MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>;
-    // Access to metrics calculate methods
-    protected metrics: SingleLayerNetworkMetrics<T, U, V, W>;
-    // Enable visualization of network
-    protected visualization: SingleLayerNetworkVisualization<Node_Types<T>, Link_Types<U, V, W>>;
-
-    // SingleLayerNetwork is initialized by its Orientation and Mulit info
-    constructor(args: ARGS_SingleLayerNetwork_Constructor<V, W>)
+    public static createSTDNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
+    (args: {
+        orientation: V,
+        multi: W
+    }): SingleLayerNetwork<T, U, V, W>
     {
         const {
             orientation,
             multi
         } = args;
 
-        super();
-
-        // Create TU_Meta of single layer network (it always contains just one layer)
-        const tuMeta: TU_Meta<Node_Types<T>, Link_Types<U, V, W>> = {
+        // Create SingleLayerNetwork_TU_Meta of single layer network
+        const tuMeta: SingleLayerNetwork_TU_Meta<T, U, V, W> = {
             nodes: {
                 default: null
             },
@@ -80,17 +69,50 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
             }
         };
 
-        this.core = new MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>({
+        const core = new MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>({
             tuMeta: tuMeta
         });
 
-        this.metrics = new SingleLayerNetworkMetrics({
-            network: this.core
+        const metrics = new SingleLayerNetworkMetrics<T, U, V, W>({
+            iterate: core.iterate.bind(core)
         });
-        
-        this.visualization = new SingleLayerNetworkVisualization({
-            core: this.core
+
+        const visualization = new SingleLayerNetworkVisualization<T, U, V, W>({
+            iterate: core.iterate.bind(core)
         });
+
+        const network = new SingleLayerNetwork<T, U, V, W>({
+            core: core,
+            metrics: metrics,
+            visualization: visualization
+        });
+        return network;
+    }
+
+    // MultilayerNetwork already implements all method
+    protected core: MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>;
+    // Access to metrics calculate methods
+    protected metrics: SingleLayerNetworkMetrics<T, U, V, W>; // Zde by měl být typ "any" (uživatel by si mohl sám určit, jaký typ metriky chce použít - to samé i pro visualization)
+    // Enable visualization of network
+    protected visualization: SingleLayerNetworkVisualization<T, U, V, W>;
+
+    // SingleLayerNetwork is initialized by its Orientation and Mulit info
+    constructor(args: ARGS_SingleLayerNetwork_Constructor<T, U, V, W>)
+    {
+        const {
+            core,
+            metrics,
+            visualization
+        } = args;
+
+        super();
+
+        // Vyzkoušet a zjistit, zda pokud Core (který má dostat "SingleLayerNetwork_TU_Meta") dostane obecnou strukturu ("TU_Meta"), typový systém
+        // vyhodí chybu (má ji vyhodit)
+
+        this.core = core;
+        this.metrics = metrics;
+        this.visualization = visualization;
     }
 
     // Override addNode method
@@ -185,21 +207,8 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
 
     // Override getVisualization method
     public override getVisualization
-    (): SingleLayerNetworkVisualization<Node_Types<T>, Link_Types<U, V, W>>
+    (): SingleLayerNetworkVisualization<T, U, V, W>
     {
         return this.visualization;
-    }
-
-    // Override iterate method
-    public override iterate<ARGS extends ARGS_Callback<IterateCallback<Node_Types<T>, Link_Types<U, V, W>>>>
-    (args: ARGS): void
-    {
-        const {
-            callback
-        } = args;
-
-        this.core.iterate({
-            callback: callback
-        });
     }
 };

@@ -1,29 +1,11 @@
 import {
+    ARGS_Callback,
     ARGS_NodeId
 } from "../../args_items.js";
 
 import {
-    Orientation,
-    Multi,
-    Orientation_Undir_Dir,
-    Orientation_Dir
-} from "../../core/index.js";
-
-import {
-    MultilayerNetwork
-} from "../multilayerNetwork/multilayerNetwork.js";
-
-import {
-    MultilayerNetworkMetrics
-} from "../multilayerNetwork/multilayerNetwork_metrics.js";
-
-import {
-    IterateCallback
-} from "../multilayerNetwork/multilayerNetwork_types.js";
-
-import {
-    Metrics
-} from "../network/metrics.js";
+    Network
+} from "../network/network.js";
 
 import {
     GetLinksCount,
@@ -33,54 +15,107 @@ import {
     AverageDegree,
     DegreeDistribution,
     ClusteringCoefficient
-} from "../network/metrics_types.js";
+} from "../network/network_types.js";
 
 import {
+    IterateCallback,
+    Link_Types,
+    Multi,
     Node_Types,
-    Link_Types
-} from "./singleLayerNetwork_types.js";
+    Orientation,
+    Orientation_Dir,
+    Orientation_Undir_Dir,
+    Iterate
+} from "../../interface/index.js";
+
+
 
 // Metrics for single layer network
 // It receives (generics) type of node, type of link, type of orerientation (Directed or Undirected) and Multi type (Singlelinks or Multilinks)
-export class SingleLayerNetworkMetrics<T, U, V extends keyof Orientation, W extends keyof Multi>
-extends Metrics<Node_Types<T>, Link_Types<U, V, W>, MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>>
+export class SingleLayerNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
+extends Network<Node_Types<T>, Link_Types<U, V, W>>
 implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, DegreeDistribution/* , ClusteringCoefficient */
 {
-    // MutlilayerNetworkMetrics already implements metrics algorithms 
-    private core: MultilayerNetworkMetrics<Node_Types<T>, Link_Types<U, V, W>>;
-
     // SingleLayerNetwork is initialized by its network
     constructor(args: {
-        network: MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>
+        iterate: Iterate<ARGS_Callback<IterateCallback<Node_Types<T>, Link_Types<U, V, W>>>, Node_Types<T>, Link_Types<U, V, W>>
     })
     {
         const {
-            network
+            iterate
         } = args;
 
         super({
-            network: network 
+            iterate: iterate
         });
-
-        this.core = network.getMetrics();
     }
 
     // Nodes count
     getNodesCount
     (): number
     {
-        return this.core.getNodesCount({
-            layerId: "default"
+        // Return variable
+        let nodesCount: number = 0;
+
+        // Callback for network
+        const callback: IterateCallback<Node_Types<T>, Link_Types<U, V, W>> = (args) =>
+        {
+            const {
+                nodeLayers
+            } = args;
+            
+            // Set return variable to value of size of given layer
+            nodesCount = nodeLayers["default"].size;
+        };
+            
+        // Let callback iterate through network
+        this.iterate({
+            callback: callback
         });
+
+        return nodesCount;
     }
 
     // Links count
     getLinksCount
     (): number
-    {
-        return this.core.getLinksCount({
-            layerId: "default"
+    {        
+        // Return variable
+        let linkCount = 0;
+
+        const callback: IterateCallback<Node_Types<T>, Link_Types<U, V, W>> = (args) =>
+        {
+            const {
+                hin,
+                linkLayers
+            } = args;
+
+            // Through the nodes of link layers
+            for(const [_, node] of linkLayers["default"][0])
+            {
+                // Get link layer from data structure of current node
+                const nodeLinkLayer = node.getLinks()["default"];
+                // Add number of degree of current node to sum
+                linkCount += (nodeLinkLayer instanceof Map) ? nodeLinkLayer.size : nodeLinkLayer.out.size;
+            }
+
+            // Get information about link layer
+            const layerOrientationMulti = hin.getOrientationMulti({
+                layerId: "default"
+            });
+
+            // If given link layer is interlayer (source type == target layer), everey link is count twice => linkCount /= 2
+            if(layerOrientationMulti.orientation == "Undirected")
+            {
+                linkCount /= 2;
+            }
+        }
+
+        this.iterate({
+            callback: callback
         });
+    
+        return linkCount;
     }
 
     // Degree of given node
@@ -124,7 +159,7 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
         };
 
         // Iterate the network
-        this.network.iterate({
+        this.iterate({
             callback: callback
         });
 
@@ -135,20 +170,23 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
     public degreeSequence
     (): Orientation_Undir_Dir<V, Array<number>>
     {
-        // Bool value which determines if network is undirected
-        const isNetworkUndirected = this.network.getHIN().getOrientationMulti({
-            layerId: "default"
-        }).orientation == "Undirected";
-
-        // Return variable
-        const degreeSequence: Orientation_Undir_Dir<V, Array<number>> = ((isNetworkUndirected) ? new Array<number>() : { in: new Array<number>(), out: new Array<number>() }) as Orientation_Undir_Dir<V, Array<number>>;
+        // Return variable, which initialize by default value -> it is overwritten in the iterate callback
+        let degreeSequence: Orientation_Undir_Dir<V, Array<number>> = new Array<number>() as Orientation_Undir_Dir<V, Array<number>>;
 
         // Callback to iterate the network
         const callback: IterateCallback<Node_Types<T>, Link_Types<U, V, W>> = (args) =>
         {
             const {
-                nodeLayers
+                nodeLayers,
+                hin
             } = args;
+
+            // Bool value which determines if network is undirected
+            const isNetworkUndirected = hin.getOrientationMulti({
+                layerId: "default"
+            }).orientation == "Undirected";
+
+            degreeSequence = ((isNetworkUndirected) ? new Array<number>() : { in: new Array<number>(), out: new Array<number>() }) as Orientation_Undir_Dir<V, Array<number>>;
 
             // Through the all nodes of network (it has just one layer)
             for(const [_, node] of nodeLayers["default"])
@@ -166,23 +204,24 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
                     (degreeSequence as Orientation_Dir<Array<number>>).out.push(links.out.size);
                 }
             }
+
+            // Sort the sequence(s)
+            if(isNetworkUndirected)
+            {
+                // Default sorting in javascript is lexicographic (even on numbers)
+                (degreeSequence as Array<number>).sort((a, b) => a - b);
+            }
+            else
+            {
+                (degreeSequence as Orientation_Dir<Array<number>>).in.sort((a, b) => a - b);
+                (degreeSequence as Orientation_Dir<Array<number>>).out.sort((a, b) => a - b);
+            }
         };
 
         // Iterate the network
-        this.network.iterate({
+        this.iterate({
             callback: callback
         });
-
-        // Sort the sequence(s)
-        if(isNetworkUndirected)
-        {
-            (degreeSequence as Array<number>).sort();
-        }
-        else
-        {
-            (degreeSequence as Orientation_Dir<Array<number>>).in.sort();
-            (degreeSequence as Orientation_Dir<Array<number>>).out.sort();
-        }
 
         return degreeSequence;
     }
@@ -191,10 +230,25 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
     public averageDegree
     (): number
     {
-        // Bool value which determines if network is undirected
-        const isNetworkUndirected = this.network.getHIN().getOrientationMulti({
-            layerId: "default"
-        }).orientation == "Undirected";
+        // Bool value which determines if network is undirected, it is intialized to true and overwritten in the iterate callback
+        let isNetworkUndirected: boolean = true;
+
+        // Implementation of the iterate callback
+        const callback: IterateCallback<Node_Types<T>, Link_Types<U, V, W>> = (args) =>
+        {
+            const {
+                hin
+            } = args;
+
+            isNetworkUndirected = hin.getOrientationMulti({
+                layerId: "default"
+            }).orientation == "Undirected";
+        };
+
+        // Iterate through the network
+        this.iterate({
+            callback: callback
+        });
 
         // Get count of nodes
         const N: number = this.getNodesCount();
@@ -208,10 +262,25 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
     public degreeDistribution
     (): Orientation_Undir_Dir<V, Array<number>>
     {
-        // Bool value which determines if network is undirected
-        const isNetworkUndirected = this.network.getHIN().getOrientationMulti({
-            layerId: "default"
-        }).orientation == "Undirected";
+        // Bool value which determines if network is undirected, which is initalized to true and its overwritten in iterate callback
+        let isNetworkUndirected: boolean = true;
+
+        // Implementation of the iterate callback
+        const callback: IterateCallback<Node_Types<T>, Link_Types<U, V, W>> = (args) =>
+        {
+            const {
+                hin
+            } = args;
+
+            isNetworkUndirected = hin.getOrientationMulti({
+                layerId: "default"
+            }).orientation == "Undirected";
+        };
+
+        // Iterate through the network
+        this.iterate({
+            callback: callback
+        });
 
         // Get degree sequence (by degree sequence is degree distribution calculated)
         const degreeSequence = this.degreeSequence();

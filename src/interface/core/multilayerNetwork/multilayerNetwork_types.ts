@@ -1,10 +1,11 @@
 import {
+    ARGS_Callback,
     ARGS_LayerId,
     ARGS_NodeId,
     ARGS_SourceNodeId,
     ARGS_TargetNodeId,
     ARGS_TUMeta
-} from "../../args_items.js";
+} from "../../../args_items.js";
 
 import {
     HIN,
@@ -14,9 +15,13 @@ import {
     TT,
     TU,
     TU_Meta
-} from "../../core/index.js";
+} from "../../../core/index.js";
 
+// Type which determines if concrete leayer of network enables multilinks or not - if enables => T; otherwise Array<T>
 export type Multi_Data_Type_Value<T extends TT, U extends TU<T>, L extends keyof U> = U[L]["multi"] extends "Singlelinks" ? U[L]["value"] : Array<U[L]["value"]>;
+
+// Type for iterate method which enables iterate through the network
+export type Iterate<ARGS extends ARGS_Callback<IterateCallback<T, U>>, T extends TT, U extends TU<T>> = (args: ARGS) => void;
 
 // Type for callback to iterate through network
 export type IterateCallback<T extends TT, U extends TU<T>> = (args: {

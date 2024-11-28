@@ -1,7 +1,8 @@
 import {
     ARGS_LayerId,
-    ARGS_Core,
-    ARGS_Container
+    ARGS_Container,
+    ARGS_Iterate,
+    ARGS_Callback
 } from "../../../args_items.js";
 
 import {
@@ -10,7 +11,8 @@ import {
 } from "../../../core/hin/hin_types.js";
 
 import {
-    MultilayerNetwork
+    Iterate,
+    IterateCallback
 } from "../../../interface/index.js";
 
 export type Edge = {
@@ -28,6 +30,6 @@ export type Nodes = Array<Node>;
 
 // Object type (interface) of parameters of Layer constructor
 export interface ARGS_Layer_Constructor<T extends TT, U extends TU<T>> extends ARGS_LayerId<keyof U>,
-                                                                               ARGS_Core<MultilayerNetwork<T, U>>,
+                                                                               ARGS_Iterate<Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>>,
                                                                                ARGS_Container<string | HTMLElement>
 { };

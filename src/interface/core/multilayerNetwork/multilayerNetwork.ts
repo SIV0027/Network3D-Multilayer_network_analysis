@@ -5,7 +5,7 @@ import {
     ARGS_SourceNodeId,
     ARGS_TargetNodeId,
     ARGS_Value
-} from "../../args_items.js";
+} from "../../../args_items.js";
 
 import {
     HIN,
@@ -16,19 +16,11 @@ import {
     TU,
     Node_Links,
     Multi_Data_Type
-} from "../../core/index.js";
+} from "../../../core/index.js";
 
 import {
     Network
-} from "../network/network.js";
-
-import {
-    MultilayerNetworkMetrics
-} from "./multilayerNetwork_metrics.js";
-
-import {
-    Network as NetworkVisualizaiton
-} from "../../visualization/index.js";
+} from "../index.js";
 
 import {
     Multi_Data_Type_Value,
@@ -36,19 +28,20 @@ import {
     ARGS_MultilayerNetwork_Constructor
 } from "./multilayerNetwork_types.js";
 
+import {
+    IterateMethod
+} from "../index.js";
+
 // This class represents Multilayer network to user
 // It gets (generics) layers (types) of nodes and layers (types) of links
 export class MultilayerNetwork<T extends TT, U extends TU<T>>
 extends Network<T, U>
+implements IterateMethod<T, U>
 {
-    // Data structure which represents the whole structure of network (from core part of framework)
+    // Data structure which enable access to the structure of the network
     protected core: Core<T, U>;
-    // Compute all metrics of network
-    protected metrics: MultilayerNetworkMetrics<T, U>;
-    // Enable visualization of network
-    protected visualization: NetworkVisualizaiton<T, U>;
 
-    // Multilayer newtork is initialized by describing of structure of network (TU_META<T, U>)
+    // Multilayer network is initialized by describing of structure of network (TU_META<T, U>)
     constructor(args: ARGS_MultilayerNetwork_Constructor<T, U>)
     {
         const {
@@ -64,18 +57,10 @@ extends Network<T, U>
         this.core = new Core<T, U>({
             hin: hin
         });
-
-        this.metrics = new MultilayerNetworkMetrics({
-            network: this
-        });
-
-        this.visualization = new NetworkVisualizaiton({
-            core: this,
-        });
     }
 
     // Adds node to given node layer of network
-    public addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
+    public override addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
                                                    ARGS_NodeId<string> &
                                                    ARGS_Value<T[L]["value"]>>
     (args: ARGS): void
@@ -108,7 +93,7 @@ extends Network<T, U>
     }
 
     // Getter of node (its value) by its ID
-    public getNode<L extends keyof T>
+    public override getNode<L extends keyof T>
     (args: {
         layerId: L,
         nodeId: string
@@ -130,7 +115,7 @@ extends Network<T, U>
     }
 
     // Adds link to given link layer of network
-    public addLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
+    public override addLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
                                                                                                                                      ARGS_SourceNodeId<string> &
                                                                                                                                      ARGS_TargetNodeId<string> &
                                                                                                                                      ARGS_Value<U[L]["value"]>>
@@ -178,7 +163,7 @@ extends Network<T, U>
     }
 
     // Getter of value of single link (or array of values if Multilinks is allowed)
-    public getLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
+    public override getLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
                                                                                                                                      ARGS_SourceNodeId<string> &
                                                                                                                                      ARGS_TargetNodeId<string>>
     (args: ARGS): Multi_Data_Type_Value<T, U, L>
@@ -217,27 +202,6 @@ extends Network<T, U>
         return ret;
     }
 
-    // Getter of HIN of network
-    public getHIN
-    (): HIN<T, U>
-    {
-        return this.core.getHIN();
-    }
-
-    // Getter of metrics of network
-    public getMetrics
-    (): MultilayerNetworkMetrics<T, U>
-    {
-        return this.metrics;
-    }
-
-    // Override getVisualization method
-    public override getVisualization
-    (): NetworkVisualizaiton<T, U>
-    {
-        return this.visualization;
-    }
-
     // Enable passage through the whole network
     public iterate<ARGS extends ARGS_Callback<IterateCallback<T, U>>>
     (args: ARGS): void
@@ -266,7 +230,8 @@ extends Network<T, U>
             ];
         }
 
-        // Callback receives structure of node layers, structure of link layers and info about network structure (by HIN form)
+        // Callback receives structure of node layers, structure of link layers, info about network structure (by HIN form)
+        // and getNode and getLink metods
         callback({
             nodeLayers: this.core.getNodes(),
             linkLayers: linkLayers as { [K in keyof U]: [Map<string, Node<U[K]["source"], T, U>>, Map<string, Node<U[K]["target"], T, U>>] },

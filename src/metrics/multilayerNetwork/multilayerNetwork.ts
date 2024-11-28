@@ -1,4 +1,7 @@
-import { ARGS_LayerId } from "../../args_items.js";
+/* import {
+    ARGS_LayerId
+} from "../../args_items.js";
+
 import {
     Node_Links,
     TT,
@@ -6,26 +9,22 @@ import {
 } from "../../core/index.js";
 
 import {
-    Metrics
-} from "../network/metrics.js";
+    Network
+} from "../network/network.js";
 
 import {
     GetLinksCount,
     GetNodesCount
-} from "../network/metrics_types.js";
-
-import {
-    MultilayerNetwork
-} from "./multilayerNetwork.js";
+} from "../network/network_types.js";
 
 import {
     IterateCallback
-} from "./multilayerNetwork_types.js";
+} from "../../interface/core/multilayerNetwork/multilayerNetwork_types.js";
 
 // This class implements algorithms for metrics of Multilayer network
 // It gets (generics) types of nodes and types of links
-export class MultilayerNetworkMetrics<T extends TT, U extends TU<T>>
-extends Metrics<T, U, MultilayerNetwork<T, U>>
+export class MultilayerNetwork<T extends TT, U extends TU<T>>
+extends Network<T, U>
 implements GetNodesCount, GetLinksCount
 {
     // Returns count of nodes of given node layer
@@ -51,7 +50,7 @@ implements GetNodesCount, GetLinksCount
         };
             
         // Let callback iterate through network
-        this.network.iterate({
+        this.iterate({
             callback: callback
         });
 
@@ -101,10 +100,10 @@ implements GetNodesCount, GetLinksCount
         };
 
         // Let callback iterate through network
-        this.network.iterate({
+        this.iterate({
             callback: callback
         });
 
         return linkCount;
     }
-};
+}; */

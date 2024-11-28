@@ -1,4 +1,8 @@
 import {
+    ARGS_Callback
+} from "../../../args_items.js";
+
+import {
     TT,
     TU
 } from "../../../core/hin/hin_types.js";
@@ -8,8 +12,8 @@ import {
 } from "../../../core/index.js";
 
 import {
-    IterateCallback,
-    MultilayerNetwork
+    Iterate,
+    IterateCallback
 } from "../../../interface/index.js";
 
 import {
@@ -17,6 +21,10 @@ import {
     Edges,
     Nodes
 } from "./layer_types.js";
+
+import {
+    HIN
+} from "../../../core/index.js";
 
 export declare namespace G6
 {
@@ -33,19 +41,19 @@ export declare namespace G6
 export class Layer<T extends TT, U extends TU<T>>
 {
     private layerId: keyof U;
-    private core: MultilayerNetwork<T, U>;
+    private iterate: Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>;
     private graph: G6.Graph;
 
     constructor(args: ARGS_Layer_Constructor<T, U>)
     {
         const {
             layerId,
-            core,
+            iterate,
             container
         } = args;
 
         this.layerId = layerId;
-        this.core = core;
+        this.iterate = iterate;
         this.graph = new (G6.Graph as new (options: any) => G6.Graph)({
             container: container,
             width: 800,
@@ -88,7 +96,7 @@ export class Layer<T extends TT, U extends TU<T>>
             }
         };
     
-        this.core.iterate({
+        this.iterate({
             callback: callback
         });
 
@@ -129,7 +137,7 @@ export class Layer<T extends TT, U extends TU<T>>
             }
         }
 
-        this.core.iterate({
+        this.iterate({
             callback: callback
         });
 
@@ -139,11 +147,25 @@ export class Layer<T extends TT, U extends TU<T>>
     private loadData
     (): void
     {
-        const hin = this.core.getHIN();
-        const linkLayerNodeTypes = hin.getSourceTarget({
+        let h: HIN<T, U>;
+
+        const callback: IterateCallback<T, U> = (args) =>
+        {
+            const {
+                hin
+            } = args;
+
+            h = hin;
+        };
+
+        this.iterate({
+            callback: callback
+        });
+
+        const linkLayerNodeTypes = h!.getSourceTarget({
             layerId: this.layerId
         });
-        const isLinkLayerDirected = hin.getOrientationMulti({
+        const isLinkLayerDirected = h!.getOrientationMulti({
             layerId: this.layerId
         }).orientation == "Directed";
 

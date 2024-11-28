@@ -122,3 +122,18 @@ export interface ARGS_Container<T>
 {
     container: T;
 }
+
+export interface ARGS_Metrics<T>
+{
+    metrics: T;
+}
+
+export interface ARGS_Visualization<T>
+{
+    visualization: T;
+}
+
+export interface ARGS_Iterate<T>
+{
+    iterate: T;
+}

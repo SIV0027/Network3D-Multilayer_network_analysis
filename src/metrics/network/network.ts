@@ -4,27 +4,32 @@ import {
 } from "../../core/index.js";
 
 import {
-    Network
-} from "./network.js";
+    ARGS_Network_Constructor
+} from "./network_types.js";
 
 import {
-    ARGS_Metrics_Constructor
-} from "./metrics_types.js";
+    Iterate,
+    IterateCallback
+} from "../../interface/index.js";
+
+import {
+    ARGS_Callback
+} from "../../args_items.js";
 
 // Abstract (template) class for metrics classes of concrete types of networks
 // It receives (generics) layers (types) of nodes, layers (types) of links and Network type over which the metrics are calculated
-export abstract class Metrics<T extends TT, U extends TU<T>, N extends Network<T, U>>
+export abstract class Network<T extends TT, U extends TU<T>>
 {
     // Network over which the metrics are calculated
-    protected network: N;
+    protected iterate: Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>;
 
     // Metrics is initialized by its network
-    constructor(args: ARGS_Metrics_Constructor<T, U, N>)
+    constructor(args: ARGS_Network_Constructor<T, U>)
     {
         const {
-            network
+            iterate
         } = args;
 
-        this.network = network;
+        this.iterate = iterate;
     }
 };

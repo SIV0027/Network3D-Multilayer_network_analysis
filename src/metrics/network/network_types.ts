@@ -1,5 +1,6 @@
 import {
-    ARGS_Network
+    ARGS_Callback,
+    ARGS_Iterate
 } from "../../args_items.js";
 
 import {
@@ -8,8 +9,9 @@ import {
 } from "../../core/index.js";
 
 import {
-    Network
-} from "./network.js";
+    Iterate,
+    IterateCallback
+} from "../../interface/index.js";
 
 // interfaces of individual metrics for concrete classes
 export interface GetLinksCount
@@ -48,5 +50,5 @@ export interface ClusteringCoefficient
 }
 
 // Object type (interface) of parameters of metrics constructor
-export interface ARGS_Metrics_Constructor<T extends TT, U extends TU<T>, N extends Network<T, U>> extends ARGS_Network<N>
+export interface ARGS_Network_Constructor<T extends TT, U extends TU<T>> extends ARGS_Iterate<Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>>
 { };
