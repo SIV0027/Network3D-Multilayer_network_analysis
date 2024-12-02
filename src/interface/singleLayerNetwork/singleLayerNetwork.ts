@@ -89,7 +89,7 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
         return network;
     }
 
-    // MultilayerNetwork already implements all method
+    // Core class for interface 
     protected core: MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>;
     // Access to metrics calculate methods
     protected metrics: SingleLayerNetworkMetrics<T, U, V, W>; // Zde by měl být typ "any" (uživatel by si mohl sám určit, jaký typ metriky chce použít - to samé i pro visualization)
@@ -113,6 +113,14 @@ extends Network<Node_Types<T>, Link_Types<U, V, W>>
         this.core = core;
         this.metrics = metrics;
         this.visualization = visualization;
+    }
+
+    public override getNodesIds
+    (): Array<string>
+    {
+        return this.core.getNodesIds({
+            layerId: "default"
+        });
     }
 
     // Override addNode method

@@ -58,6 +58,53 @@ implements IterateMethod<T, U>
             hin: hin
         });
     }
+    
+    /* public getNodesLayers
+    (): Array<string>
+    {
+
+    }
+
+    public getLinksLayers
+    (): Array<string>
+    {
+
+    } */
+
+    public getNodesIds
+    (args: {
+        layerId: keyof T
+    }): Array<string>
+    {
+        const {
+            layerId
+        } = args;
+
+        const nodesIds = new Array<string>();
+
+        const nodesOfLayer = this.core.getNodes()[layerId];
+        for(const [nodeId, _] of nodesOfLayer )
+        {
+            nodesIds.push(nodeId);
+        }
+
+        return nodesIds;
+    }
+
+    /* public getLinksIds
+    (args: {
+        layerId: keyof U
+    }): Array<{ source: string, target: string }>
+    {
+        const {
+            layerId
+        } = args;
+
+        const linksIds = new Array<{ source: string, target: string }>();
+
+        const linksOfLayers = this.core.
+        for(const )
+    } */
 
     // Adds node to given node layer of network
     public override addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &

@@ -19,17 +19,19 @@ extends Core<T, U>
     // Enable visualization of network
     protected abstract visualization: any;
 
+    // Getter for all nodes IDs
+    public abstract getNodesIds
+    (_: ARGS_): Array<string>;
+
+    /* // Getter for all links IDs (source and target)
+    public abstract getLinksIds
+    (_: ARGS_): Array<{ source: string, target: string }>; */
+
     // Getter of metrics
-    public getMetrics
-    (_: ARGS_): any
-    {
-        return this.metrics;
-    }
+    public abstract getMetrics
+    (_: ARGS_): any;
 
     // Getter of visualization
-    public getVisualization
-    (_: ARGS_): any
-    {
-        return this.visualization;
-    }
+    public abstract getVisualization
+    (_: ARGS_): any;
 };
