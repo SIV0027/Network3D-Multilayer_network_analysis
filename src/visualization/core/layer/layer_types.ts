@@ -1,6 +1,6 @@
 import {
     ARGS_LayerId,
-    ARGS_Container,
+    ARGS_Config,
     ARGS_Iterate,
     ARGS_Callback
 } from "../../../args_items.js";
@@ -28,8 +28,17 @@ export type Node = {
 
 export type Nodes = Array<Node>;
 
+export type Config = {
+    container: string | HTMLElement,
+    width: number,
+    height: number,
+    modes: {
+        default: Array<string>
+    }
+};
+
 // Object type (interface) of parameters of Layer constructor
 export interface ARGS_Layer_Constructor<T extends TT, U extends TU<T>> extends ARGS_LayerId<keyof U>,
                                                                                ARGS_Iterate<Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>>,
-                                                                               ARGS_Container<string | HTMLElement>
+                                                                               ARGS_Config<Config>
 { };

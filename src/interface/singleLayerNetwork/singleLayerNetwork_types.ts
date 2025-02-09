@@ -1,4 +1,4 @@
-import {
+/* import {
     ARGS_Metrics,
     ARGS_Visualization,
     ARGS_Core
@@ -53,12 +53,12 @@ export type SingleLayerNetwork_TU_Meta<T, U, V extends keyof Orientation, W exte
             multi: W
         }
     }
-};
+}; */
 
 // Object type (interface) of parameters of SingleLayerNetworkMetrics constructor
-export interface ARGS_SingleLayerNetwork_Constructor<T, U, V extends keyof Orientation, W extends keyof Multi> extends /* ARGS_Orientation<V>,
+/* export interface ARGS_SingleLayerNetwork_Constructor<T, U, V extends keyof Orientation, W extends keyof Multi> extends */ /* ARGS_Orientation<V>,
                                                                                                                        ARGS_Multi<W>, */
-                                                                                                                       ARGS_Core<MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>>,
+/*                                                                                                                        ARGS_Core<MultilayerNetwork<Node_Types<T>, Link_Types<U, V, W>>>,
                                                                                                                        ARGS_Metrics<SingleLayerNetworkMetrics<T, U, V, W>>,
                                                                                                                        ARGS_Visualization<SingleLayerNetworkVisualization<T, U, V, W>>
-{ };
+{ }; */

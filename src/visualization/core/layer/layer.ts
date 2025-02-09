@@ -35,6 +35,7 @@ export declare namespace G6
         public data(...args: any): any;
         public render(...args: any): any;
         public updateLayout(...args: any): any;
+        public updateCfg(...args: any): any;
     }
 }
 
@@ -49,16 +50,12 @@ export class Layer<T extends TT, U extends TU<T>>
         const {
             layerId,
             iterate,
-            container
+            config
         } = args;
 
         this.layerId = layerId;
         this.iterate = iterate;
-        this.graph = new (G6.Graph as new (options: any) => G6.Graph)({
-            container: container,
-            width: 800,
-            height: 500
-        });
+        this.graph = new (G6.Graph as new (options: any) => G6.Graph)(config);
         this.loadData();
     }
 
@@ -185,12 +182,13 @@ export class Layer<T extends TT, U extends TU<T>>
             nodes: this.loadNodes(),
             edges: edges
         };
-        console.log(data);
         this.graph.data(data);
-        this.graph.updateLayout({                // Object, layout configuration. random by default
-            type: "force",         // Force layout
-            preventOverlap: true  // The size of nodes for collide detection. Since we have assigned sizes for each node to their data in last chapter, the nodeSize here is not required any more.
-          });
+    }
+
+    public updateLayout
+    (cfg: any): void
+    {
+        this.graph.updateLayout(cfg);
     }
 
     public render

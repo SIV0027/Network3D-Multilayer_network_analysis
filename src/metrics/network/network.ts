@@ -1,4 +1,4 @@
-import {
+/* import {
     TT,
     TU
 } from "../../core/index.js";
@@ -32,4 +32,4 @@ export abstract class Network<T extends TT, U extends TU<T>>
 
         this.iterate = iterate;
     }
-};
+}; */

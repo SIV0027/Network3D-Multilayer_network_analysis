@@ -54,7 +54,7 @@ export type MultilayerNetwork_Nodes<T extends TT, U extends TU<T>> = {
 // Type which decides if given link layer have enabled multilinks
 export type Multi_Data_Type<L extends keyof U, T extends TT, U extends TU<T>> = U[L]["multi"] extends "Singlelinks" ? Link<L, T, U> : Array<Link<L, T, U>>;
 
-// Template for Node types
+// Template for Node types (key -> name of node type)
 export type TT = {
     [key: string]: {
         value: any

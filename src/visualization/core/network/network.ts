@@ -1,4 +1,4 @@
-import {
+/* import {
     ARGS_
 } from "../../../args_items";
 
@@ -9,4 +9,4 @@ export abstract class Network
 
     public abstract visualize
     (args: ARGS_): any;
-};
+}; */

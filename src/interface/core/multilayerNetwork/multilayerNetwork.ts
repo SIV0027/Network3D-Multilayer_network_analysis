@@ -32,6 +32,14 @@ import {
     IterateMethod
 } from "../index.js";
 
+import {
+    Layer
+} from "../../../visualization/index.js";
+
+import {
+    Config
+} from "../../../visualization/core/layer/layer_types.js";
+
 // This class represents Multilayer network to user
 // It gets (generics) layers (types) of nodes and layers (types) of links
 export class MultilayerNetwork<T extends TT, U extends TU<T>>
@@ -83,7 +91,7 @@ implements IterateMethod<T, U>
         const nodesIds = new Array<string>();
 
         const nodesOfLayer = this.core.getNodes()[layerId];
-        for(const [nodeId, _] of nodesOfLayer )
+        for(const [nodeId, _] of nodesOfLayer)
         {
             nodesIds.push(nodeId);
         }
@@ -91,7 +99,8 @@ implements IterateMethod<T, U>
         return nodesIds;
     }
 
-    /* public getLinksIds
+    // Get all links Ids (Ids of source and target nodes) of given link layer - ZATÍM POUZE PRO NEORIENTOVANÉ SINGLELINKS SÍTĚ!!!
+    public getLinksIds
     (args: {
         layerId: keyof U
     }): Array<{ source: string, target: string }>
@@ -100,11 +109,38 @@ implements IterateMethod<T, U>
             layerId
         } = args;
 
-        const linksIds = new Array<{ source: string, target: string }>();
+        const hin = this.getHIN();
+        const { source/* , target */ } = hin.getSourceTarget({
+            layerId
+        });
+        /* const { orientation } = hin.getOrientationMulti({
+            layerId
+        }); */
 
-        const linksOfLayers = this.core.
-        for(const )
-    } */
+        const nodes = this.core.getNodes();
+        
+        // BEGIN: Undirected singlelinks layer
+        const already: Set<string> = new Set(); // For undirected layers -> links are added twice
+        const linksIds: Array<{ source: string, target: string }> = new Array();
+        for(const [nodeId, node] of nodes[source])
+        {
+            for(const [neighbourId, _] of (node.getLinks()[layerId as Extract<keyof Node_Links<U[keyof U]["source"], T, U>, string>] as Map<string, Link<typeof layerId, T, U>>))
+            {
+                if(!already.has(neighbourId + nodeId))
+                {
+                    linksIds.push({
+                        source: nodeId,
+                        target: neighbourId
+                    });
+
+                    already.add(nodeId + neighbourId);
+                }
+            }
+        }
+        // END: Undirected singlelinks layer 
+
+        return linksIds;
+    }
 
     // Adds node to given node layer of network
     public override addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
@@ -271,7 +307,7 @@ implements IterateMethod<T, U>
             });
 
             // Create tuple of current link layer (source nodes, target nodes)
-            (linkLayers as{ [K in keyof U]: [Map<string, Node<U[K]["source"], T, U>>, Map<string, Node<U[K]["target"], T, U>>] } )[linkLayerId] = [
+            (linkLayers as{ [K in keyof U]: [Map<string, Node<U[K]["source"], T, U>>, Map<string, Node<U[K]["target"], T, U>>] })[linkLayerId] = [
                 this.core.getNodes()[sourceTargetTypes.source],
                 this.core.getNodes()[sourceTargetTypes.target]
             ];
@@ -286,5 +322,26 @@ implements IterateMethod<T, U>
             getNode: (args) => this.core.getNode(args),
             getLink: (args) => this.core.getLink(args)
         });
+    }
+
+    // Create and return visualization of given layer
+    public createVisualization
+    (args: {
+        layerId: keyof U,
+        config: Config
+    }): Layer<T, U>
+    {
+        const {
+            layerId,
+            config
+        } = args;
+
+        const layerVisualization = new Layer<T, U>({
+            layerId,
+            iterate: this.iterate.bind(this),
+            config
+        });
+
+        return layerVisualization;
     }
 };

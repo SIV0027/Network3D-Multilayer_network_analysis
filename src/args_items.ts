@@ -137,3 +137,8 @@ export interface ARGS_Iterate<T>
 {
     iterate: T;
 }
+
+export interface ARGS_Config<T>
+{
+    config: T
+};

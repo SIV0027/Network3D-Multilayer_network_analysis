@@ -1,4 +1,4 @@
-import {
+/* import {
     ARGS_Callback,
     ARGS_Iterate
 } from "../../args_items.js";
@@ -51,4 +51,4 @@ export interface ClusteringCoefficient
 
 // Object type (interface) of parameters of metrics constructor
 export interface ARGS_Network_Constructor<T extends TT, U extends TU<T>> extends ARGS_Iterate<Iterate<ARGS_Callback<IterateCallback<T, U>>, T, U>>
-{ };
+{ }; */

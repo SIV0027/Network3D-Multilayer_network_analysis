@@ -1,1 +1,1 @@
-export { MUltilayerNetwork } from "./multilayerNetwork/multilayerNetwork.js";
+export { Layer } from "./layer/layer.js";

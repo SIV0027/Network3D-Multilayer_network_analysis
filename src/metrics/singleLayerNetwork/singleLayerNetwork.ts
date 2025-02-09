@@ -1,4 +1,4 @@
-import {
+/* import {
     ARGS_Callback,
     ARGS_NodeId
 } from "../../args_items.js";
@@ -26,16 +26,16 @@ import {
     Orientation_Dir,
     Orientation_Undir_Dir,
     Iterate
-} from "../../interface/index.js";
+} from "../../interface/index.js"; */
 
 
 
 // Metrics for single layer network
 // It receives (generics) type of node, type of link, type of orerientation (Directed or Undirected) and Multi type (Singlelinks or Multilinks)
-export class SingleLayerNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
+/* export class SingleLayerNetwork<T, U, V extends keyof Orientation, W extends keyof Multi>
 extends Network<Node_Types<T>, Link_Types<U, V, W>>
-implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, DegreeDistribution/* , ClusteringCoefficient */
-{
+implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, DegreeDistribution *//* , ClusteringCoefficient */
+/* {
     // SingleLayerNetwork is initialized by its network
     constructor(args: {
         iterate: Iterate<ARGS_Callback<IterateCallback<Node_Types<T>, Link_Types<U, V, W>>>, Node_Types<T>, Link_Types<U, V, W>>
@@ -329,7 +329,7 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
         }
 
         return degreeDistribution;
-    }
+    } */
 
     // Clustering coefficient - Zjistit implementaci pro orientované sítě
     /* clusteringCoefficient<ARGS extends ARGS_NodeId<string>>
@@ -356,4 +356,4 @@ implements GetNodesCount, GetLinksCount, Degree, DegreeSequence, AverageDegree, 
             }
         };
     } */
-};
+/* }; */
