@@ -3,17 +3,17 @@ import {
     ARGS_Config,
     ARGS_Iterate,
     ARGS_Callback
-} from "../../../args_items.js";
+} from "../../args_items.js";
 
 import {
     TT,
     TU
-} from "../../../core/hin/hin_types.js";
+} from "../../core/hin/hin_types.js";
 
 import {
     Iterate,
     IterateCallback
-} from "../../../interface/index.js";
+} from "../../interface/index.js";
 
 export type Edge = {
     source: string,

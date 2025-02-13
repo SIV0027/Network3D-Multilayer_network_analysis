@@ -1,20 +1,20 @@
 import {
     ARGS_Callback
-} from "../../../args_items.js";
+} from "../../args_items.js";
 
 import {
     TT,
     TU
-} from "../../../core/hin/hin_types.js";
+} from "../../core/hin/hin_types.js";
 
 import {
     Link
-} from "../../../core/index.js";
+} from "../../core/index.js";
 
 import {
     Iterate,
     IterateCallback
-} from "../../../interface/index.js";
+} from "../../interface/index.js";
 
 import {
     ARGS_Layer_Constructor,
@@ -24,7 +24,7 @@ import {
 
 import {
     HIN
-} from "../../../core/index.js";
+} from "../../core/index.js";
 
 export declare namespace G6
 {

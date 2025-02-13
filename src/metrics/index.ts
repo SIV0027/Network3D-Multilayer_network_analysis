@@ -1,2 +1,1 @@
-/* export * from "./multilayerNetwork/multilayerNetwork.js";
- *//* export * from "./singleLayerNetwork/singleLayerNetwork.js"; */
+export { Layer } from "./layer/layer.js";

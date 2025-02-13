@@ -5,7 +5,7 @@ import {
     ARGS_SourceNodeId,
     ARGS_TargetNodeId,
     ARGS_TUMeta
-} from "../../../args_items.js";
+} from "../../args_items.js";
 
 import {
     HIN,
@@ -15,7 +15,7 @@ import {
     TT,
     TU,
     TU_Meta
-} from "../../../core/index.js";
+} from "../../core/index.js";
 
 // Type which determines if concrete leayer of network enables multilinks or not - if enables => T; otherwise Array<T>
 export type Multi_Data_Type_Value<T extends TT, U extends TU<T>, L extends keyof U> = U[L]["multi"] extends "Singlelinks" ? U[L]["value"] : Array<U[L]["value"]>;
@@ -44,6 +44,7 @@ export type IterateCallback<T extends TT, U extends TU<T>> = (args: {
                                                                                                                    ARGS_TargetNodeId<string>>
             (args: ARGS) => Multi_Data_Type<L, T, U>
 }) => void;
+
 
 // Object type (interface) of parameters of MutlilayerNetwork constructor
 export interface ARGS_MultilayerNetwork_Constructor<T extends TT, U extends TU<T>> extends ARGS_TUMeta<TU_Meta<T, U>>

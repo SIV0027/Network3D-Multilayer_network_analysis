@@ -5,7 +5,7 @@ import {
     ARGS_SourceNodeId,
     ARGS_TargetNodeId,
     ARGS_Value
-} from "../../../args_items.js";
+} from "../../args_items.js";
 
 import {
     HIN,
@@ -16,11 +16,7 @@ import {
     TU,
     Node_Links,
     Multi_Data_Type
-} from "../../../core/index.js";
-
-import {
-    Network
-} from "../index.js";
+} from "../../core/index.js";
 
 import {
     Multi_Data_Type_Value,
@@ -29,22 +25,20 @@ import {
 } from "./multilayerNetwork_types.js";
 
 import {
-    IterateMethod
-} from "../index.js";
+    Layer as LayerVisualization
+} from "../../visualization/index.js";
 
 import {
-    Layer
-} from "../../../visualization/index.js";
+    Layer as LayerMetrics
+} from "../../metrics/index.js";
 
 import {
     Config
-} from "../../../visualization/core/layer/layer_types.js";
+} from "../../visualization/layer/layer_types.js";
 
 // This class represents Multilayer network to user
 // It gets (generics) layers (types) of nodes and layers (types) of links
 export class MultilayerNetwork<T extends TT, U extends TU<T>>
-extends Network<T, U>
-implements IterateMethod<T, U>
 {
     // Data structure which enable access to the structure of the network
     protected core: Core<T, U>;
@@ -56,7 +50,7 @@ implements IterateMethod<T, U>
             tuMeta
         } = args;
 
-        super();
+        /* super(); */
 
         const hin = new HIN<T, U>({
             tuMeta: tuMeta
@@ -65,6 +59,13 @@ implements IterateMethod<T, U>
         this.core = new Core<T, U>({
             hin: hin
         });
+    }
+
+    // Getter of HIN
+    public getHIN
+    (): HIN<T, U>
+    {
+        return this.core.getHIN();
     }
     
     /* public getNodesLayers
@@ -143,7 +144,7 @@ implements IterateMethod<T, U>
     }
 
     // Adds node to given node layer of network
-    public override addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
+    public addNode<L extends keyof T, ARGS extends ARGS_LayerId<L> &
                                                    ARGS_NodeId<string> &
                                                    ARGS_Value<T[L]["value"]>>
     (args: ARGS): void
@@ -176,7 +177,7 @@ implements IterateMethod<T, U>
     }
 
     // Getter of node (its value) by its ID
-    public override getNode<L extends keyof T>
+    public getNode<L extends keyof T>
     (args: {
         layerId: L,
         nodeId: string
@@ -198,7 +199,7 @@ implements IterateMethod<T, U>
     }
 
     // Adds link to given link layer of network
-    public override addLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
+    public addLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
                                                                                                                                      ARGS_SourceNodeId<string> &
                                                                                                                                      ARGS_TargetNodeId<string> &
                                                                                                                                      ARGS_Value<U[L]["value"]>>
@@ -246,7 +247,7 @@ implements IterateMethod<T, U>
     }
 
     // Getter of value of single link (or array of values if Multilinks is allowed)
-    public override getLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
+    public getLink<L extends keyof U & keyof Node_Links<U[L]["source"], T, U> & keyof Node_Links<U[L]["target"], T, U>, ARGS extends ARGS_LayerId<L> &
                                                                                                                                      ARGS_SourceNodeId<string> &
                                                                                                                                      ARGS_TargetNodeId<string>>
     (args: ARGS): Multi_Data_Type_Value<T, U, L>
@@ -324,24 +325,42 @@ implements IterateMethod<T, U>
         });
     }
 
-    // Create and return visualization of given layer
+    // Create and return visualization of given (link) layer
     public createVisualization
     (args: {
         layerId: keyof U,
         config: Config
-    }): Layer<T, U>
+    }): LayerVisualization<T, U>
     {
         const {
             layerId,
             config
         } = args;
 
-        const layerVisualization = new Layer<T, U>({
+        const layerVisualization = new LayerVisualization<T, U>({
             layerId,
             iterate: this.iterate.bind(this),
             config
         });
 
         return layerVisualization;
+    }
+
+    // Create and return metrics of given (link) layer
+    public createMetrics
+    (args: {
+        layerId: keyof U
+    }): LayerMetrics<T, U>
+    {
+        const {
+            layerId
+        } = args;
+
+        const layerMetrics: LayerMetrics<T, U> = new LayerMetrics({
+            layerId,
+            iterate: this.iterate.bind(this)
+        });
+
+        return layerMetrics;
     }
 };
