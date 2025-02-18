@@ -95,10 +95,22 @@ export class Layer<T extends TT, U extends TU<T>>
     }
 
     // Undirected
-    public degreeCentrality
-    (): Map<string, number>
+    public degree
+    (): { 
+        nodes: Map<string, number>,
+        distribution: Array<number>,
+        average: number
+    }
     {
-        const res: Map<string, number> = new Map();
+        const res: { 
+            nodes: Map<string, number>,
+            distribution: Array<number>,
+            average: number
+        } = {
+            nodes: new Map(),
+            distribution: new Array(),
+            average: 0
+        };
 
         const callback: IterateCallback<T, U> = (args) => {
 
@@ -116,7 +128,20 @@ export class Layer<T extends TT, U extends TU<T>>
             {
                 const layer: Extract<keyof Node_Links<U[keyof U]["source"], T, U>, string> = this.layerId as Extract<keyof Node_Links<U[keyof U]["source"], T, U>, string>;
                 const linksOfNodeInLayer = node.getLinks()[layer] as Map<string, Link<typeof this.layerId, T, U>>;
-                res.set(nodeId, linksOfNodeInLayer.size);
+                const degree = linksOfNodeInLayer.size;
+                res.nodes.set(nodeId, degree);
+                if(res.distribution[degree] == undefined)
+                {
+                    for(let i = 0; i <= degree; i++)
+                    {
+                        if(res.distribution[i] == undefined)
+                        {
+                            res.distribution[i] = 0;
+                        }
+                    }
+                }
+                res.distribution[degree]++;
+                res.average += degree;
             }
         };
 
@@ -124,16 +149,12 @@ export class Layer<T extends TT, U extends TU<T>>
             callback
         });
 
+        res.average /= this.nodesCount();
+
         return res;
     }
 
-    public distributionDegreeCentrality
-    (): void
-    {
-
-    }
-
-    // Undirected
+    /* // Undirected - Možná ponechat? (z výkonových důvodů)
     public averageDegreeCentrality
     (): number
     {
@@ -142,13 +163,25 @@ export class Layer<T extends TT, U extends TU<T>>
         const res = (2 * linksCount) / nodesCount;
 
         return res;
-    }
+    } */
 
     // Undirected
-    public clusteringCoefficientCentrality
-    (): Map<string, number>
+    public clusteringCoefficient
+    (): { 
+        nodes: Map<string, number>,
+        distribution: { [cc: number]: number },
+        average: number
+    }
     {
-        const res: Map<string, number> = new Map();
+        const res: { 
+            nodes: Map<string, number>,
+            distribution: { [cc: number]: number },
+            average: number
+        } = {
+            nodes: new Map(),
+            distribution: { },
+            average: 0
+        };
 
         const callback: IterateCallback<T, U> = (args) => {
 
@@ -203,7 +236,14 @@ export class Layer<T extends TT, U extends TU<T>>
 
                const clusteringCoefficient = (2 * neighboursLinksCount) / Math.max(maxNeighboursLinksCount, 1);
 
-               res.set(nodeId, clusteringCoefficient);
+               res.nodes.set(nodeId, clusteringCoefficient);
+
+               if(res.distribution[clusteringCoefficient] == undefined)
+               {
+                    res.distribution[clusteringCoefficient] = 0;
+               }
+               res.distribution[clusteringCoefficient]++;
+               res.average += clusteringCoefficient;
            }
         };
 
@@ -211,37 +251,21 @@ export class Layer<T extends TT, U extends TU<T>>
             callback
         });
 
+        res.average /= this.nodesCount();
+
         return res;
     }
 
-    public averageClusteringCoefficientCentrality
-    (): void
-    {
-
-    }
-
-    public closenessCentrality
+    public closeness
     (): void
     {
         
     }
 
-    public distributionclosenessCentrality
+    public betweenness
     (): void
     {
         
-    }
-
-    public betweennessCentrality
-    (): void
-    {
-        
-    }
-
-    public distributionbetweennessCentrality
-    (): void
-    {
-
     }
 
     public communities
