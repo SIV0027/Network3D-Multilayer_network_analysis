@@ -3,14 +3,15 @@ import type {
     IO,
     NodesMetric,
     Adjacency_args,
-    Adjacency_args_
+    Adjacency_args_,
+    SelfLoops_args
 } from "@/algorithm/utitlities";
 import { DegreeError } from "./degreeErrors";
 import { Algorithm } from "@/algorithm/utitlities";
 
 export abstract class Degree
 {
-    /*public static directed({ adjacency, selfLoops }: Adjacency_args_<Core.ReadonlyDirected> & { selfLoops: boolean }): NodesMetric<IO<number>>
+    /*public static directed({ adjacency, selfLoops }: Adjacency_args_<Core.ReadonlyDirected> & SelfLoops_args): NodesMetric<IO<number>>
     {
         const degree: NodesMetric<IO<number>> = new Map();
         for(const [actorId, neighbours] of adjacency.out)
@@ -22,7 +23,7 @@ export abstract class Degree
         return degree;
     }*/
 
-    public static undirected({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): NodesMetric<number>
+    public static undirected({ adjacency, selfLoops }: Adjacency_args & SelfLoops_args): NodesMetric<number>
     {
         const degree: NodesMetric<number> = new Map();
         for(const [actorId, neighbours] of adjacency)
@@ -38,7 +39,7 @@ export abstract class Degree
         return degree;
     }
 
-    private static computeAverage({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): number
+    private static computeAverage({ adjacency, selfLoops }: Adjacency_args & SelfLoops_args): number
     {
         DegreeError.remapExceptions({
             callback: () => Algorithm.validateLayerIfNotEmpty({ layer: adjacency })
@@ -58,20 +59,24 @@ export abstract class Degree
         return degreeAvg;
     }
     
-    public static undirectedAverage({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): number
+    public static undirectedAverage({ adjacency, selfLoops }: Adjacency_args & SelfLoops_args): number
     {
         return this.computeAverage({ adjacency, selfLoops });
     }
 
-    /*public static directedAverage({ adjacency, selfLoops }: Adjacency_args_<Core.ReadonlyDirected> & { selfLoops: boolean }): number
+    /*public static directedAverage({ adjacency, selfLoops }: Adjacency_args_<Core.ReadonlyDirected> & SelfLoops_args): number
     {
         return this.computeAverage({ adjacency: adjacency.out, selfLoops });
     }*/
 
-    /*public static undirectedDistribution({ adjacency }: Adjacency_args): Array<number>
-    {
+    public static undirectedDistribution({ adjacency, selfLoops }: Adjacency_args & SelfLoops_args): Array<number>
+    {        
+        DegreeError.remapExceptions({
+            callback: () => Algorithm.validateLayerIfNotEmpty({ layer: adjacency })
+        });
+        
         const distribution: Array<number> = new Array();
-        const degrees = this.undirected({ adjacency });
+        const degrees = this.undirected({ adjacency, selfLoops });
 
         for(const [_, degree] of degrees)
         {

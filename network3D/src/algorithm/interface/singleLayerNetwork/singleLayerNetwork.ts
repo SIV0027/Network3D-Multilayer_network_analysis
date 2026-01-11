@@ -1,4 +1,5 @@
 import {
+    ClusteringCoefficient,
     Degree
 } from "@/algorithm/core";
 
@@ -9,7 +10,8 @@ import type {
 } from "./singleLayerNetwork_types";
 import type {
     IO,
-    NodesMetric
+    NodesMetric,
+    SelfLoops_args
 } from "@/algorithm/utitlities";
 import { Algorithm } from "../../utitlities/algorithm";
 import {
@@ -25,9 +27,9 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return network.getActorsCount();
     }
 
-    public static M({ network, selfloops = false }: NetworkSingleLayer_args & { selfloops?: boolean }): number
+    public static M({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
     {
-        if(selfloops)
+        if(selfLoops)
         {
             return network.getLinksCount();
         }
@@ -51,7 +53,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return M!;
     }
 
-    public static density({ network, selfLoops = false }: NetworkSingleLayer_args & { selfLoops?: boolean }): number
+    public static density({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
     {
         let density: number;
         network.iterate({
@@ -94,7 +96,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return components!;
     }
 
-    public static degree({ network, selfLoops = false }: NetworkSingleLayer_args & { selfLoops?: boolean }): NodesMetric<number> | NodesMetric<IO<number>>
+    public static degree({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): NodesMetric<number> | NodesMetric<IO<number>>
     {
         let degree: NodesMetric<number> | NodesMetric<IO<number>>;
         network.iterate({
@@ -114,7 +116,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return degree!;
     }
 
-    public static averageDegree({ network, selfLoops = false }: NetworkSingleLayer_args & { selfLoops?: boolean }): number
+    public static averageDegree({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
     {
         let degreeAvg: number;
         network.iterate({
@@ -134,7 +136,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return degreeAvg!;
     }
 
-    /*public static degreeDistribution({ network }: NetworkSingleLayer_args): Array<number> | { out: Array<number>, in: Array<number> }
+    public static degreeDistribution({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<Partial<SelfLoops_args>>): Array<number> | { out: Array<number>, in: Array<number> }
     {
         let degreeDistribution: Array<number> | { out: Array<number>, in: Array<number> };
         network.iterate({
@@ -143,11 +145,11 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                 switch(layerType)
                 {
                     case "Undirected":
-                        degreeDistribution = Degree.undirectedDistribution({ adjacency: links as Core.ReadonlyAdjacency });
+                        degreeDistribution = Degree.undirectedDistribution({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
                         break;
-                    case "Directed":
+                    /*case "Directed":
                         degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
-                        break;
+                        break;*/
                 }
             }
         });
@@ -155,7 +157,28 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return degreeDistribution!;
     }
 
-    public static closeness({ network }: NetworkSingleLayer_args): NodesMetric<number>
+    public static clusteringCoefficient({ network }: NetworkSingleLayer_args): NodesMetric<number>
+    {
+        let clusteringCoefficient: NodesMetric<number> = new Map();
+        network.iterate({
+            callback: ({ links }) => {
+                const layerType = Algorithm.getLayerType({ layer: links });
+                switch(layerType)
+                {
+                    case "Undirected":
+                        clusteringCoefficient = ClusteringCoefficient.undirected({ adjacency: links as Core.ReadonlyAdjacency });
+                        break;
+                    /*case "Directed":
+                        degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
+                        break;*/
+                }
+            }
+        });
+
+        return clusteringCoefficient!;
+    }
+
+    /*public static closeness({ network }: NetworkSingleLayer_args): NodesMetric<number>
     {
         let closeness;
         network.iterate({
@@ -180,11 +203,6 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
     public static betweennessAvg({ network }: NetworkSingleLayer_args): number
     {
         
-    }
-
-    public static clusteringCoefficient({ network }: NetworkSingleLayer_args): Map<ActorId, number>
-    {
-
     }
 
     public static clusteringCoefficientAvg(): number

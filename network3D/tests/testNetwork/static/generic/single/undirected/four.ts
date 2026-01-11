@@ -1,4 +1,4 @@
-import type { TestNetwork } from "../../utilities";
+import type { TestNetwork } from "../../../utilities";
 
 export const fourUndirectedGenericTestNetwork: TestNetwork = {
     schema: {
@@ -22,6 +22,7 @@ export const fourUndirectedGenericTestNetwork: TestNetwork = {
         density: 2/3,
         components: [["1", "2", "3", "4"]],
         degree: new Map([["1", 2], ["2", 2], ["3", 2], ["4", 2]]),
-        averageDegree: 2
+        averageDegree: 2,
+        degreeDistribution: [0, 0, 4/4]
     }
 };

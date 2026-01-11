@@ -13,3 +13,11 @@ export class AlgorithmEmptyLayerError extends AlgorithmError
         super(`${AlgorithmEmptyLayerError.layerMsg} is ${AlgorithmEmptyLayerError.emptyMsg}`, { });
     }
 };
+
+export class AlgorithmMinimumActorsLayerError extends AlgorithmError
+{
+    constructor({ minActors }: { minActors: number })
+    {
+        super(`${AlgorithmMinimumActorsLayerError.layerMsg} must contains at least ${minActors} actor(s).`, { minActors });
+    }
+};

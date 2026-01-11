@@ -1,5 +1,5 @@
-import { DensityMinimumActorsLayerError } from "@/algorithm/core";
-import type { TestNetwork } from "../../utilities";
+import { AlgorithmMinimumActorsLayerError } from "@/algorithm/utitlities";
+import type { TestNetwork } from "../../../utilities";
 import { DegreeEmptyLayerError } from "@/algorithm/core/degree/degreeErrors";
 
 export const noneUndirectedGenericTestNetwork: TestNetwork = {
@@ -14,9 +14,10 @@ export const noneUndirectedGenericTestNetwork: TestNetwork = {
     metrics: {
         N: 0,
         M: 0,
-        density: DensityMinimumActorsLayerError,
+        density: AlgorithmMinimumActorsLayerError,
         components: [],
         degree: new Map(),
-        averageDegree: DegreeEmptyLayerError
+        averageDegree: DegreeEmptyLayerError,
+        degreeDistribution: DegreeEmptyLayerError
     }
 };

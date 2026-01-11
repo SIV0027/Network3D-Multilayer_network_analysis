@@ -1,2 +1,1 @@
-export * from "./utilities";
-export * as single from "./single";
+export * as genericSingle from "./single";

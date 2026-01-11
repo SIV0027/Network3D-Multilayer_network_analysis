@@ -1,6 +1,6 @@
-import type {
-    Adjacency_args,
-    NodesMetric
+import {
+    type Adjacency_args,
+    type NodesMetric
 } from "@/algorithm/utitlities";
 
 export abstract class ClusteringCoefficient
@@ -10,6 +10,12 @@ export abstract class ClusteringCoefficient
         const clusteringCoefficient: NodesMetric<number> = new Map();
         for(const [nodeId, neighbours] of adjacency)
         {
+            if(neighbours.size < 2)
+            {                
+                clusteringCoefficient.set(nodeId, NaN);
+                continue;
+            }
+
             let linksCount = 0;
             const maxLinksCount = neighbours.size * (neighbours.size - 1);
             for(const neighbourAId of neighbours)
@@ -32,10 +38,10 @@ export abstract class ClusteringCoefficient
                     }
                 }
             }
+
             clusteringCoefficient.set(nodeId, linksCount / maxLinksCount);
         }
         
-
         return clusteringCoefficient;
     }
 };

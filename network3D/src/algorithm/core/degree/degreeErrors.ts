@@ -6,7 +6,7 @@ import {
 
 export abstract class DegreeError extends AlgorithmError
 {    
-    protected static readonly degreeAvgMsg: string = `average degree`;    
+    protected static readonly degreesMsg: string = `average degree or degree distribution`;    
 
     public static override remapExceptions({ callback }: { callback: () => any }): void
     {
@@ -21,6 +21,6 @@ export class DegreeEmptyLayerError extends DegreeError
 {
     constructor({ error }: Error_args<AlgorithmEmptyLayerError>)
     {
-        super(`${DegreeEmptyLayerError.layerMsg} ${DegreeEmptyLayerError.cannotBeMsg} ${DegreeEmptyLayerError.emptyMsg} ${DegreeEmptyLayerError.withinMsg} ${DegreeEmptyLayerError.degreeAvgMsg}`, error.data);
+        super(`${DegreeEmptyLayerError.layerMsg} ${DegreeEmptyLayerError.cannotBeMsg} ${DegreeEmptyLayerError.emptyMsg} ${DegreeEmptyLayerError.withinMsg} ${DegreeEmptyLayerError.degreesMsg}`, error.data);
     }
 };
