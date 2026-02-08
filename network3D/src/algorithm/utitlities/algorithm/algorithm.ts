@@ -1,16 +1,15 @@
-import * as Core from "@/core";
+import * as Core from "../../../core";
 
 import type {
     Adjacency_args,
     Layer_args_,
     LayerType,
-    LayerType_args,
-    SelfLoops_args
-} from "./algorithm_types";
+    LayerType_args
+} from "../types";
 
 import type {
     Layer_args
-} from "@/algorithm/utitlities";
+} from "../../../algorithm/utitlities";
 import {
     AlgorithmEmptyLayerError,
     AlgorithmMinimumActorsLayerError
@@ -18,7 +17,7 @@ import {
 
 export abstract class Algorithm
 {
-    public static validateLayerMinimumActors({ adjacency, minActorsCount }: Adjacency_args & { minActorsCount: number }): void
+    /*public static validateLayerMinimumActors({ adjacency, minActorsCount }: Adjacency_args & { minActorsCount: number }): void
     {
         if(adjacency.size < minActorsCount)
         {
@@ -48,7 +47,7 @@ export abstract class Algorithm
         {
             throw new AlgorithmEmptyLayerError();
         }
-    }
+    }*/
 
     public static getLayerType({ layer }: Layer_args_<Core.ReadonlyLayer>): LayerType
     {

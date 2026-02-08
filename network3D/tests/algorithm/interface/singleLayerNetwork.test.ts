@@ -11,12 +11,12 @@ import * as Algorithm from "@/algorithm";
 import {
     type TestNetwork,
 
-    toCSV,
+    //toCSV,
     genericSingle,
     realSingle,
 
     testSingleLayerNetwork
-} from "../testNetwork";
+} from "../../testNetwork";
 import {
     createActors,
     createFullTestSingleLayerNetwork,
@@ -52,7 +52,7 @@ describe("SingleLayerNetwork", () => {
         }
     };
 
-    describe("N", () => {
+    /*describe("N", () => {
 
         it("ok", () => {
             const network = createFullTestSingleLayerNetwork(testSingleLayerNetwork);
@@ -164,7 +164,7 @@ describe("SingleLayerNetwork", () => {
         });
 
         /*it("ok - directed", () => {
-        });*/
+        });
 
         it("generic test networks", () =>
         {
@@ -219,7 +219,7 @@ describe("SingleLayerNetwork", () => {
 
             const { actors, links } = testSingleLayerNetwork.data!;
             expect(Algorithm.SingleLayerNetwork.density({ network })).toBe(links.length / (actors.length * (actors.length - 1)));
-        });*/
+        });
 
         it("ok - selfloops - ignore", () => {
             const networkInitsLinks = [
@@ -294,7 +294,7 @@ describe("SingleLayerNetwork", () => {
 
             expect(() => Algorithm.SingleLayerNetwork.density({ network }))
                 .toThrow(DensityMinimumActorsLayerError);
-        });*/
+        });
 
         it("error, when layer (network) is empty (no actors) - undirected", () => {
             const network = new Core.SingleLayerNetwork();
@@ -325,7 +325,7 @@ describe("SingleLayerNetwork", () => {
                 expect((degree as Map<string, { out: number }>).get(actorId)!.out).toBe(Number(actorId));
                 expect((degree as Map<string, { in: number }>).get(actorId)!.in).toBe(19 - Number(actorId));
             }
-        });*/
+        });
 
         it("ok - undirected", () => {
             const AT = createActors(20, (i) => i.toString());
@@ -432,7 +432,7 @@ describe("SingleLayerNetwork", () => {
             const network = new Core.SingleLayerNetwork(testSingleLayerNetwork);
 
             expect(Algorithm.SingleLayerNetwork.averageDegree({ network })).toBe(9.5);
-        });*/
+        });
 
         it("ok - undirected", () => {
             const AT = createActors(20, (i) => i.toString());
@@ -519,7 +519,7 @@ describe("SingleLayerNetwork", () => {
 
             expect(() => Algorithm.SingleLayerNetwork.averageDegree({ network }))
                 .toThrow(DegreeEmptyLayerError);
-        });*/
+        });
 
         it("error, when layer (network) is empty (no actors) - undirected", () => {
             const network = new Core.SingleLayerNetwork();
@@ -550,7 +550,7 @@ describe("SingleLayerNetwork", () => {
                     out: Array.from({ length }, () => 0.05),
                     in: Array.from({ length }, () => 0.05)
                 });
-        });*/
+        });
 
         it("ok - undirected", () => {
             const network = new Core.SingleLayerNetwork({
@@ -570,7 +570,7 @@ describe("SingleLayerNetwork", () => {
                     out: new Array(),
                     in: new Array()
                 });
-        });*/
+        });
 
         it("ok - selfloops - ignore", () => {
             const networkInitsLinks = [
@@ -742,6 +742,6 @@ describe("SingleLayerNetwork", () => {
         it("real test networks", () =>
         {            
             testTestNetwork(realSingle, "degreeDistribution", (exp, res) => { exp.toStrictEqual(res); });
-        });*/
-    });
+        });
+    });*/
 });

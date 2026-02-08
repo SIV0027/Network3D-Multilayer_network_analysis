@@ -6,8 +6,8 @@ import {
     NonExistingLinkError,
     NonWeightedLayerError,
     WeightedLayerError
-} from "@/core";
-import type { Error_args } from "@/utilities/network3DError/network3DError_types";
+} from "../../core";
+import type { Error_args } from "../../utilities/network3DError/network3DError_types";
 
 export class BipartiteNetworkErrors extends MultilayerNetworkErrors
 {

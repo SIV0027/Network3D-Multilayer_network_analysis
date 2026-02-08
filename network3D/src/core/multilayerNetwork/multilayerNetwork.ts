@@ -3,7 +3,7 @@ import type {
     LayerId_args,
     PartitionId,
     PartitionId_args
-} from "@/core/networkSchema/networkSchema_types";
+} from "../../core/networkSchema/networkSchema_types";
 
 import type {
     ActorId,
@@ -19,7 +19,7 @@ import type {
     AdjacencyType_args
 } from "./multilayerNetwork_types";
 
-import { ID } from "@/utilities/id/id";
+import { ID } from "../../utilities/id/id";
 import { NetworkSchema } from "../networkSchema/networkSchema";
 import {
     AlreadyExistingActorError,
@@ -27,7 +27,7 @@ import {
     NonExistingActorError,
     NonExistingLinkError
 } from "./mutlilayerNetworkErrors";
-import type { Optional } from "@/utilities";
+import type { Optional } from "../../utilities";
 
 export class MultilayerNetwork extends NetworkSchema
 {

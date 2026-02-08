@@ -1,9 +1,9 @@
 import {
     type Network_args_
-} from "@/algorithm/utitlities";
+} from "../../../algorithm/utitlities";
 
 import {
     SingleLayerNetwork
-} from "@/algorithm";
+} from "../../../algorithm";
 
 export type NetworkSingleLayer_args = Network_args_<SingleLayerNetwork>;

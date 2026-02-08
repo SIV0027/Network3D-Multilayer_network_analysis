@@ -1,4 +1,4 @@
-import type { IClassAny, Optional } from "@/utilities";
+import type { IClassAny, Optional } from "../../utilities";
 
 import type {
     ActorId,
@@ -15,7 +15,7 @@ import type {
     SingleLayerNetwork,
     Validators_args,
     Weights_args
-} from "@/core";
+} from "../../core";
 
 export type ISingleLayerNetworkIterate = IClassAny<MultilayerNetworkIterate,
                                                         "addActor" |

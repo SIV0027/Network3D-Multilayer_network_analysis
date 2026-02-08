@@ -1,8 +1,8 @@
-import type { Error_args } from "@/utilities/network3DError/network3DError_types";
+import type { Error_args } from "../../../utilities/network3DError/network3DError_types";
 import {
     AlgorithmError,
     AlgorithmEmptyLayerError
-} from "@/algorithm/utitlities";
+} from "../../../algorithm/utitlities";
 
 export abstract class DegreeError extends AlgorithmError
 {    

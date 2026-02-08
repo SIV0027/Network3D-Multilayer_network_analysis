@@ -1,4 +1,4 @@
-import type { Error_args } from "@/utilities/network3DError/network3DError_types";
+import type { Error_args } from "../../utilities/network3DError/network3DError_types";
 import {
     AlreadyExistingActorError,
     AlreadyExistingLinkError,

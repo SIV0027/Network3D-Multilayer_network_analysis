@@ -7,7 +7,7 @@ import {
     type SingleLayerIterateCallback,
 
     SingleLayerNetworkErrors
-} from "@/core";
+} from "../../core";
 
 import {
     type LayerId,

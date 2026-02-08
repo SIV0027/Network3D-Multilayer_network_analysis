@@ -1,9 +1,9 @@
-import {
+import * as Core from "../../../core/";
+
+/*import {
     ClusteringCoefficient,
     Degree
-} from "@/algorithm/core";
-
-import * as Core from "@/core/";
+} from "../../../algorithm/core";
 
 import type {
     NetworkSingleLayer_args
@@ -11,18 +11,17 @@ import type {
 import type {
     IO,
     NodesMetric,
-    SelfLoops_args
-} from "@/algorithm/utitlities";
+} from "../../../algorithm/utitlities";
 import { Algorithm } from "../../utitlities/algorithm";
 import {
     M as M_alg,
     Density,
     Component
-} from "@/algorithm/core";
+} from "../../../algorithm/core";*/
 
 export class SingleLayerNetwork extends Core.SingleLayerNetwork
 {
-    public static N({ network }: NetworkSingleLayer_args): number
+    /*public static N({ network }: NetworkSingleLayer_args): number
     {
         return network.getActorsCount();
     }
@@ -42,7 +41,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                 {
                     /*case "Directed":
                         M = M_alg.directed({ adjacency: links as Core.Directed });
-                        break;*/
+                        break;
                     case "Undirected":
                         M = M_alg.undirected({ adjacency: links as Core.Adjacency });
                         break;
@@ -63,7 +62,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                 {                    
                     /*case "Directed":
                         density = Density.directed({ adjacency: links as Core.ReadonlyDirected, selfLoops });
-                        break;*/
+                        break;
                     case "Undirected":
                         density = Density.undirected({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
                         break;
@@ -106,7 +105,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                 {
                     /*case "Directed":
                         degree = Degree.directed({ adjacency: links as Core.ReadonlyDirected, selfLoops });
-                        break;*/
+                        break;
                     case "Undirected":
                         degree = Degree.undirected({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
                 }
@@ -126,7 +125,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                 {
                     /*case "Directed":
                         degreeAvg = Degree.directedAverage({ adjacency: links as Core.ReadonlyDirected, selfLoops });
-                        break;*/
+                        break;
                     case "Undirected":
                         degreeAvg = Degree.undirectedAverage({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
                 }
@@ -149,7 +148,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                         break;
                     /*case "Directed":
                         degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
-                        break;*/
+                        break;
                 }
             }
         });
@@ -170,7 +169,7 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
                         break;
                     /*case "Directed":
                         degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
-                        break;*/
+                        break;
                 }
             }
         });

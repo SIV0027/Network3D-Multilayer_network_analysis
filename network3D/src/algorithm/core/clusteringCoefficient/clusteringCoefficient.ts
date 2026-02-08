@@ -1,18 +1,23 @@
 import {
     type Adjacency_args,
     type NodesMetric
-} from "@/algorithm/utitlities";
+} from "../../../algorithm/utitlities";
 
 export abstract class ClusteringCoefficient
 {
-    public static undirected({ adjacency }: Adjacency_args): NodesMetric<number>
+    public static undirected({ adjacency }: Adjacency_args): {
+        nodes: NodesMetric<number>,
+        average: number,
+        distribution: Map<number, number>
+    }
     {
         const clusteringCoefficient: NodesMetric<number> = new Map();
+        let clusteringCoefficientSum = 0;
         for(const [nodeId, neighbours] of adjacency)
         {
-            if(neighbours.size < 2)
+            if(neighbours.size - (neighbours.has(nodeId) ? 1 : 0) < 2)
             {                
-                clusteringCoefficient.set(nodeId, NaN);
+                clusteringCoefficient.set(nodeId, 0);
                 continue;
             }
 
@@ -39,9 +44,37 @@ export abstract class ClusteringCoefficient
                 }
             }
 
-            clusteringCoefficient.set(nodeId, linksCount / maxLinksCount);
+            const nodeClusteringCoefficient = linksCount / maxLinksCount;
+            clusteringCoefficient.set(nodeId, nodeClusteringCoefficient);
+            clusteringCoefficientSum += nodeClusteringCoefficient;
         }
         
-        return clusteringCoefficient;
+        return {
+            nodes: clusteringCoefficient,
+            average: clusteringCoefficientSum / adjacency.size,
+            distribution: this.undirectedDistribution({ adjacency, clusteringCoefficients: clusteringCoefficient })
+        };
+    }
+
+    private static undirectedDistribution({ adjacency, clusteringCoefficients }: Adjacency_args & { clusteringCoefficients: NodesMetric<number> }): Map<number, number>
+    {        
+        const distribution: Map<number, number> = new Map();
+
+        for(const [_, clusteringCoefficient] of clusteringCoefficients)
+        {
+            let value = 1;
+            if(distribution.has(clusteringCoefficient))
+            {
+                value += distribution.get(clusteringCoefficient)!;
+            }
+            distribution.set(clusteringCoefficient, value);
+        }
+
+        for(const [clusteringCoefficient, _] of distribution)
+        {
+            distribution.set(clusteringCoefficient, distribution.get(clusteringCoefficient)! / adjacency.size);
+        }
+
+        return distribution;
     }
 };

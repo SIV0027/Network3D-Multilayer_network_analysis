@@ -1,5 +1,5 @@
-import type { Adjacency_args } from "@/algorithm/utitlities";
-import * as Core from "@/core";
+import type { Adjacency_args } from "../../../algorithm/utitlities";
+import * as Core from "../../../core";
 
 export abstract class Component
 {

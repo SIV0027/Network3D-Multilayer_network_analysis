@@ -1,17 +1,17 @@
-/*import {
-    expect,
+import {
+    //expect,
     describe,
     it
-} from "vitest";*/
+} from "vitest";
 
-import {
+/*import {
   genericSingle
-} from "../testNetwork/";
+} from "../testNetwork/";*/
 
-import * as Visualization from "@/visualization";
-import * as Core from "@/core";
+/*import * as Visualization from "@/visualization";
+import * as Core from "@/core";*/
 
-/*describe("Core", () => {
+describe("Core", () => {
 
     describe("Graph", () => {
 
@@ -19,9 +19,9 @@ import * as Core from "@/core";
           
         });
     });
-});*/
+});
 
-const networkData = genericSingle.oneUndirectedGenericTestNetwork;
+/*const networkData = genericSingle.oneUndirectedGenericTestNetwork;
 
 const network = new Core.SingleLayerNetwork({
     schema: networkData.schema,
@@ -36,4 +36,4 @@ const networkVisualization = Visualization.SingleLayerNetwork.create({
     network
 });
 
-networkVisualization.render();
+networkVisualization.render();*/

@@ -1,4 +1,4 @@
-import type { IClassAny, Optional } from "@/utilities";
+import type { IClassAny, Optional } from "../../utilities";
 
 import type {
     LayerId,
@@ -17,7 +17,7 @@ import type {
     Weights_args,
     ReadonlyDirected,
     ReadonlyAdjacency
-} from "@/core";
+} from "../../core";
 
 
 export type IMultiplexNetworkIterate = IClassAny<MultilayerNetworkIterate,

@@ -1,4 +1,4 @@
-import { Network3DError } from "@/utilities";
+import { Network3DError } from "../../../utilities";
 
 export abstract class AlgorithmError extends Network3DError
 {

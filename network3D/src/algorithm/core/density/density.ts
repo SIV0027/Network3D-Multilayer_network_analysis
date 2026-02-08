@@ -1,51 +1,26 @@
-import { Algorithm, type Adjacency_args } from "@/algorithm/utitlities";
-import type { ReadonlyDirected } from "@/core";
+import { 
+    type Adjacency_args
+} from "../../../algorithm/utitlities";
 
 export abstract class Density
 {
-    private static linksCount({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): number
+    public static undirected({ adjacency }: Adjacency_args): number
     {
-        let linksCount = 0;
+        if(adjacency.size < 2)
+        {
+            throw new Error(`Density is not defined for ${adjacency.size} nodes/actors`);
+        }
+
+        let density = 0;
         for(const [nodeId, neighbours] of adjacency)
         {
-            linksCount += neighbours.size;
-            if(neighbours.has(nodeId) && !selfLoops)
+            density += neighbours.size;
+            if(neighbours.has(nodeId))
             {
-                linksCount--;
+                density--;
             }
         }
 
-        return linksCount;
+        return density / (adjacency.size * (adjacency.size - 1));
     }
-
-    private static compute({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): number
-    {
-        if(selfLoops)
-        {
-            Algorithm.validateLayerMinimumActors({ adjacency, minActorsCount: 1 });
-        }
-        else
-        {
-            Algorithm.validateLayerMinimumActors({ adjacency, minActorsCount: 2 });
-        }
-
-        const linksCount = this.linksCount({ adjacency, selfLoops });
-        let maxLinksCount = adjacency.size * (adjacency.size - 1);
-        if(selfLoops)
-        {
-            maxLinksCount += adjacency.size;
-        }
-
-        return linksCount / maxLinksCount;
-    }
-
-    public static undirected({ adjacency, selfLoops }: Adjacency_args & { selfLoops: boolean }): number
-    {
-        return this.compute({ adjacency, selfLoops });
-    }
-
-    /*public static directed({ adjacency, selfLoops }: { adjacency: ReadonlyDirected } & { selfLoops: boolean }): number
-    {
-        return this.compute({ adjacency: adjacency.out, selfLoops });
-    }*/
 };

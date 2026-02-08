@@ -1,5 +1,5 @@
 import { G6Graph } from "../../core";
-import * as Core from "@/core";
+import * as Core from "../../../core";
 
 class SingleLayerNetworkInstance
 {

@@ -1,4 +1,4 @@
-import type { Optional } from "@/utilities";
+import type { Optional } from "../../utilities";
 import type { NetworkSchema } from "./networkSchema";
 
 export type Id = string;

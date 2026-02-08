@@ -1,11 +1,10 @@
 import { AlgorithmMinimumActorsLayerError } from "@/algorithm/utitlities";
 import type { TestNetwork } from "../../../utilities";
-import { DegreeEmptyLayerError } from "@/algorithm/core/degree/degreeErrors";
 
 export const noneUndirectedGenericTestNetwork: TestNetwork = {
     schema: {
         directed: false,
-        weighted: true
+        weighted: false
     },
     data: {
         nodes: [],
@@ -16,8 +15,24 @@ export const noneUndirectedGenericTestNetwork: TestNetwork = {
         M: 0,
         density: AlgorithmMinimumActorsLayerError,
         components: [],
+
         degree: new Map(),
-        averageDegree: DegreeEmptyLayerError,
-        degreeDistribution: DegreeEmptyLayerError
+        averageDegree: NaN,
+        degreeDistribution: new Array(),
+        
+        clusteringCoefficient: new Map(),
+        averageClusteringCoefficient: NaN,
+        clusteringCoefficientDistribution: new Map(),
+
+        closeness: new Map(),
+        averageCloseness: NaN,
+        closenessDistribution: new Map(),
+        
+        betweenness: new Map(),
+        averageBetweenness: NaN,
+        betweennessDistribution: new Map(),
+         
+        diameter: 0,
+        averagePathLength: 0
     }
 };

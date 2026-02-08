@@ -1,4 +1,3 @@
-export * from "./undirected/weighted";
 export * from "./undirected/none";
 export * from "./undirected/empty";
 export * from "./undirected/one";

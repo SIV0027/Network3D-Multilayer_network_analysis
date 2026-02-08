@@ -11,7 +11,7 @@ import type {
     PartitionIds
 } from "./networkSchema_types";
 
-import { ID } from "@/utilities/id/id";
+import { ID } from "../../utilities/id/id";
 import {
     NonExistingPartitionError,
     AlreadyExistingPartitionError,
@@ -20,7 +20,7 @@ import {
     NonWeightedLayerError,
     WeightedLayerError
 } from "./networkSchemaErrors";
-import type { Optional } from "@/utilities";
+import type { Optional } from "../../utilities";
 
 // schema (structure definition) of any kind of (multilayer) network
 export class NetworkSchema

@@ -1,4 +1,4 @@
-import { Network3DError } from "@/utilities";
+import { Network3DError } from "../../utilities";
 
 import type {
     PartitionId_args,

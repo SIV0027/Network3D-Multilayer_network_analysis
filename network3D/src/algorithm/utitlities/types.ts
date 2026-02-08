@@ -1,4 +1,4 @@
-import * as Core from "@/core";
+import * as Core from "../../core";
 
 export type LayerType = "Undirected" | "Directed" | "Bipartite";
 
@@ -24,8 +24,4 @@ export type LayerType_args = {
 
 export type Network_args_<T> = {
     network: T
-};
-
-export type SelfLoops_args = {
-    selfLoops: boolean
 };

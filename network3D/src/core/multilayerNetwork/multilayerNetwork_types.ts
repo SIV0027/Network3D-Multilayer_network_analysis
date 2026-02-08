@@ -2,12 +2,12 @@ import type {
     Id,
     LayerId,
     PartitionId
-} from "@/core/networkSchema/networkSchema_types";
+} from "../../core/networkSchema/networkSchema_types";
 import type {
     MultilayerNetwork,
     NetworkSchema
 } from "..";
-import type { Optional } from "@/utilities";
+import type { Optional } from "../../utilities";
 
 export type Adjacency  = Map<ActorId, Set<ActorId>>;
 export type Directed = { out: Adjacency, in: Adjacency };

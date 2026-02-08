@@ -1,6 +1,6 @@
-import { Parser } from "@/importer/core";
+import { Parser } from "../../../importer/core";
 
-import * as Core from "@/core";
+import * as Core from "../../../core";
 
 export class SingleLayerNetwork
 {

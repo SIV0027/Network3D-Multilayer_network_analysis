@@ -3,9 +3,23 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+
+  "main": "./dist/network3d.cjs",
+  "module": "./dist/network3d.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/network3d.js",
+      "require": "./dist/network3d.cjs"
+    }
+  },
+
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build": "vite build && npm run build:types",
     "preview": "vite preview",
     "test": "vitest"
   },

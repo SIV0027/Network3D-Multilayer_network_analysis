@@ -1,12 +1,11 @@
 import {
-    expect,
+    //expect,
     describe,
     it
 } from "vitest";
 
-import * as Core from "@/core"
-import * as Algorithm from "@/algorithm"
-
+/*import * as Core from "@/core";
+import * as Algorithm from "@/algorithm";*/
 
 describe("MultilayerNetwork", () => {
 

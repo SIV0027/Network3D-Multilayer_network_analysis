@@ -1,4 +1,4 @@
-import type { IClassAny, Optional } from "@/utilities";
+import type { IClassAny, Optional } from "../../utilities";
 
 import type {
     ActorId,
@@ -14,7 +14,7 @@ import type {
     BipartiteNetwork,
     ReadonlyBipartite,
     Weights_args
-} from "@/core";
+} from "../../core";
 
 export type IMultilayerNetworkIterate = IClassAny<MultilayerNetworkIterate,
                                                         "addLink" |
