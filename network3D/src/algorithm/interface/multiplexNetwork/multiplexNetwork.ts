@@ -10,7 +10,8 @@ import {
     ClusteringCoefficient,
     Component,
     Degree,
-    Density
+    Density,
+    Flattening
 } from "../../../algorithm/core";
 
 export class MultiplexNetwork extends Core.MultiplexNetwork
@@ -221,23 +222,47 @@ export class MultiplexNetwork extends Core.MultiplexNetwork
         return brandes;
     }
 
-    /*public static closeness({ network }: NetworkSingleLayer_args): NodesMetric<number>
+    public static flattening({ network, layerIds, newLayerId }: { network: MultiplexNetwork, layerIds: Array<Core.LayerId>, newLayerId: string }): void
     {
-        throw new Error();
-    }
+        for(const layerId of layerIds)
+        {            
+            if(!network.isLayerExists({ layerId }))
+            {
+                throw new Error(`Given layer ID "${layerId}" does not exist in network`);
+            }
+        }
 
-    public static closenessAvg({ network }: NetworkSingleLayer_args): number
-    {
-        throw new Error();
-    }
+        network.addLayer({ layerId: newLayerId });
 
-    public static betweenness({ network }: NetworkSingleLayer_args): Map<ActorId, number>
-    {
-        throw new Error();
-    }
+        const adjacencies: Array<Core.ReadonlyAdjacency> = new Array();
+        network.iterate({
+            callback: ({ links }) => {
 
-    public static betweennessAvg({ network }: NetworkSingleLayer_args): number
-    {
-        throw new Error();
-    }*/
+                for(const layerId of layerIds)
+                {
+                    const layer = links.get(layerId)!;
+                    const layerType = Algorithm.getLayerType({ layer });
+                    switch(layerType)
+                    {
+                        case "Directed":
+                            throw new Error("Directed layers are not supported");
+                            break;
+                        case "Undirected":
+                            adjacencies.push(layer as Core.ReadonlyAdjacency);
+                            break;
+                    }
+                }
+            }
+        });
+        
+        Flattening.undirected({
+            adjacencies,
+            callback: ({ sourceActorId, targetActorId }) => {
+                try {
+                    network.addLink({ layerId: newLayerId, sourceActorId, targetActorId });
+                }
+                catch(e) { }
+            }
+        });
+    }
 };

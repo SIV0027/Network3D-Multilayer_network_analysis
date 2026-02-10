@@ -10,6 +10,10 @@ import {
     Parser
 } from "@/importer/core";
 
+import {
+    realSingle
+} from "../testNetwork/static/real/index";
+
 describe("Core", () => {
 
     (globalThis as any).ohm = ohm;
@@ -53,8 +57,7 @@ describe("Core", () => {
                     }
                 }
             });
-
-            console.log(parser.match({ input: "100 + 1 * 2" }));
+            
             expect(parser.parse({ input: "100 + 1 * 2", semanticName: "expression" }).eval()).toBe(102);
             expect(parser.parse({ input: "1 + 2 - 3 + 4", semanticName: "expression" }).eval()).toBe(4);
             expect(parser.parse({ input: "12345", semanticName: "expression" }).eval()).toBe(12345);

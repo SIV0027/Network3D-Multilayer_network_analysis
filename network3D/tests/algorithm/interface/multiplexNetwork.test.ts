@@ -581,6 +581,131 @@ describe("MultiplexNetwork", () => {
         });
     });
 
+    describe("flattening", () => {
+
+        it("ok", () => {
+            const links: Record<string, Array<{ sourceActorId: string, targetActorId: string }>> = {
+                "first": [{ sourceActorId: "1", targetActorId: "2" }],
+                "second": [{ sourceActorId: "2", targetActorId: "3" }],
+                "third": [{ sourceActorId: "3", targetActorId: "4" }],
+                "fourth": [{ sourceActorId: "4", targetActorId: "1" }]
+            };
+
+            const network = new Core.MultiplexNetwork({
+                schema: ["first", "second", "third", "fourth"],
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links
+                }
+            });
+
+            Algorithm.MultiplexNetwork.flattening({ layerIds: ["first", "second", "third", "fourth"], network, newLayerId: "flattened" });
+
+            for(const layerId in links)
+            {
+                for(const link of links[layerId])
+                {
+                    const { sourceActorId, targetActorId } = link;
+                    expect(network.isLinkExists({ layerId: "flattened", sourceActorId, targetActorId })).toBe(true);
+                }
+            }
+        });
+
+        it("ok - single", () => {
+            const links: Record<string, Array<{ sourceActorId: string, targetActorId: string }>> = {
+                "first": [{ sourceActorId: "1", targetActorId: "2" }],
+                "second": [{ sourceActorId: "2", targetActorId: "3" }],
+                "third": [{ sourceActorId: "3", targetActorId: "4" }],
+                "fourth": [{ sourceActorId: "4", targetActorId: "1" }]
+            };
+
+            const network = new Core.MultiplexNetwork({
+                schema: ["first", "second", "third", "fourth"],
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links
+                }
+            });
+
+            for(const layerId in links)
+            {
+                const newLayerId = `flattened${layerId}`;
+                Algorithm.MultiplexNetwork.flattening({ layerIds: [layerId], network, newLayerId });
+
+                const { sourceActorId, targetActorId } = links[layerId][0];
+                expect(network.isLinkExists({ layerId: newLayerId, sourceActorId, targetActorId })).toBe(true);
+            }
+        });
+
+        it("ok - empty", () => {
+            const links: Record<string, Array<{ sourceActorId: string, targetActorId: string }>> = {
+                "first": [],
+                "second": [],
+                "third": [],
+                "fourth": []
+            };
+
+            const network = new Core.MultiplexNetwork({
+                schema: ["first", "second", "third", "fourth"],
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links
+                }
+            });
+
+            Algorithm.MultiplexNetwork.flattening({ layerIds: ["first", "second", "third", "fourth"], network, newLayerId: "flattened" });
+            
+            for(let i = 1; i <= 4; i++)
+            {
+                for(let ii = 1; ii <= 4; ii++)
+                {                    
+                    expect(network.isLinkExists({ layerId: "flattened", sourceActorId: i.toString(), targetActorId: ii.toString() })).toBe(false);
+                }
+            }
+        });
+
+
+        it("error - non existing layer ID", () => {
+            const links: Record<string, Array<{ sourceActorId: string, targetActorId: string }>> = {
+                "first": [],
+                "second": [],
+                "third": [],
+                "fourth": []
+            };
+
+            const network = new Core.MultiplexNetwork({
+                schema: ["first", "second", "third", "fourth"],
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links
+                }
+            });
+
+            expect(() => Algorithm.MultiplexNetwork.flattening({ layerIds: ["first", "second", "non-existing", "third", "fourth"], network, newLayerId: "flattened" }))
+                .toThrow();
+        });
+
+        it("error - already existing layer ID", () => {
+            const links: Record<string, Array<{ sourceActorId: string, targetActorId: string }>> = {
+                "first": [],
+                "second": [],
+                "third": [],
+                "fourth": []
+            };
+
+            const network = new Core.MultiplexNetwork({
+                schema: ["first", "second", "third", "fourth"],
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links
+                }
+            });
+
+            expect(() => Algorithm.MultiplexNetwork.flattening({ layerIds: ["first", "second", "third", "fourth"], network, newLayerId: "first" }))
+                .toThrow();
+        });
+    });
+
     describe("generic networks", () => {
 
         const {
