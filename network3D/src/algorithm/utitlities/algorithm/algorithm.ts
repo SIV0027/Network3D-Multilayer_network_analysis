@@ -1,19 +1,9 @@
 import * as Core from "../../../core";
 
 import type {
-    Adjacency_args,
     Layer_args_,
     LayerType,
-    LayerType_args
 } from "../types";
-
-import type {
-    Layer_args
-} from "../../../algorithm/utitlities";
-import {
-    AlgorithmEmptyLayerError,
-    AlgorithmMinimumActorsLayerError
-} from "./algorithmErrors";
 
 export abstract class Algorithm
 {
