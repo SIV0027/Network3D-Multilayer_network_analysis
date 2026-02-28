@@ -1,10 +1,10 @@
-import { Parser } from "../../../importer/core";
+//import { Parser } from "../../../importer/core";
 
-import * as Core from "../../../core";
+//import * as Core from "../../../core";
 
-export class SingleLayerNetwork
+export abstract class SingleLayerNetwork
 {
-    public static readonly CSV: ({ }: { delimiters: { col: string, row: string } }) => string = ({ delimiters }) => {
+    /*public static readonly CSV: ({ }: { delimiters: { col: string, row: string } }) => string = ({ delimiters }) => {
         return `
             CSV {
                 File = Content "${delimiters.row}"? end
@@ -64,5 +64,5 @@ export class SingleLayerNetwork
         });
 
         return network;
-    }
+    }*/
 };

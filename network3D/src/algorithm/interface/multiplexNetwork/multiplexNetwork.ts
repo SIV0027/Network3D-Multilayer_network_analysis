@@ -11,7 +11,9 @@ import {
     Component,
     Degree,
     Density,
-    Flattening
+    Flattening,
+    LabelPropagation,
+    RandomWalk
 } from "../../../algorithm/core";
 
 export class MultiplexNetwork extends Core.MultiplexNetwork
@@ -264,5 +266,56 @@ export class MultiplexNetwork extends Core.MultiplexNetwork
                 catch(e) { }
             }
         });
+    }
+
+    public static labelPropagation({ network, maximumIterations, layerId }: { network: MultiplexNetwork, maximumIterations?: number, layerId: Core.LayerId }): Map<Core.ActorId, string>
+    {        
+        let communities: Map<Core.ActorId, string> = new Map();
+
+        network.iterate({
+            callback: ({ links, validators }) => {
+                validators.schema.validateLayerIfExists({ layerId });
+
+                const layer = links.get(layerId)!;
+                const layerType = Algorithm.getLayerType({ layer });
+                switch(layerType)
+                {
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
+                        break;
+                    case "Undirected":
+                        communities = LabelPropagation.undirected({ adjacency: layer as Core.ReadonlyAdjacency, maximumIterations });
+                        break;
+                }
+            }
+        });
+
+        return communities!;
+    }
+
+    public static randomWalk({ network, layersIds, stepsCount }: { network: MultiplexNetwork, layersIds?: Array<Core.LayerId>, stepsCount?: number }): Array<{ actorId: Core.ActorId, layerId: Core.LayerId }>
+    {
+        let path: Array<{ actorId: Core.ActorId, layerId: Core.LayerId }>;
+        
+        const adjacencies: Map<Core.LayerId, Core.ReadonlyAdjacency> = new Map();
+
+        network.iterate({
+            callback: ({ links, validators, actors }) => {
+                for(const layerId of layersIds ?? links.keys())
+                {                    
+                    validators.schema.validateLayerIfExists({ layerId });
+                    const layer = links.get(layerId)!;
+                    if(Algorithm.getLayerType({ layer }) != "Undirected")
+                    {
+                        throw new Error("Directed layers are not supported");
+                    }
+                    adjacencies.set(layerId, layer as Core.ReadonlyAdjacency);
+                }
+                
+                path = RandomWalk.undirected({ adjacencies, stepsCount, actorsIds: Array.from(actors) });
+            }
+        });
+
+        return path!;
     }
 };

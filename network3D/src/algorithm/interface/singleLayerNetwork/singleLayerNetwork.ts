@@ -1,70 +1,45 @@
+import {
+    Algorithm,
+    type NodesMetric
+} from "../../utitlities";
+
 import * as Core from "../../../core/";
 
-/*import {
-    ClusteringCoefficient,
-    Degree
-} from "../../../algorithm/core";
-
-import type {
-    NetworkSingleLayer_args
-} from "./singleLayerNetwork_types";
-import type {
-    IO,
-    NodesMetric,
-} from "../../../algorithm/utitlities";
-import { Algorithm } from "../../utitlities/algorithm";
 import {
-    M as M_alg,
+    Brandes,
+    ClusteringCoefficient,
+    Component,
+    Degree,
     Density,
-    Component
-} from "../../../algorithm/core";*/
+    LabelPropagation
+} from "../../../algorithm/core";
 
 export class SingleLayerNetwork extends Core.SingleLayerNetwork
 {
-    /*public static N({ network }: NetworkSingleLayer_args): number
+    public static N({ network }: { network: SingleLayerNetwork }): number
     {
         return network.getActorsCount();
     }
 
-    public static M({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
+    public static M({ network }: { network: SingleLayerNetwork }): number
     {
-        if(selfLoops)
-        {
-            return network.getLinksCount();
-        }
+        return network.getLinksCount();
+    }
 
-        let M: number;
+    public static density({ network }: { network: SingleLayerNetwork }): number
+    {
+        let density: number;
+
         network.iterate({
             callback: ({ links }) => {
                 const layerType = Algorithm.getLayerType({ layer: links });
                 switch(layerType)
                 {
-                    /*case "Directed":
-                        M = M_alg.directed({ adjacency: links as Core.Directed });
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
                         break;
                     case "Undirected":
-                        M = M_alg.undirected({ adjacency: links as Core.Adjacency });
-                        break;
-                }
-            }
-        });
-
-        return M!;
-    }
-
-    public static density({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
-    {
-        let density: number;
-        network.iterate({
-            callback: ({ links }) => {
-                const layerType = Algorithm.getLayerType({ layer: links });
-                switch(layerType)
-                {                    
-                    /*case "Directed":
-                        density = Density.directed({ adjacency: links as Core.ReadonlyDirected, selfLoops });
-                        break;
-                    case "Undirected":
-                        density = Density.undirected({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
+                        density = Density.undirected({ adjacency: links as Core.ReadonlyAdjacency });
                         break;
                 }
             }
@@ -73,17 +48,17 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return density!;
     }
 
-    public static components({ network }: NetworkSingleLayer_args): Array<Array<Core.ActorId>>
+    public static components({ network }: { network: SingleLayerNetwork }): Array<Array<Core.ActorId>>
     {
         let components: Array<Array<Core.ActorId>>;
+
         network.iterate({
             callback: ({ links }) => {
                 const layerType = Algorithm.getLayerType({ layer: links });
                 switch(layerType)
-                {                    
+                {
                     case "Directed":
-                        throw Error("not implemented method directed within Component metric");
-                        //components = Component.directed({ adjacency: links as Core.ReadonlyAdjacency });
+                        throw new Error("Directed layers are not supported");
                         break;
                     case "Undirected":
                         components = Component.undirected({ adjacency: links as Core.ReadonlyAdjacency });
@@ -95,19 +70,29 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return components!;
     }
 
-    public static degree({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): NodesMetric<number> | NodesMetric<IO<number>>
+    public static degree({ network }: { network: SingleLayerNetwork }): {
+        nodes: NodesMetric<number>,
+        average: number,
+        distribution: Array<number>
+    }
     {
-        let degree: NodesMetric<number> | NodesMetric<IO<number>>;
+        let degree: {
+            nodes: NodesMetric<number>,
+            average: number,
+            distribution: Array<number>
+        };
+
         network.iterate({
             callback: ({ links }) => {
                 const layerType = Algorithm.getLayerType({ layer: links });
                 switch(layerType)
                 {
-                    /*case "Directed":
-                        degree = Degree.directed({ adjacency: links as Core.ReadonlyDirected, selfLoops });
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
                         break;
                     case "Undirected":
-                        degree = Degree.undirected({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
+                        degree = Degree.undirected({ adjacency: links as Core.ReadonlyAdjacency });
+                        break;
                 }
             }
         });
@@ -115,102 +100,116 @@ export class SingleLayerNetwork extends Core.SingleLayerNetwork
         return degree!;
     }
 
-    public static averageDegree({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<SelfLoops_args>): number
-    {
-        let degreeAvg: number;
-        network.iterate({
-            callback: ({ links }) => {
-                const layerType = Algorithm.getLayerType({ layer: links });
-                switch(layerType)
-                {
-                    /*case "Directed":
-                        degreeAvg = Degree.directedAverage({ adjacency: links as Core.ReadonlyDirected, selfLoops });
-                        break;
-                    case "Undirected":
-                        degreeAvg = Degree.undirectedAverage({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
-                }
-            }
-        });
-        
-        return degreeAvg!;
+    public static clusteringCoefficient({ network }: { network: SingleLayerNetwork }): {
+        nodes: NodesMetric<number>,
+        average: number,
+        distribution: Map<number, number>
     }
-
-    public static degreeDistribution({ network, selfLoops = false }: NetworkSingleLayer_args & Partial<Partial<SelfLoops_args>>): Array<number> | { out: Array<number>, in: Array<number> }
     {
-        let degreeDistribution: Array<number> | { out: Array<number>, in: Array<number> };
+        let clusteringCoefficient: {
+            nodes: NodesMetric<number>,
+            average: number,
+            distribution: Map<number, number>
+        };
+
         network.iterate({
             callback: ({ links }) => {
                 const layerType = Algorithm.getLayerType({ layer: links });
                 switch(layerType)
                 {
-                    case "Undirected":
-                        degreeDistribution = Degree.undirectedDistribution({ adjacency: links as Core.ReadonlyAdjacency, selfLoops });
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
                         break;
-                    /*case "Directed":
-                        degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
-                        break;
-                }
-            }
-        });
-
-        return degreeDistribution!;
-    }
-
-    public static clusteringCoefficient({ network }: NetworkSingleLayer_args): NodesMetric<number>
-    {
-        let clusteringCoefficient: NodesMetric<number> = new Map();
-        network.iterate({
-            callback: ({ links }) => {
-                const layerType = Algorithm.getLayerType({ layer: links });
-                switch(layerType)
-                {
                     case "Undirected":
                         clusteringCoefficient = ClusteringCoefficient.undirected({ adjacency: links as Core.ReadonlyAdjacency });
                         break;
-                    /*case "Directed":
-                        degreeDistribution = Degree.directedDistribution({ adjacency: links as Core.ReadonlyDirected });
+                }
+            }
+        });
+
+        return clusteringCoefficient!;   
+    }
+
+    public static brandes({ network }: { network: SingleLayerNetwork }): {
+        closeness: {
+            nodes: NodesMetric<number>,
+            average: number,
+            distribution: Map<number, number>
+        },
+        betweenness: {
+            nodes: NodesMetric<number>,
+            average: number,
+            distribution: Map<number, number>
+        },
+        diameter: number,
+        averagePathLength: number
+    }
+    {
+        let brandes: {
+            closeness: {
+                nodes: NodesMetric<number>,
+                average: number,
+                distribution: Map<number, number>
+            },
+            betweenness: {
+                nodes: NodesMetric<number>,
+                average: number,
+                distribution: Map<number, number>
+            },
+            diameter: number,
+            averagePathLength: number
+        } = { } as {
+            closeness: {
+                nodes: NodesMetric<number>,
+                average: number,
+                distribution: Map<number, number>
+            },
+            betweenness: {
+                nodes: NodesMetric<number>,
+                average: number,
+                distribution: Map<number, number>
+            },
+            diameter: number,
+            averagePathLength: number
+        };
+
+        network.iterate({
+            callback: ({ links }) => {
+                const layerType = Algorithm.getLayerType({ layer: links });
+                switch(layerType)
+                {
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
+                        break;
+                    case "Undirected":
+                        brandes = Brandes.undirected({ adjacency: links as Core.ReadonlyAdjacency });
                         break;
                 }
             }
         });
 
-        return clusteringCoefficient!;
+        return brandes;
     }
 
-    /*public static closeness({ network }: NetworkSingleLayer_args): NodesMetric<number>
+    public static labelPropagation({ network, maximumIterations }: { network: SingleLayerNetwork, maximumIterations?: number }): Map<Core.ActorId, string>
     {
-        let closeness;
+        let communities: Map<Core.ActorId, string> = new Map();
+
         network.iterate({
             callback: ({ links }) => {
-                closeness = ;
+                const layerType = Algorithm.getLayerType({ layer: links });
+                switch(layerType)
+                {
+                    case "Directed":
+                        throw new Error("Directed layers are not supported");
+                        break;
+                    case "Undirected":
+                        communities = LabelPropagation.undirected({ adjacency: links as Core.ReadonlyAdjacency, maximumIterations });
+                        break;
+                }
             }
         });
 
-        return closeness!;
+        return communities!;
     }
-
-    public static closenessAvg({ network }: NetworkSingleLayer_args): number
-    {
-        
-    }
-
-    public static betweenness({ network }: NetworkSingleLayer_args): Map<ActorId, number>
-    {
-
-    }
-
-    public static betweennessAvg({ network }: NetworkSingleLayer_args): number
-    {
-        
-    }
-
-    public static clusteringCoefficientAvg(): number
-    {
-        
-    }
-
-    public static degreeDistribution(): Map<number, number>
-    {
-
-    }*/
 };

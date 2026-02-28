@@ -16,6 +16,65 @@ import {
 } from "tests/testNetwork";
 
 describe("MultiplexNetwork", () => {
+    
+    describe("random walk", () => {
+
+        it("ok", () => {
+            const network = new Core.MultiplexNetwork({
+                schema: {
+                    "first": { },
+                    "second": { },
+                    "third": { }
+                },
+                data: {
+                    actors: ["1", "2", "3", "4"],
+                    links: {
+                        "first": [],
+                        "second": [{
+                            sourceActorId: "1",
+                            targetActorId: "2"
+                        }, {
+                            sourceActorId: "1",
+                            targetActorId: "3"
+                        }, {
+                            sourceActorId: "1",
+                            targetActorId: "4"
+                        }],
+                        "third": [{
+                            sourceActorId: "1",
+                            targetActorId: "2"
+                        }, {
+                            sourceActorId: "1",
+                            targetActorId: "3"
+                        }, {
+                            sourceActorId: "1",
+                            targetActorId: "4"
+                        }, {
+                            sourceActorId: "2",
+                            targetActorId: "3"
+                        }, {
+                            sourceActorId: "2",
+                            targetActorId: "4"
+                        }]
+                    }
+                }
+            });
+
+            Algorithm.MultiplexNetwork.flattening({
+                layerIds: ["first", "second"],
+                network,
+                newLayerId: "fourth"
+            });
+
+            const path = Algorithm.MultiplexNetwork.randomWalk({ network, layersIds: ["first"], stepsCount: 100000 });
+            const occupation: Map<Core.ActorId, number> = new Map();
+            for(const step of path)
+            {
+                occupation.set(step.actorId, (occupation.get(step.actorId) ?? 0) + 1);
+            }
+            console.log(occupation);
+        });
+    });
 
     describe("L", () => {
 

@@ -16,7 +16,76 @@ import {
 } from "../testNetwork";
 import { InvalidIdError } from "@/utilities/id/idErrors";
 
+import {
+    Core,
+    Algorithm
+} from "@/index";
+
 describe("NetworkSchema", () => {
+
+    describe("example", () => {
+        it("schema", () => {
+            const twitter = new Core.MultilayerNetwork({
+                schema: {
+                    // Definování typů aktérů
+                    partitions: ["uživatel", "příspěvek"],
+                    // Definování vrstev a jejich vlastností
+                    layers: {
+                        "sleduje": {
+                            // vrstva je unipartitní (uživatel → uživatel)
+                            partitionsIds: "uživatel",
+                            // vazby budou orientované a nevážené
+                            directed: true,
+                            weighted: false
+                        },
+                        "zveřejňuje": {
+                            // vrstva je bipartitní (uživatel → příspěvek)
+                            partitionsIds: {
+                                source: "uživatel",
+                                target: "příspěvek"
+                            },
+                            // vazby budou orientované a nevážené
+                            directed: true,
+                            weighted: false
+                        },
+                        "zmiňuje": {
+                            // vrstva je bipartitní (příspěvek → uživatel)
+                            partitionsIds: {
+                                source: "příspěvek",
+                                target: "uživatel"
+                            },
+                            // vazby budou orientované a nevážené
+                            directed: true,
+                            weighted: false
+                        }
+                    }
+                },
+                // Příklad možných síťových dat v kontextu definované vícevrstvé struktury 
+                data: {
+                    actors: {
+                        // Konkrétní aktéři typu "uživatel"
+                        "uživatel": ["Jindra", "Zikmund", "Tereza"],
+                        // Konkrétní aktéři typu "příspěvek"
+                        "příspěvek": ["1", "2", "3"]
+                    },
+                    links: {
+                        // Vazby ve vrstvě "sleduje"
+                        "sleduje": [{ sourceActorId: "Jindra", targetActorId: "Zikmund" },
+                                    { sourceActorId: "Zikmund", targetActorId: "Tereza" }],
+                        // Vazby ve vrstvě "zveřejňuje"
+                        "zveřejňuje": [{ sourceActorId: "Tereza", targetActorId: "1" },
+                                       { sourceActorId: "Tereza", targetActorId: "2" },
+                                       { sourceActorId: "Zikmund", targetActorId: "3" }],
+                        // Vazby ve vrstvě "zmiňuje"
+                        "zmiňuje": [{ sourceActorId: "1", targetActorId: "Zikmund" },
+                                    { sourceActorId: "1", targetActorId: "Jindra" },
+                                    { sourceActorId: "3", targetActorId: "Tereza" }]
+                    }
+                }
+            });
+        });
+    });
+
 
     describe("addPartition", () => {
 

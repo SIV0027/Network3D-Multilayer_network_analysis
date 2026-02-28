@@ -1,80 +1,47 @@
-import { G6Graph } from "../../core";
 import * as Core from "../../../core";
 
-class SingleLayerNetworkInstance
-{
-    private G6Graph: G6Graph;
-            
-    constructor({ data, container }: { data: any, container: string | HTMLElement })
-    {
-        this.G6Graph = new G6Graph({
-            init: {
-                container,
-                autoFit: "view",
-                data,
-                node: {
-                    style: {
-                        size: 10,
-                    },
-                    palette: {
-                        field: "group",
-                        color: "tableau",
-                    },
-                },
-                layout: {
-                    type: "d3-force",
-                    manyBody: { },
-                    x: { },
-                    y: { },
-                },
-                behaviors: ["drag-canvas", "zoom-canvas", "drag-element"],
-            }
-        });
-    }
-
-    public render(): void
-    {
-        this.G6Graph.render();
-    }
-};
+import {
+    Visualization
+} from "../../core/";
 
 export class SingleLayerNetwork extends Core.SingleLayerNetwork
 {
-    public static create({ network, container }: { network: SingleLayerNetwork, container: string | HTMLElement }): SingleLayerNetworkInstance
+    public static init({ container, attrs }: { container: string | HTMLElement, attrs?: Record<string, any> }): Record<string, any>
     {
-        const data: any = {
-            nodes: [],
-            edges: []
+        const init: Record<string, any> = {
+            container,
+            autoFit: "view",
+            layout: {
+                type: "d3-force",
+                manyBody: { },
+                x: { },
+                y: { },
+            },
+            behaviors: ["drag-canvas", "zoom-canvas", "drag-element"]
         };
-        network.iterate({
-            callback: ({ actors, links }) => {
-                for(const actorId of actors)
-                {
-                    data.nodes.push({ id: actorId });
-                }
 
-                const visitedLinks: Map<string, Set<string>> = new Map(); 
-                for(const [sourceId, neighbours] of links as Core.ReadonlyAdjacency)
-                {
-                    visitedLinks.set(sourceId, new Set());
-                    for(const targetId of neighbours)
-                    {
-                        if(!visitedLinks.has(targetId) || !visitedLinks.get(targetId)!.has(sourceId))
-                        {
-                            visitedLinks.get(sourceId)!.add(targetId);
-                            data.edges.push({
-                                source: sourceId,
-                                target: targetId
-                            });
-                        }
-                    }
-                }
+        for(const attrName in attrs)
+        {
+            init[attrName] = attrs[attrName];
+        }
+
+        return init;
+    }
+
+    public static create({ network, init }: { network: SingleLayerNetwork, init: any }): Visualization
+    {
+        let visualization: Visualization;
+
+        network.iterate({
+            callback: ({ links }) => {
+
+                visualization = new Visualization({
+                    init,
+                    layer: links as Core.ReadonlyAdjacency
+                });
             }
         });
-
-        return new SingleLayerNetworkInstance({
-            container,
-            data
-        });
+        
+        return visualization!;
     }
 };

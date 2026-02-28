@@ -4,10 +4,9 @@ import {
     it
 } from "vitest";
 
-import * as ohm from "ohm-js";
-
 import {
-    Parser
+    DFA,
+    CSVDFA
 } from "@/importer/core";
 
 import {
@@ -16,51 +15,57 @@ import {
 
 describe("Core", () => {
 
-    (globalThis as any).ohm = ohm;
-
-    describe("Ohm", () => {
+    describe("DFA", () => {
 
         it("ok", () => {
-            const parser = new Parser({
-                source: `
-                    Arithmetic {
-                        Exp = AddExp
+            const res: {
+                rows: Array<Array<string>>,
+                row: Array<string>,
+                field: string
+            } = {
+                rows: [],
+                row: [],
+                field: ""
+            };
 
-                        AddExp = AddExp "+" MulExp  -- plus
-                            | AddExp "-" MulExp  -- minus
-                            | MulExp
+            const pushCol = () => {
+                res.row.push(res.field);
+                res.field = "";
+            };
 
-                        MulExp = MulExp "*" number  -- times
-                            | MulExp "/" number  -- div
-                            | number
+            const pushRow = () => {
+                res.rows.push(res.row);
+                res.row = [];
+            };
 
-                        number = digit+
-                    }
-                `
+            const csvDfa = new DFA({
+                transitionTable: {
+                    "S| ":  { next: "S", callback: pushCol },
+                    "S|\n": { next: "S", callback: () => { pushCol(); pushRow(); } },
+                    "S|*":  { next: "S", callback: (ch) => res.field += ch },
+                },
+                startState: "S"
             });
-            parser.addSemantic({ name: "expression" });
-            parser.addOperation({ semanticName: "expression", name: "eval", actionDictionary: {
-                    AddExp_plus(a: any, _: any, b: any) {
-                            return a.eval() + b.eval();    
-                    },
-                    AddExp_minus(a: any, _: any, b: any) {
-                        return a.eval() - b.eval();
-                    },
-                    MulExp_times(a: any, _: any, b: any) {
-                        return a.eval() * b.eval();
-                    },
-                    MulExp_div(a: any, _: any, b: any) {
-                        return a.eval() / b.eval();
-                    },
-                    number(digits: any) {
-                        return parseInt(digits.sourceString)
-                    }
-                }
-            });
-            
-            expect(parser.parse({ input: "100 + 1 * 2", semanticName: "expression" }).eval()).toBe(102);
-            expect(parser.parse({ input: "1 + 2 - 3 + 4", semanticName: "expression" }).eval()).toBe(4);
-            expect(parser.parse({ input: "12345", semanticName: "expression" }).eval()).toBe(12345);
+
+            csvDfa.parse({ input: "1 2 3\n4 5 6" });
+
+            // EOF flush
+            if(res.field.length > 0 || res.row.length > 0)
+            {
+                res.row.push(res.field);
+                res.rows.push(res.row);
+            }
+
+            console.log(res.rows);
+        });
+    });
+
+    describe("CsvDfa", () => {
+
+        it("ok", () => {
+            const csvDfa = new CSVDFA();
+            console.log(csvDfa.parse({ input: realSingle.bioCECX }));
+            console.log(csvDfa.parse({ input: "1 2 3\n4 5 6" }));
         });
     });
 });

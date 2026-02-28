@@ -4,3 +4,5 @@ export * from "./degree";
 export * from "./clusteringCoefficient";
 export * from "./brandes";
 export * from "./flattening";
+export * from "./labelPropagation";
+export * from "./randomWalk";
