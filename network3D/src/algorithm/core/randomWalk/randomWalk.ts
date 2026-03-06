@@ -15,7 +15,6 @@ export abstract class RandomWalk
         {
             path.push({ actorId: currentActorId, layerId: currentLayerId });
 
-            console.log(adjacencies.get(currentLayerId), currentActorId, adjacencies.get(currentLayerId)!.get(currentActorId));
             const neighbours = Array.from(adjacencies.get(currentLayerId)!.get(currentActorId)!);
             const otherLayersIds = layersIds.filter((layerId) => (layerId != currentLayerId));
 
