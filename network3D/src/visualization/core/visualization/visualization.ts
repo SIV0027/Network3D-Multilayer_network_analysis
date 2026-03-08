@@ -9,7 +9,7 @@ import {
 
 export class Visualization extends G6Graph
 {
-    private static getUndirectedData(layer: Core.ReadonlyAdjacency): {
+    protected static getUndirectedData(layer: Core.ReadonlyAdjacency): {
         nodes: Array<any>,
         edges: Array<any>
     }
@@ -19,7 +19,7 @@ export class Visualization extends G6Graph
             edges: new Array()
         };
 
-        const visitedLinks: Map<string, Set<string>> = new Map(); 
+        const visitedLinks: Map<string, Set<string>> = new Map();
         for(const [sourceId, neighbours] of layer)
         {
             data.nodes.push({ id: sourceId });
