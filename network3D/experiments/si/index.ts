@@ -4,8 +4,83 @@ import {
 } from "../../tests/testNetwork/static/real/index";
 
 import {
+    Eccentricity
+} from "./eccentricity";
+
+import {
     SI
 } from "./si";
+
+const {
+    nodes,
+    links
+} = realSingle.karateKlubRealTestNetwork.data;
+
+const network = new Network3D.Core.SingleLayerNetwork({
+    data: {
+        actors: nodes,
+        links: links.map(({ source, target }) => { return { sourceActorId: source, targetActorId: target }; })
+    }
+ });
+
+const app = document.querySelector("#app") as HTMLElement;
+let infectiousArray = new Array();
+infectiousArray = new Array();
+SI.run({
+    network,
+    infectionRate: 0.5,
+    startInfectious: new Array("11", "5"),
+    callback({ infectious, timeSlot }) {
+        infectiousArray.push(new Set(infectious));
+    }
+});
+
+const eccentricitiy = () => {
+    const eccentricities = Eccentricity.run({ network });
+    for(const [actorId, eccentricity] of eccentricities)
+    {
+        let timeSlotAccum = 0;
+        for(let i = 0; i < 1e3; i++)
+        {        
+            let timeSlotG = 0;
+            SI.run({
+                network,
+                infectionRate: 0.1,
+                startInfectious: [actorId],
+                callback({ timeSlot }) {
+                    timeSlotG = timeSlot;
+                }
+            });
+            timeSlotAccum += timeSlotG;
+        }
+
+        document.body.innerHTML += (timeSlotAccum / 1e3) + " " + eccentricity + "<br>";
+    }
+    console.log(eccentricities);
+};
+
+const degrees = () => {
+    const degreeNodes = Network3D.Algorithm.SingleLayerNetwork.degree({ network }).nodes;
+    for(const [actorId, degree] of degreeNodes)
+    {
+        let timeSlotAccum = 0;
+        for(let i = 0; i < 1e3; i++)
+        {        
+            let timeSlotG = 0;
+            SI.run({
+                network,
+                infectionRate: 0.1,
+                startInfectious: [actorId],
+                callback({ timeSlot }) {
+                    timeSlotG = timeSlot;
+                }
+            });
+            timeSlotAccum += timeSlotG;
+        }
+
+        document.body.innerHTML += (timeSlotAccum / 1e3) + " " + degree + "<br>";
+    }
+}
 
 const visualize = (infectiousArray: Array<any>) => {
     const maxSize = 100;
@@ -101,19 +176,6 @@ const visualize = (infectiousArray: Array<any>) => {
     });
 };
 
-const {
-    nodes,
-    links
-} = realSingle.karateKlubRealTestNetwork.data;
-
-const network = new Network3D.Core.SingleLayerNetwork({
-    data: {
-        actors: nodes,
-        links: links.map(({ source, target }) => { return { sourceActorId: source, targetActorId: target }; })
-    }
- });
-
- 
 const simulate = () => {
 
     const simulateResults: Map<string, number> = new Map();
@@ -149,20 +211,7 @@ const simulate = () => {
     return simulateResults;
 };
 
-console.log(simulate());
-
-const app = document.querySelector("#app") as HTMLElement;
-let infectiousArray = new Array();
-
-infectiousArray = new Array();    
-SI.run({
-    network,
-    infectionRate: 0.5,
-    startInfectious: new Array("11", "5"),
-    callback({ infectious, timeSlot }) {
-        infectiousArray.push(new Set(infectious));
-    }
-});
-
-
+//console.log(simulate());
 //visualize(infectiousArray);
+eccentricitiy();
+//degrees();

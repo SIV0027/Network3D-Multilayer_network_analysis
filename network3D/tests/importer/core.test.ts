@@ -1,5 +1,4 @@
 import {
-    expect,
     describe,
     it
 } from "vitest";
@@ -8,10 +7,6 @@ import {
     DFA,
     CSVDFA
 } from "@/importer/core";
-
-import {
-    realSingle
-} from "../testNetwork/static/real/index";
 
 describe("Core", () => {
 
@@ -64,7 +59,6 @@ describe("Core", () => {
 
         it("ok", () => {
             const csvDfa = new CSVDFA();
-            console.log(csvDfa.parse({ input: realSingle.bioCECX }));
             console.log(csvDfa.parse({ input: "1 2 3\n4 5 6" }));
         });
     });
