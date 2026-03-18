@@ -211,7 +211,7 @@ const simulate = () => {
     return simulateResults;
 };
 
-//console.log(simulate());
-//visualize(infectiousArray);
+console.log(simulate());
+visualize(infectiousArray);
 eccentricitiy();
-//degrees();
+degrees();

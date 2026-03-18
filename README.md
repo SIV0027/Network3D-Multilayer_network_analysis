@@ -15,4 +15,4 @@ The library allows users to model networks with multiple interconnected layers, 
 ## Technologies
 - TypeScript/JavaScript
 - HTML/CSS
-- Web visualization libraries (AntV G6)
+- Web visualization library (AntV G6)

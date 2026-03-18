@@ -7,7 +7,10 @@ import {
     NonWeightedLayerError,
     WeightedLayerError
 } from "../../core";
-import type { Error_args } from "../../utilities/network3DError/network3DError_types";
+
+import {
+    type Error_args
+} from "../../utilities/network3DError/network3DError_types";
 
 export class SingleLayerNetworkErrors extends MultilayerNetworkErrors
 {
