@@ -16,6 +16,7 @@ export abstract class Component
         {
             const start: Core.ActorId = nodes.values().next().value!;
         
+            // BFS
             const visited: Set<Core.ActorId> = new Set();
             visited.add(start);
 

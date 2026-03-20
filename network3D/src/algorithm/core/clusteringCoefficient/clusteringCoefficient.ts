@@ -15,6 +15,7 @@ export abstract class ClusteringCoefficient
         let clusteringCoefficientSum = 0;
         for(const [nodeId, neighbours] of adjacency)
         {
+            // It is defined for more than one neighbour
             if(neighbours.size - (neighbours.has(nodeId) ? 1 : 0) < 2)
             {                
                 clusteringCoefficient.set(nodeId, 0);
@@ -23,6 +24,7 @@ export abstract class ClusteringCoefficient
 
             let linksCount = 0;
             const maxLinksCount = neighbours.size * (neighbours.size - 1);
+            // Count links of neighbours
             for(const neighbourAId of neighbours)
             {
                 if(neighbourAId == nodeId)
@@ -44,8 +46,10 @@ export abstract class ClusteringCoefficient
                 }
             }
 
+            // Clustering Coefficeint for node i
             const nodeClusteringCoefficient = linksCount / maxLinksCount;
             clusteringCoefficient.set(nodeId, nodeClusteringCoefficient);
+            // Avg clustering coefficient
             clusteringCoefficientSum += nodeClusteringCoefficient;
         }
         
@@ -60,6 +64,7 @@ export abstract class ClusteringCoefficient
     {        
         const distribution: Map<number, number> = new Map();
 
+        // Count frequencey of values
         for(const [_, clusteringCoefficient] of clusteringCoefficients)
         {
             let value = 1;
@@ -70,6 +75,7 @@ export abstract class ClusteringCoefficient
             distribution.set(clusteringCoefficient, value);
         }
 
+        // Normalize clustering coefficient distribution
         for(const [clusteringCoefficient, _] of distribution)
         {
             distribution.set(clusteringCoefficient, distribution.get(clusteringCoefficient)! / adjacency.size);

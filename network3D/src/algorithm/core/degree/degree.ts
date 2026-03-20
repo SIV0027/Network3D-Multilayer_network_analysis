@@ -16,6 +16,7 @@ export abstract class Degree
         for(const [actorId, neighbours] of adjacency)
         {
             let actorDegree = neighbours.size;
+            // Decrement self-loops
             if(neighbours.has(actorId))
             {
                 actorDegree--;
@@ -37,6 +38,7 @@ export abstract class Degree
 
         for(const [_, degree] of degrees)
         {
+            // Values of degrees which no nodes has
             for(let _ = distribution.length; _ <= degree; _++)
             {
                 distribution.push(0);
@@ -46,6 +48,7 @@ export abstract class Degree
 
         for(let i = 0; i < distribution.length; i++)
         {
+            // Normalize degree distribution
             distribution[i] /= adjacency.size;
         }
 

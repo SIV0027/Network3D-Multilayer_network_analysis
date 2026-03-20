@@ -23,11 +23,13 @@ export abstract class LabelPropagation
             updated = false;
             iteration++;
 
+            // Node shaking
             const nodes = Array.from(adjacency.keys()).sort(() => Math.random() - 0.5);
             for(const nodeId of nodes)
             {
                 const neighbours = adjacency.get(nodeId)!;
 
+                // Communities of neighbours
                 const communitiesTmp: Map<string, number>  = new Map();
                 for(const neighbourId of neighbours)
                 {
