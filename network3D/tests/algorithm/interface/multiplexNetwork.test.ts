@@ -8,11 +8,9 @@ import * as Core from "@/core";
 import * as Algorithm from "@/algorithm";
 
 import * as TestNetworks from "../../testNetwork/static/generic/index";
-import * as RealTestNetworks from "../../testNetwork/static/real/single/";
+
 import {
     type TestNetwork,
-
-    toCSV
 } from "tests/testNetwork";
 
 describe("MultiplexNetwork", () => {

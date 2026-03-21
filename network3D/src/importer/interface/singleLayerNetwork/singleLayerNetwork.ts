@@ -1,68 +1,47 @@
-//import { Parser } from "../../../importer/core";
+import * as Core from "../../../core";
 
-//import * as Core from "../../../core";
+import {
+   CSVDFA
+} from "../../core";
 
 export abstract class SingleLayerNetwork
 {
-    /*public static readonly CSV: ({ }: { delimiters: { col: string, row: string } }) => string = ({ delimiters }) => {
-        return `
-            CSV {
-                File = Content "${delimiters.row}"? end
-
-                Content = Row ("${delimiters.row}" Row)*
-
-                Row = Id "${delimiters.col}" Id
-                        
-                Id = (digit | letter)+
-            }`;
-    };
-
-    public static parse({ input, parserSource }: { input: string, parserSource: string }): Core.SingleLayerNetwork
+    public static fromCSV({ csvInput, colDelimiter, rowDelimiter, header = false }: { csvInput: string, colDelimiter?: string, rowDelimiter?: string, header?: boolean }): Core.SingleLayerNetwork
     {
-        const actors: Set<string> = new Set();
-        const links: Array<{ sourceActorId: string, targetActorId: string }> = new Array();
+        const network = new Core.SingleLayerNetwork();
 
-        const parser = new Parser({
-            source: parserSource
-        });
-        parser.addSemantic({ name: "CSV" });
-        parser.addOperation({ semanticName: "CSV", name: "parse", actionDictionary: {
-                    File(content: any, _: any, _end: any)
-                    {
-                        content.parse();
-                    },
-                    Content(row: any, _: any, rest: any)
-                    {
-                        row.parse();
-                        rest.children.forEach((element: any) => {
-                            element.parse();
-                        });
-                    },
-                    Row(source: any, _: any, target: any)
-                    {
-                        const sourceId = source.parse();
-                        const targetId = target.parse();
+        const parser = new CSVDFA({ colDelimiter, rowDelimiter });
+        const data = parser.parse({ input: csvInput });
+        if(header)
+        {
+            data.shift();
+        }
+        for(let row of data)
+        {
+            row = row.map((val) => val.trim());
 
-                        actors.add(sourceId);
-                        actors.add(targetId);
-                        links.push({ sourceActorId: sourceId, targetActorId: targetId });
-                    },
-                    Id(letters: any)
-                    {
-                        return letters.sourceString
-                    }
-                }
-            });
-
-        parser.parse({ input, semanticName: "CSV" }).parse();
-
-        const network = new Core.SingleLayerNetwork({
-            data: {
-                actors: Array.from(actors),
-                links
+            if(!network.isActorExists({ actorId: row[0] }))
+            {
+                network.addActor({ actorId: row[0] });
             }
-        });
+
+            if(!network.isActorExists({ actorId: row[1] }))
+            {
+                network.addActor({ actorId: row[1] });
+            }
+
+            if(!network.isLinkExists({
+                sourceActorId: row[0],
+                targetActorId: row[1]
+            }))
+            {                
+                network.addLink({
+                    sourceActorId: row[0],
+                    targetActorId: row[1]
+                });
+            }
+        }
 
         return network;
-    }*/
+    }
 };

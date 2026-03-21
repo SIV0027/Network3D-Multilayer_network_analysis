@@ -1,6 +1,8 @@
 import * as Core from "../../../core";
 
-import { CSVDFA } from "../../core";
+import {
+   CSVDFA
+} from "../../core";
 
 export abstract class MultiplexNetwork
 {
