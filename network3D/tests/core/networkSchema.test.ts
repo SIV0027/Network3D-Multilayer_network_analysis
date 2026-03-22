@@ -17,8 +17,7 @@ import {
 import { InvalidIdError } from "@/utilities/id/idErrors";
 
 import {
-    Core,
-    Algorithm
+    Core
 } from "@/index";
 
 describe("NetworkSchema", () => {

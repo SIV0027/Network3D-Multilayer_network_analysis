@@ -59,18 +59,12 @@ const maxDegree = Math.max(...Array.from(nodes).map(([_, nodeDegree]) => nodeDeg
 const visualization = Network3D.Visualization.SingleLayerNetwork.create({
     network,
     init: Network3D.Visualization.MultiplexNetwork.init({
-        // ID HTML prvku pro vykreslení
         container: "container",
         attrs: {
-            // Nastavení pro vykreslení uzlů
             node: {
-                // Uzly se vykreslí jako kruh
                 type: "circle",
-                // Nastavení barvy, popisku a velikosti uzlů
                 style: {
-                    // Velikost nastavena dle stupně
                     size: (node: any) => (nodes.get(node.id)! / maxDegree) * (maxSize - minSize) + minSize,
-                    // Barva nastavena dle příslušnosti ke komunitě
                     fill: (node: any) => { const color = communitiesColors.get(communities.get(node.id)!)!; return `hsl(${color.hue.toFixed(1)}, 50%, 50%)`; },
                     stroke: (node: any) => { const color = communitiesColors.get(communities.get(node.id)!)!; return `hsl(${color.hue.toFixed(1)}, 40%, 40%)`; },
                     lineWidth: 2,
@@ -81,19 +75,14 @@ const visualization = Network3D.Visualization.SingleLayerNetwork.create({
                     labelFill: "#ffffff"
                 }
             },
-            // Nastavení pro vykreslení vazeb
             edge: {
-                // Vazby se vykreslí jako rovné čáry
                 type: "line",
-                // Nastavení barvy a tloušťky
                 style: {
                     stroke: "#888787",
                     lineWidth: 1
                 }                            
             },
-            // Nastavení rozložení
             layout: {
-                // Rozložení se provede pomocí algoritmu Force Atlas 2
                 type: 'force-atlas2',
                 preventOverlap: true
             }

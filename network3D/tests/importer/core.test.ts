@@ -44,7 +44,6 @@ describe("Core", () => {
 
             csvDfa.parse({ input: "1 2 3\n4 5 6" });
 
-            // EOF flush
             if(res.field.length > 0 || res.row.length > 0)
             {
                 res.row.push(res.field);
