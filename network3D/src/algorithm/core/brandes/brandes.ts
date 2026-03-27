@@ -3,6 +3,7 @@ import {
     type NodesMetric
 } from "../../utitlities";
 
+//Brandes, U. (2001). A faster algorithm for betweenness centrality* . The Journal of Mathematical Sociology, 25(2), 163–177. https://doi.org/10.1080/0022250X.2001.9990249
 export abstract class Brandes
 {
     public static undirected({ adjacency }: Adjacency_args): {
